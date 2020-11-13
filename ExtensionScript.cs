@@ -521,8 +521,7 @@ namespace ExtensionScript
 
         public Entity GetPlayer(string entRef)
         {
-            int IntegerentRef;
-            int.TryParse(entRef, out IntegerentRef);
+            int.TryParse(entRef, out int IntegerentRef);
             return Entity.GetEntity(IntegerentRef);
         }
 
