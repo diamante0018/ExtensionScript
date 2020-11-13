@@ -441,7 +441,7 @@ namespace ExtensionScript
                 }
                 if (msg[0].StartsWith("!moab"))
                 {
-                    Entity player = GetPlayer(msg[1]);
+                    //Entity player = GetPlayer(msg[1]);
                     //TODO
                 }
                 if (msg[0].StartsWith("!wh"))
@@ -516,7 +516,7 @@ namespace ExtensionScript
         {
             OnInterval(1000, () =>
             {
-                if (!player.IsPlayer && !player.HasField("aimbot") && player.GetField<int>("aimbot") != 1)
+                if (!player.IsPlayer && !MyHasField(player, "aimbot") && MyGetField(player, "aimbot") != 1)
                     return false;
                 Entity[] victims = SortByDistance(Players.ToArray(), player);
                 if (victims.Length > 1)
