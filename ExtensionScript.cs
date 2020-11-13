@@ -200,8 +200,6 @@ namespace ExtensionScript
 
             Thread(OnPlayerSpawned(player), (entRef, notify, paras) =>
             {
-                // This is endon function
-                // If that delegate return false then this coroutine will not be processed
                 if (notify == "disconnect" && player.EntRef == entRef)
                     return false;
 
@@ -215,6 +213,25 @@ namespace ExtensionScript
             {
                 yield return player.WaitTill("spawned_player");
                 player.SetClientDvar("cg_objectiveText", GetDvar("sv_objText"));
+
+                if (player.HasWeapon("stinger_mp"))
+                {
+                    player.TakeWeapon("stinger_mp");
+                    player.GiveWeapon("iw5_usp45_mp");
+                    player.SetWeaponAmmoClip("iw5_usp45_mp", 0);
+                    player.SetWeaponAmmoStock("iw5_usp45_mp", 0);
+
+                }
+
+                if (player.HasWeapon("flash_grenade_mp"))
+                {
+                    player.SetWeaponAmmoStock("flash_grenade_mp", 1);
+                }
+
+                else if (player.HasWeapon("concussion_grenade_mp"))
+                {
+                    player.SetWeaponAmmoStock("concussion_grenade_mp", 1);
+                }
             }
         }
 
@@ -638,6 +655,10 @@ namespace ExtensionScript
             }
         }
 
+        public override void OnPlayerDisconnect(Entity player)
+        {
+            fields.Remove(player.HWID);
+        }
 
         public override EventEat OnSay2(Entity player, string name, string message)
         {
