@@ -668,27 +668,33 @@ namespace ExtensionScript
 
         private bool MyHasField(Entity player, string field)
         {
-            if (fields.ContainsKey(player.Name))
-                return fields[player.Name].ContainsKey(field);
+            if (!player.IsPlayer)
+                return false;
+            if (fields.ContainsKey(player.HWID))
+                return fields[player.HWID].ContainsKey(field);
             return false;
         }
 
         private void MySetField(Entity player, string field, int value)
         {
-            if (!fields.ContainsKey(player.Name))
-                fields.Add(player.Name, new Dictionary<string, int>());
+            if (!player.IsPlayer)
+                return;
+            if (!fields.ContainsKey(player.HWID))
+                fields.Add(player.HWID, new Dictionary<string, int>());
 
             if (!MyHasField(player, field))
-                fields[player.Name].Add(field, value);
+                fields[player.HWID].Add(field, value);
             else
-                fields[player.Name][field] = value;
+                fields[player.HWID][field] = value;
         }
 
         private int MyGetField(Entity player, string field)
         {
+            if (!player.IsPlayer)
+                return int.MinValue;
             if (!MyHasField(player, field))
                 return int.MinValue;
-            return fields[player.Name][field];
+            return fields[player.HWID][field];
         }
     }
 }
