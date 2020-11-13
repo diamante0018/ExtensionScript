@@ -298,11 +298,11 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!blockchat"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if (!MyHasField(player,"muted"))
+                    if (!MyHasField(player, "muted"))
                     {
                         MySetField(player, "muted", 0);
                     }
-                    if (MyGetField(player,"muted") == 1)
+                    if (MyGetField(player, "muted") == 1)
                     {
                         MySetField(player, "muted", 0);
                         Utilities.RawSayAll($"{player.Name} ^1chat has been unblocked.");
@@ -320,7 +320,7 @@ namespace ExtensionScript
                     {
                         MySetField(player, "frozen", 0);
                     }
-                    if (MyGetField(player,"frozen") == 1)
+                    if (MyGetField(player, "frozen") == 1)
                     {
                         player.FreezeControls(false);
                         MySetField(player, "frozen", 0);
@@ -393,7 +393,7 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!clientdvar"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if(msg.Length < 4)
+                    if (msg.Length < 4)
                     {
                         Utilities.RawSayAll($"^1{player.Name} ^7Client dvar can't be changed. Not enough arguments supplied: cdvar value.");
                         return;
@@ -420,7 +420,7 @@ namespace ExtensionScript
                     player.SetClanTag(CalculateString(msg[2]));
                 }
                 if (msg[0].StartsWith("!speed"))
-                {     
+                {
                     int.TryParse(msg[1], out int speed);
                     Utilities.Speed = speed;
                 }
@@ -451,7 +451,7 @@ namespace ExtensionScript
                     {
                         MySetField(player, "wallhack", 0);
                     }
-                    if (MyGetField(player,"wallhack") == 1)
+                    if (MyGetField(player, "wallhack") == 1)
                     {
                         player.ThermalVisionFOFOverlayOff();
                         MySetField(player, "wallhack", 0);
@@ -467,7 +467,7 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!aimbot"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if(!MyHasField(player, "aimbot"))
+                    if (!MyHasField(player, "aimbot"))
                     {
                         MySetField(player, "aimbot", 0);
                     }
@@ -505,10 +505,21 @@ namespace ExtensionScript
                         MySetField(player, "fly", 1);
                     }
                 }
+                if (msg[0].StartsWith("!yell"))
+                {
+                    if (msg.Length < 2)
+                        return;
+
+                    string yell = "";
+                    for (int i = 1; i < msg.Length; i++)
+                        yell = yell + msg[i];
+
+                    IPrintLnBold(yell);
+                }
             }
             catch (Exception e)
             {
-                InfinityScript.Log.Write(LogLevel.Error,"Error in Command Processing. Error:" + e.Message + e.StackTrace);
+                InfinityScript.Log.Write(LogLevel.Error, "Error in Command Processing. Error:" + e.Message + e.StackTrace);
             }
         }
 
