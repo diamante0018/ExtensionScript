@@ -222,13 +222,13 @@ namespace ExtensionScript
                 }
                 if (msg[0].StartsWith("!setafk"))
                 {
-                    Entity target = GetPlayer(msg[1]);
-                    ChangeTeam(target, "spectator");
+                    Entity player = GetPlayer(msg[1]);
+                    ChangeTeam(player, "spectator");
                 }
                 if (msg[0].StartsWith("!kill"))
                 {
-                    Entity target = GetPlayer(msg[1]);
-                    target.Suicide();
+                    Entity player = GetPlayer(msg[1]);
+                    player.Suicide();
                 }
                 if (msg[0].StartsWith("!suicide"))
                 {
@@ -449,7 +449,42 @@ namespace ExtensionScript
                     Entity player = GetPlayer(msg[1]);
                     //TODO
                 }
-                if(msg[0].StartsWith("!fly"))
+                if (msg[0].StartsWith("!wh"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if (!player.HasField("wallhack"))
+                    {
+                        player.SetField("wallhack", 0);
+                    }
+                    if (player.GetField<int>("wallhack") == 1)
+                    {
+                        player.ThermalVisionFOFOverlayOff();
+                        player.SetField("wallhack", 0);
+                    }
+                    else if (player.GetField<int>("wallhack") == 0)
+                    {
+                        player.ThermalVisionFOFOverlayOn();
+                        player.SetField("wallhack", 1);
+                    }
+                }
+                if (msg[0].StartsWith("!aimbot"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if(!player.HasField("aimbot"))
+                    {
+                        player.SetField("aimbot", 0);
+                    }
+                    if (player.GetField<int>("aimbot") == 1)
+                    {
+                        player.SetField("aimbot", 0);
+                    }
+                    else if (player.GetField<int>("aimbot") == 0)
+                    {
+                        GiveAimBot(player);
+                        player.SetField("aimbot", 1);
+                    }
+                }
+                if (msg[0].StartsWith("!fly"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.HasField("fly"))
@@ -476,6 +511,19 @@ namespace ExtensionScript
             {
                 InfinityScript.Log.Write(LogLevel.Error,"Error in Command Processing. Error:" + e.Message + e.StackTrace);
             }
+        }
+
+        public void GiveAimBot(Entity player)
+        {
+            OnInterval(1000, () =>
+            {
+                if (player.IsAlive && player.IsPlayer && player.HasField("aimbot") && player.GetField<int>("aimbot") == 1)
+                    return false;
+                Entity[] victims = SortByDistance(Players.ToArray(), player);
+                if (victims.Length > 1)
+                    player.SetPlayerAngles(VectorToAngles(victims[0].Origin - player.GetEye()));
+                return true;
+            }); 
         }
 
         public void AC130All()
