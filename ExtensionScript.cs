@@ -676,7 +676,7 @@ namespace ExtensionScript
         private int MyGetField(Entity player, string field)
         {
             if (!MyHasField(player, field))
-                return -1;
+                return int.MinValue;
             return fields[player.Name][field];
         }
     }
