@@ -31,7 +31,7 @@ namespace ExtensionScript
 
             //Making and Settings dvars if they are unused and have value
             SetDvarIfUninitialized("sv_hideCommands", "1");
-            SetDvarIfUninitialized("sv_gmotd", "^:Welcome to ^4DIA ^:servers. https://discord.com/invite/TaZEWrRh");
+            SetDvarIfUninitialized("sv_gmotd", "^:Welcome to ^4DIA ^:servers. https://discord.com/invite/");
             SetDvarIfUninitialized("sv_forceSmoke", "1");
             SetDvarIfUninitialized("sv_objText", "^7 Join our Discord Server now! ^1https://discord.com/invite/");
             SetDvarIfUninitialized("sv_clientDvars", "1");
