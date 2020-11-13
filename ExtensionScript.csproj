@@ -32,8 +32,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="InfinityScript">
-      <HintPath>D:\Tekno 1.4\InfinityScript.dll</HintPath>
+    <Reference Include="InfinityScript, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\InfinityScript\InfinityScript\bin\Release\InfinityScript.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

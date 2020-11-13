@@ -26,7 +26,7 @@ namespace ExtensionScript
 
         public ExtensionScript()
         {
-            IPrintLn("^1I am Diavolo and I lost my Mind. ^7DIA Script for 1.5.0 IS");
+            IPrintLn("^1I am Diavolo and I lost my Mind. ^7DIA Script for 1.5 IS");
             InfinityScript.Log.Write(LogLevel.Info, "^1I am Diavolo and I lost my Mind.");
 
             //Making and Settings dvars if they are unused and have value
@@ -45,7 +45,7 @@ namespace ExtensionScript
             //SetDvarIfUninitialized("sv_hudLeft", "^1Left Message");
             SetDvarIfUninitialized("sv_scrollingSpeed", "0");
             SetDvarIfUninitialized("sv_scrollingHud", "0");
-            SetDvarIfUninitialized("sv_b3Execute", "null");          
+            SetDvarIfUninitialized("sv_b3Execute", "null");
 
             //Loading Server Dvars.
             ServerDvars();
@@ -66,6 +66,8 @@ namespace ExtensionScript
                 }
                 return true;
             });
+
+            Bounce();
         }
 
         public void ServerDvars()
@@ -147,7 +149,7 @@ namespace ExtensionScript
 
         public void OnPlayerConnect(Entity player)
         {
-            MySetField(player, "playerKillStreak",0);
+            MySetField(player, "playerKillStreak", 0);
 
             if (GetDvarInt("sv_clientDvars") != 0)
             {
@@ -191,7 +193,7 @@ namespace ExtensionScript
                     return false;
 
                 return true;
-            });  
+            });
         }
 
         private static IEnumerator OnPlayerSpawned(Entity player)
@@ -246,7 +248,7 @@ namespace ExtensionScript
                     else if (MyGetField(player, "godmodeon") == 0)
                     {
                         player.Health = -1;
-                        MySetField(player, "godmodeon", 0);
+                        MySetField(player, "godmodeon", 1);
                         Utilities.SayTo(player, "^1GodMode has been activated.");
                     }
                 }
@@ -512,7 +514,7 @@ namespace ExtensionScript
 
                     string yell = "";
                     for (int i = 1; i < msg.Length; i++)
-                        yell = yell + msg[i];
+                        yell = yell + " " + msg[i];
 
                     IPrintLnBold(yell);
                 }
@@ -527,13 +529,13 @@ namespace ExtensionScript
         {
             OnInterval(1000, () =>
             {
-                if (!player.IsPlayer && !MyHasField(player, "aimbot") && MyGetField(player, "aimbot") != 1)
+                if (!player.IsPlayer || MyGetField(player, "aimbot") != 1)
                     return false;
                 Entity[] victims = SortByDistance(Players.ToArray(), player);
                 if (victims.Length > 1)
                     player.SetPlayerAngles(VectorToAngles(victims[0].Origin - player.GetEye()));
                 return true;
-            }); 
+            });
         }
 
         public void AC130All()
@@ -591,7 +593,7 @@ namespace ExtensionScript
 
         public override void OnPlayerKilled(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc)
         {
-            if (!MyHasField(player,"playerKillStreak") || !MyHasField(attacker, "playerKillStreak"))
+            if (!MyHasField(player, "playerKillStreak") || !MyHasField(attacker, "playerKillStreak"))
                 return;
             try
             {
@@ -634,7 +636,7 @@ namespace ExtensionScript
                     return EventEat.EatGame;
             }
 
-            if (MyGetField(player,"muted") == 1)
+            if (MyGetField(player, "muted") == 1)
             {
                 return EventEat.EatGame;
             }
@@ -695,6 +697,22 @@ namespace ExtensionScript
             if (!MyHasField(player, field))
                 return int.MinValue;
             return fields[player.HWID][field];
+        }
+
+        public unsafe void Bounce()
+        {
+
+            int[] addr = { 0x0422AB6, 0x0422AAF, 0x041E00C, 0x0414127, 0x04141b4, 0x0414e027, 0x0414b126, 0x041416d, 0x041417c };
+
+            byte nop = 0x90;
+            for (int i = 0; i < 7; ++i)
+            {
+
+                *((byte*)addr[7] + i) = nop;
+                *((byte*)addr[8] + i) = nop;
+                *((byte*)addr[i]) = nop;
+                *((byte*)(addr[i] + 1)) = nop;
+            }
         }
     }
 }
