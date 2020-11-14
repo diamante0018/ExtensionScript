@@ -22,6 +22,7 @@ namespace ExtensionScript
 
         private Kicker proKicker = new Kicker();
         private Dictionary<string, Dictionary<string, int>> fields = new Dictionary<string, Dictionary<string, int>>();
+        private bool fallDamage = false;
 
 
         public ExtensionScript()
@@ -463,8 +464,8 @@ namespace ExtensionScript
                 }
                 if (msg[0].StartsWith("!falldamage"))
                 {
-                    bool gravity = bool.Parse(msg[1]);
-                    Utilities.FallDamage = gravity;
+                    fallDamage = !fallDamage;
+                    Utilities.FallDamage = fallDamage;
                 }
                 if (msg[0].StartsWith("!jumpheight"))
                 {
@@ -557,13 +558,13 @@ namespace ExtensionScript
 
         public void GiveAimBot(Entity player)
         {
-            OnInterval(1000, () =>
+            OnInterval(100, () =>
             {
                 if (!player.IsPlayer || MyGetField(player, "aimbot") != 1)
                     return false;
                 Entity[] victims = SortByDistance(Players.ToArray(), player);
-                if (victims.Length > 1)
-                    player.SetPlayerAngles(VectorToAngles(victims[0].Origin - player.GetEye()));
+                if (victims.Length >= 1)
+                    player.SetPlayerAngles(VectorToAngles(victims[1].GetEye() - player.GetEye()));
                 return true;
             });
         }
