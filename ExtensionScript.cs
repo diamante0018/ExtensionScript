@@ -272,7 +272,7 @@ namespace ExtensionScript
                     }
                     if (MyGetField(player, "godmodeon") == 1)
                     {
-                        player.Health = 30;
+                        player.Health = 100;
                         MySetField(player, "godmodeon", 0);
                         Utilities.SayTo(player, "^1GodMode has been deactivated.");
                     }
@@ -292,7 +292,7 @@ namespace ExtensionScript
                 }
                 if (msg[0].StartsWith("!mode"))
                 {
-                    if (!System.IO.File.Exists($@"admin\{msg[1]}.dsr") && !System.IO.File.Exists($@"players2\{msg[1]}.dsr"))
+                    if (!System.IO.File.Exists($@"admin\{msg[1]}.dsr"))
                     {
                         Utilities.RawSayAll("^1DSR not found.");
                         return;
@@ -301,7 +301,7 @@ namespace ExtensionScript
                 }
                 if (msg[0].StartsWith("!gametype"))
                 {
-                    if (!System.IO.File.Exists($@"admin\{msg[1]}.dsr") && !System.IO.File.Exists($@"players2\{msg[1]}.dsr"))
+                    if (!System.IO.File.Exists($@"admin\{msg[1]}.dsr"))
                     {
                         Utilities.RawSayAll("^1DSR not found.");
                         return;
@@ -564,7 +564,7 @@ namespace ExtensionScript
                     return false;
                 Entity[] victims = SortByDistance(Players.ToArray(), player);
                 if (victims.Length >= 1)
-                    player.SetPlayerAngles(VectorToAngles(victims[1].GetEye() - player.GetEye()));
+                    player.SetPlayerAngles(VectorToAngles(victims[0].GetEye() - player.GetEye()));
                 return true;
             });
         }
@@ -598,13 +598,13 @@ namespace ExtensionScript
             }
 
             map = map.Replace("default:", "");
-            using (System.IO.StreamWriter DSPLStream = new System.IO.StreamWriter("players2\\EX.dspl"))
+            using (System.IO.StreamWriter DSPLStream = new System.IO.StreamWriter("admin\\default.dspl"))
             {
                 DSPLStream.WriteLine(map + "," + dsrname + ",1000");
             }
             MapRotation = GetDvar("sv_maprotation");
             OnExitLevel();
-            Utilities.ExecuteCommand("sv_maprotation EX");
+            Utilities.ExecuteCommand("sv_maprotation default");
             Utilities.ExecuteCommand("map_rotate");
             Utilities.ExecuteCommand("sv_maprotation " + MapRotation);
             MapRotation = "";
