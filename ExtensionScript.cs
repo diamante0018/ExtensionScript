@@ -199,6 +199,10 @@ namespace ExtensionScript
             elem.HideWhenInMenu = true;
             elem.GlowAlpha = 0f;
 
+            //Give Ammo Related Code
+            player.NotifyOnPlayerCommand("giveammo", "vote yes"); ;
+
+
             Thread(OnPlayerSpawned(player), (entRef, notify, paras) =>
             {
                 if (notify == "disconnect" && player.EntRef == entRef)
@@ -206,6 +210,23 @@ namespace ExtensionScript
 
                 return true;
             });
+
+            Thread(OnPlayerVoteYes(player), (entRef, notify, paras) =>
+            {
+                if (notify == "disconnect" && player.EntRef == entRef)
+                    return false;
+
+                return true;
+            });
+        }
+
+        private static IEnumerator OnPlayerVoteYes(Entity player)
+        {
+            while (true)
+            {
+                yield return player.WaitTill("giveammo");
+                player.MyGiveMaxAmmo();
+            }
         }
 
         private static IEnumerator OnPlayerSpawned(Entity player)
@@ -387,9 +408,7 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!giveammo"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    string gun = player.GetCurrentWeapon();
-                    player.GiveStartAmmo(gun);
-                    player.GiveMaxAmmo(gun);
+                    player.MyGiveMaxAmmo();
                 }
                 if (msg[0].StartsWith("!crash"))
                 {

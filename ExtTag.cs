@@ -45,5 +45,12 @@ namespace ExtensionScript
 
             return name;
         }
+
+        public static void MyGiveMaxAmmo(this Entity player)
+        {
+            string gun = player.GetCurrentWeapon();
+            player.GiveStartAmmo(gun);
+            player.GiveMaxAmmo(gun);
+        }
     }
 }
