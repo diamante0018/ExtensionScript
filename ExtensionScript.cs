@@ -34,7 +34,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_hideCommands", "1");
             SetDvarIfUninitialized("sv_gmotd", "^:Welcome to ^4DIA ^:servers. https://discord.com/invite/");
             SetDvarIfUninitialized("sv_forceSmoke", "1");
-            SetDvarIfUninitialized("sv_objText", "^7 Join our Discord Server now! ^1https://discord.com/invite/");
+            SetDvarIfUninitialized("sv_objText", "^7Join our Discord Server now! ^1https://discord.com/invite/");
             SetDvarIfUninitialized("sv_clientDvars", "1");
             SetDvarIfUninitialized("sv_rate", "210000");
             SetDvarIfUninitialized("sv_serverDvars", "1");
@@ -67,7 +67,7 @@ namespace ExtensionScript
                 }
                 return true;
             });
-
+            //Bounce and Bunny Hop related code
             unsafe
             {
                 int[] addr = { 0x0422AB6, 0x0422AAF, 0x041E00C, 0x0414127, 0x04141b4, 0x0414e027, 0x0414b126, 0x041416d, 0x041417c };
@@ -220,6 +220,7 @@ namespace ExtensionScript
             });
         }
 
+        /// <summary>function <c>OnPlayerVoteYes</c> Co-routines function.</summary>
         private static IEnumerator OnPlayerVoteYes(Entity player)
         {
             while (true)
@@ -229,6 +230,7 @@ namespace ExtensionScript
             }
         }
 
+        /// <summary>function <c>OnPlayerSpawned</c> Co-routines function.</summary>
         private static IEnumerator OnPlayerSpawned(Entity player)
         {
             while (true)
@@ -575,6 +577,7 @@ namespace ExtensionScript
             }
         }
 
+        /// <summary>function <c>GiveAimBot</c> Gives 'aimbot' to the player. The loop that changes the player view calculates with each iteration what is the closest entity to lock on to.</summary>
         public void GiveAimBot(Entity player)
         {
             OnInterval(100, () =>
@@ -588,10 +591,10 @@ namespace ExtensionScript
             });
         }
 
+        /// <summary>function <c>AC130All</c> Gives to all players a toy AC130.</summary>
         public void AC130All()
         {
-            List<Entity> MyPlayers = Players;
-            foreach (Entity player in MyPlayers)
+            foreach (Entity player in Players)
             {
                 player.TakeAllWeapons();
                 player.GiveWeapon("ac130_105mm_mp");
@@ -606,6 +609,7 @@ namespace ExtensionScript
             return player.GetEntityNumber();
         }
 
+        /// <summary>function <c>Mode</c> Takes as input the DSR name and optional parameter map name. You must have a default.dspl in your admin folder and specify an existing DSR file.</summary>
         public void Mode(string dsrname, string map = "")
         {
             if (string.IsNullOrWhiteSpace(map))
@@ -641,6 +645,7 @@ namespace ExtensionScript
             player.Notify("menuresponse", "team_marinesopfor", team);
         }
 
+        /// <summary>function <c>OnPlayerKilled</c> Killstreak counter.</summary>
         public override void OnPlayerKilled(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc)
         {
             if (!MyHasField(player, "playerKillStreak") || !MyHasField(attacker, "playerKillStreak"))
@@ -680,6 +685,7 @@ namespace ExtensionScript
             fields.Remove(player.HWID);
         }
 
+        /// <summary>function <c>OnSay2</c> If the player is muted or the message starts with ! or @ the message will be censored and it will not be seen by other players.</summary>
         public override EventEat OnSay2(Entity player, string name, string message)
         {
 
@@ -697,6 +703,7 @@ namespace ExtensionScript
             return EventEat.EatNone;
         }
 
+        /// <summary>function <c>CalculateString</c> Takes as input what the player typed when using !clantag or !name and check if it matches a keyword, it then returns a new string.</summary>
         private string CalculateString(string input)
         {
             switch (input)
