@@ -38,7 +38,8 @@ let commands = [{
 
         var server = gameEvent.Owner;
         var cid = gameEvent.Target.ClientNumber;
-        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !setafk ' + cid).Result;
+        if (gameEvent.Origin.Level > gameEvent.Target.Level)
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !setafk ' + cid).Result;
     }
 },
 {
@@ -63,7 +64,8 @@ let commands = [{
 
         var server = gameEvent.Owner;
         var cid = gameEvent.Target.ClientNumber;
-        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !kill ' + cid).Result;
+        if (gameEvent.Origin.Level > gameEvent.Target.Level)
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !kill ' + cid).Result;
     }
 },
 {
@@ -153,7 +155,8 @@ let commands = [{
 
         var server = gameEvent.Owner;
         var cid = gameEvent.Target.ClientNumber;
-        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !blockchat ' + cid).Result;
+        if (gameEvent.Origin.Level > gameEvent.Target.Level)
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !blockchat ' + cid).Result;
     }
 },
 {
@@ -178,7 +181,8 @@ let commands = [{
 
         var server = gameEvent.Owner;
         var cid = gameEvent.Target.ClientNumber;
-        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !freeze ' + cid).Result;
+        if (gameEvent.Origin.Level > gameEvent.Target.Level)
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !freeze ' + cid).Result;
     }
 },
 {
@@ -203,7 +207,8 @@ let commands = [{
 
         var server = gameEvent.Owner;
         var cid = gameEvent.Target.ClientNumber;
-        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !changeteam ' + cid).Result;
+        if (gameEvent.Origin.Level > gameEvent.Target.Level)
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !changeteam ' + cid).Result;
     }
 },
 {
@@ -249,7 +254,8 @@ let commands = [{
 
         var server = gameEvent.Owner;
         var cid = gameEvent.Target.ClientNumber;
-        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !crash ' + cid).Result;
+        if (gameEvent.Origin.Level > gameEvent.Target.Level)
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !crash ' + cid).Result;
     }
 },
 {
@@ -274,7 +280,8 @@ let commands = [{
 
         var server = gameEvent.Owner;
         var cid = gameEvent.Target.ClientNumber;
-        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !reset ' + cid).Result;
+        if (gameEvent.Origin.Level > gameEvent.Target.Level)    
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !reset ' + cid).Result;
     }
 },
 {
@@ -299,7 +306,8 @@ let commands = [{
 
         var server = gameEvent.Owner;
         var cid = gameEvent.Target.ClientNumber;
-        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !close ' + cid).Result;
+        if (gameEvent.Origin.Level > gameEvent.Target.Level)
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !close ' + cid).Result;
     }
 },
 {
@@ -324,7 +332,8 @@ let commands = [{
 
         var server = gameEvent.Owner;
         var cid = gameEvent.Target.ClientNumber;
-        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !teknoban ' + cid).Result;
+        if (gameEvent.Origin.Level > gameEvent.Target.Level)
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !teknoban ' + cid).Result;
     }
 },
 {
@@ -464,7 +473,7 @@ let commands = [{
 
     alias: "wh",
 
-    permission: "Owner",
+    permission: "SeniorAdmin",
 
     targetRequired: false,
 
@@ -485,7 +494,7 @@ let commands = [{
 
     name: "yell",
 
-    description: "Disables/Enables Wall Hack",
+    description: "Yells",
 
     alias: "yell",
 
