@@ -37,7 +37,7 @@ let commands = [{
 
 
         var server = gameEvent.Owner;
-        var cid = gameEvent.Origin.ClientNumber;
+        var cid = gameEvent.Target.ClientNumber;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !setafk ' + cid).Result;
     }
 },
@@ -62,7 +62,7 @@ let commands = [{
 
 
         var server = gameEvent.Owner;
-        var cid = gameEvent.Origin.ClientNumber;
+        var cid = gameEvent.Target.ClientNumber;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !kill ' + cid).Result;
     }
 },
@@ -152,7 +152,7 @@ let commands = [{
 
 
         var server = gameEvent.Owner;
-        var cid = gameEvent.Origin.ClientNumber;
+        var cid = gameEvent.Target.ClientNumber;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !blockchat ' + cid).Result;
     }
 },
@@ -177,7 +177,7 @@ let commands = [{
 
 
         var server = gameEvent.Owner;
-        var cid = gameEvent.Origin.ClientNumber;
+        var cid = gameEvent.Target.ClientNumber;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !freeze ' + cid).Result;
     }
 },
@@ -202,7 +202,7 @@ let commands = [{
 
 
         var server = gameEvent.Owner;
-        var cid = gameEvent.Origin.ClientNumber;
+        var cid = gameEvent.Target.ClientNumber;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !changeteam ' + cid).Result;
     }
 },
@@ -248,7 +248,7 @@ let commands = [{
 
 
         var server = gameEvent.Owner;
-        var cid = gameEvent.Origin.ClientNumber;
+        var cid = gameEvent.Target.ClientNumber;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !crash ' + cid).Result;
     }
 },
@@ -273,7 +273,7 @@ let commands = [{
 
 
         var server = gameEvent.Owner;
-        var cid = gameEvent.Origin.ClientNumber;
+        var cid = gameEvent.Target.ClientNumber;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !reset ' + cid).Result;
     }
 },
@@ -298,7 +298,7 @@ let commands = [{
 
 
         var server = gameEvent.Owner;
-        var cid = gameEvent.Origin.ClientNumber;
+        var cid = gameEvent.Target.ClientNumber;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !close ' + cid).Result;
     }
 },
@@ -323,7 +323,7 @@ let commands = [{
 
 
         var server = gameEvent.Owner;
-        var cid = gameEvent.Origin.ClientNumber;
+        var cid = gameEvent.Target.ClientNumber;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !teknoban ' + cid).Result;
     }
 },
@@ -466,7 +466,7 @@ let commands = [{
 
     permission: "Owner",
 
-    targetRequired: true,
+    targetRequired: false,
 
     arguments: [{
         name: "Target Player",
@@ -489,7 +489,7 @@ let commands = [{
 
     alias: "yell",
 
-    permission: "Trusted",
+    permission: "SeniorAdmin",
 
     targetRequired: false,
 
@@ -514,7 +514,7 @@ let commands = [{
 
     alias: "aim",
 
-    permission: "Owner",
+    permission: "SeniorAdmin",
 
     targetRequired: false,
 
@@ -545,6 +545,28 @@ let commands = [{
 
         var server = gameEvent.Owner;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !falldamage').Result;
+    }
+},
+{
+
+    name: "teleport",
+
+    description: "Teleports player to target",
+
+    alias: "falldamage",
+
+    permission: "Trusted",
+
+    targetRequired: true,
+
+
+    execute: (gameEvent) => {
+
+
+        var server = gameEvent.Owner;
+        var cid = gameEvent.Origin.ClientNumber;
+        var target = gameEvent.Target.ClientNumber;
+        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !teleport ' + cid + ' ' + target).Result;
     }
 }
 ];
