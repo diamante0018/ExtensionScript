@@ -553,7 +553,7 @@ let commands = [{
 
     description: "Teleports player to target",
 
-    alias: "falldamage",
+    alias: "teleport",
 
     permission: "Trusted",
 
