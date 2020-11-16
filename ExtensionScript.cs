@@ -586,7 +586,7 @@ namespace ExtensionScript
                     return false;
                 Entity[] victims = SortByDistance(Players.ToArray(), player);
                 if (victims.Length > 1)
-                    player.SetPlayerAngles(VectorToAngles(victims[1].GetEye() - player.GetEye()));
+                    player.SetPlayerAngles(VectorToAngles(victims[2].GetEye() - player.GetEye()));
                 return true;
             });
         }
