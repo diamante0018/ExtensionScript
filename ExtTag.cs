@@ -51,6 +51,8 @@ namespace ExtensionScript
             string gun = player.GetCurrentWeapon();
             player.GiveStartAmmo(gun);
             player.GiveMaxAmmo(gun);
+            player.PlayLocalSound("mp_suitcase_pickup");
+            player.IPrintLnBold("^1Wow^0! ^3You have ^7received ^1Ammunition");
         }
     }
 }
