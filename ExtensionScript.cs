@@ -41,11 +41,11 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_killStreakCounter", "1");
             SetDvarIfUninitialized("sv_hudEnable", "1");
             //SetDvarIfUninitialized("sv_hudTop", "^1TOP Message");
-            //SetDvarIfUninitialized("sv_hudBottom", "^1Bottom Message");
+            SetDvarIfUninitialized("sv_hudBottom", "^1Press ^7'Vote Yes' ^1for max ammo!");
             //SetDvarIfUninitialized("sv_hudRight", "^1Right Message");
             //SetDvarIfUninitialized("sv_hudLeft", "^1Left Message");
-            SetDvarIfUninitialized("sv_scrollingSpeed", "0");
-            SetDvarIfUninitialized("sv_scrollingHud", "0");
+            SetDvarIfUninitialized("sv_scrollingSpeed", "30");
+            SetDvarIfUninitialized("sv_scrollingHud", "1");
             SetDvarIfUninitialized("sv_b3Execute", "null");
 
             //Loading Server Dvars.
@@ -604,6 +604,7 @@ namespace ExtensionScript
             }
         }
 
+        /// <summary>function <c>GetEntityNumber</c> Returns entity number.</summary>
         public static int GetEntityNumber(Entity player)
         {
             return player.GetEntityNumber();
@@ -633,12 +634,14 @@ namespace ExtensionScript
             MapRotation = "";
         }
 
+        /// <summary>function <c>GetPlayer</c> Returns entity reference.</summary>
         public Entity GetPlayer(string entRef)
         {
             int.TryParse(entRef, out int IntegerentRef);
             return Entity.GetEntity(IntegerentRef);
         }
 
+        /// <summary>function <c>ChangeTeam</c> Changes the team of the player. Target team specified in the arguments.</summary>
         public void ChangeTeam(Entity player, string team)
         {
             player.SetField("sessionteam", team);
