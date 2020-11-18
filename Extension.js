@@ -604,7 +604,7 @@ let commands = [{
 
     name: "load",
 
-    description: "Saves current location",
+    description: "Loads current location",
 
     alias: "load",
 
