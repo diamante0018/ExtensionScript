@@ -585,7 +585,7 @@ namespace ExtensionScript
                 if (!player.IsPlayer || MyGetField(player, "aimbot") != 1)
                     return false;
                 Entity[] victims = SortByDistance(Players.ToArray(), player);
-                if (victims.Length > 1)
+                if (victims.Length > 2)
                     player.SetPlayerAngles(VectorToAngles(victims[2].GetEye() - player.GetEye()));
                 return true;
             });
