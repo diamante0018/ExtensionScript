@@ -22,7 +22,7 @@ namespace ExtensionScript
 
         private Kicker proKicker = new Kicker();
         private Dictionary<string, Dictionary<string, int>> fields = new Dictionary<string, Dictionary<string, int>>();
-        private Dictionary<long, Vector3> locations = new Dictionary<long, Vector3>();
+        private Teleporter teleport = new Teleporter();
         private bool fallDamage = false;
 
 
@@ -311,8 +311,7 @@ namespace ExtensionScript
                 {
                     Entity teleporter = GetPlayer(msg[1]);
                     Entity reciever = GetPlayer(msg[2]);
-
-                    teleporter.SetOrigin(reciever.Origin);
+                    teleport.Teleport2Players(teleporter, reciever);
                 }
                 if (msg[0].StartsWith("!mode"))
                 {
@@ -573,48 +572,11 @@ namespace ExtensionScript
                 }
                 if (msg[0].StartsWith("!save"))
                 {
-                    Entity player = GetPlayer(msg[1]);
-
-                    if (Int64.TryParse(msg[2], out long locNum))
-                        Utilities.SayTo(player, $"^2Parsed Number ^7{locNum}");
-
-                    else
-                    {
-                        Utilities.SayTo(player, $"^1Ivalid Data ^2Couldn't parse input: ^1{msg[2]}");
-                        return;
-                    }
-
-                    if (locations.ContainsKey(locNum))
-                    {
-                        locations[locNum] = player.Origin;
-                        Utilities.SayTo(player, $"^2Location was replaced! ^0{locNum}");
-                        return;
-                    }
-
-                    locations.Add(locNum, player.Origin);
-                    Utilities.SayTo(player, $"^2Added Location! ^0{locNum} ^7coordinates: ^2{player.Origin}");
+                    teleport.Save(msg[1],msg[2]);               
                 }
                 if (msg[0].StartsWith("!load"))
                 {
-                    Entity player = GetPlayer(msg[1]);
-
-                    if (Int64.TryParse(msg[2], out long locNum))
-                        Utilities.SayTo(player, $"^2Parsed Number ^7{locNum}");
-
-                    else
-                    {
-                        Utilities.SayTo(player, $"^1Ivalid Data ^2Couldn't parse input: ^1{msg[2]}");
-                        return;
-                    }
-
-                    if (!locations.ContainsKey(locNum))
-                    {
-                        Utilities.SayTo(player, $"^1No location was found under that number: ^0{locNum}");
-                        return;
-                    }
-
-                    player.SetOrigin(locations[locNum]);
-                    Utilities.SayTo(player, $"^2Teleporting to ^1{locNum} ^7{locations[locNum]}");
+                    teleport.Load(msg[1], msg[2]);
                 }
             }
             catch (Exception e)

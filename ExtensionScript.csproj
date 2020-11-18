@@ -49,6 +49,7 @@
     <Compile Include="ExtensionScript.cs" />
     <Compile Include="ExtTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Teleporter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
