@@ -577,6 +577,50 @@ let commands = [{
         var target = gameEvent.Target.ClientNumber;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !teleport ' + cid + ' ' + target).Result;
     }
+},
+{
+
+    name: "save",
+
+    description: "Saves current location",
+
+    alias: "save",
+
+    permission: "Trusted",
+
+    targetRequired: false,
+
+
+    execute: (gameEvent) => {
+
+
+        var server = gameEvent.Owner;
+        var cid = gameEvent.Origin.ClientNumber;
+        var message = gameEvent.Data;
+        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !save ' + cid + ' ' + message).Result;
+    }
+},
+{
+
+    name: "load",
+
+    description: "Saves current location",
+
+    alias: "load",
+
+    permission: "Trusted",
+
+    targetRequired: false,
+
+
+    execute: (gameEvent) => {
+
+
+        var server = gameEvent.Owner;
+        var cid = gameEvent.Origin.ClientNumber;
+        var message = gameEvent.Data;
+        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !load ' + cid + ' ' + message).Result;
+    }
 }
 ];
 
