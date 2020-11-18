@@ -365,7 +365,7 @@ namespace ExtensionScript
                     }
                     else if (MyGetField(player, "muted") == 0)
                     {
-                        MySetField(player, "muted", 0);
+                        MySetField(player, "muted", 1);
                         Utilities.RawSayAll($"{player.Name} ^1chat has been blocked.");
                     }
                 }
