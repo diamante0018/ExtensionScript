@@ -23,6 +23,7 @@ namespace ExtensionScript
         private Kicker proKicker = new Kicker();
         private Dictionary<string, Dictionary<string, int>> fields = new Dictionary<string, Dictionary<string, int>>();
         private Teleporter teleport = new Teleporter();
+        private Welcomer welcome = new Welcomer();
         private bool fallDamage = false;
 
 
@@ -42,7 +43,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_killStreakCounter", "1");
             SetDvarIfUninitialized("sv_hudEnable", "1");
             //SetDvarIfUninitialized("sv_hudTop", "^1TOP Message");
-            SetDvarIfUninitialized("sv_hudBottom", "^1Press ^7'Vote Yes' ^1for max ammo!");
+            SetDvarIfUninitialized("sv_hudBottom", "^1Press ^7'Vote Yes' ^1for max ammo! ^7Discord: ^5https://discord.com/invite/");
             //SetDvarIfUninitialized("sv_hudRight", "^1Right Message");
             //SetDvarIfUninitialized("sv_hudLeft", "^1Left Message");
             SetDvarIfUninitialized("sv_scrollingSpeed", "30");
@@ -199,6 +200,12 @@ namespace ExtensionScript
             elem.SetText(string.Format("^0| ^5NAME ^0| ^7{0} ^0| ^5ID ^0| ^7{1}", player.Name, player.EntRef));
             elem.HideWhenInMenu = true;
             elem.GlowAlpha = 0f;
+
+            //Welcomer Related Code
+            AfterDelay(5000, () =>
+            {
+                welcome.TellPlayer(player, "^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo");
+            });
 
             //Give Ammo Related Code
             player.NotifyOnPlayerCommand("giveammo", "vote yes"); ;
@@ -570,9 +577,21 @@ namespace ExtensionScript
 
                     IPrintLnBold(yell);
                 }
+                if (msg[0].StartsWith("!tell"))
+                {
+                    if (msg.Length < 2)
+                        return;
+
+                    string tell = "";
+                    for (int i = 1; i < msg.Length; i++)
+                        tell = tell + " " + msg[i];
+
+                    foreach (Entity player in Players)
+                        welcome.TellPlayer(player, tell);
+                }
                 if (msg[0].StartsWith("!save"))
                 {
-                    teleport.Save(msg[1],msg[2]);               
+                    teleport.Save(msg[1], msg[2]);
                 }
                 if (msg[0].StartsWith("!load"))
                 {

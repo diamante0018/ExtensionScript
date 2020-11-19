@@ -17,7 +17,7 @@ namespace ExtensionScript
             player.SetOrigin(target.Origin);
         }
 
-        public void Save(string playerToParse, string locationToParse) 
+        public void Save(string playerToParse, string locationToParse)
         {
             Entity player = GetPlayer(playerToParse);
 
