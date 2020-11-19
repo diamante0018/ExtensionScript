@@ -4,10 +4,7 @@ namespace ExtensionScript
 {
     class Welcomer
     {
-        public Welcomer()
-        {
-        }
-
+        /// <summary>function <c>TellPlayer</c> Prints on the screen of the target a fancy message.</summary>
         public void TellPlayer(Entity player, string text = "^5Welcome")
         {
             HudElem welcomer = HudElem.CreateFontString(player, HudElem.Fonts.Objective, 1.8f);

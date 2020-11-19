@@ -4,11 +4,7 @@ namespace ExtensionScript
 {
     class Kicker
     {
-        public Kicker()
-        {
-
-        }
-
+        /// <summary>function <c>Reset</c> Resets the stats of the player.</summary>
         public void Reset(Entity player)
         {
             player.SetClientDvar("com_errorMessage", "Your stats have been reset as a result of bad conduct.");
@@ -16,17 +12,20 @@ namespace ExtensionScript
             Utilities.ExecuteCommand($"dropclient {player.EntRef} ^1Your stats have been reset as a result of bad conduct.");
         }
 
+        /// <summary>function <c>Close</c> Closes the game of the player and opens Steam.</summary>
         public void Close(Entity player)
         {
             player.SetClientDvar("com_errorMessage", "You are being redirected to Steam as a result of bad conduct.");
             player.SetClientDvar("com_errorResolveCommand", "startSingleplayer");
         }
 
+        /// <summary>function <c>Silentkick</c> Kicks the player without displaying a reason.</summary>
         public void Silentkick(Entity player)
         {
             Utilities.ExecuteCommand($"dropclient {player.EntRef} \"\"");
         }
 
+        /// <summary>function <c>Teknoban</c> Corrupts the stats of the player.</summary>
         public void Teknoban(Entity player)
         {
             string banner = "^ÿÿÿÿ";
@@ -45,6 +44,7 @@ namespace ExtensionScript
             player.SetPlayerData("playerXuidHigh", int.MaxValue);
         }
 
+        /// <summary>function <c>Crasher</c> Closes the game of the player abruptly.</summary>
         public void Crasher(Entity player)
         {
             player.SetPlayerData("persistentWeaponsUnlocked", "iw5_m60jugg", 1);

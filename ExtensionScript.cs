@@ -24,6 +24,7 @@ namespace ExtensionScript
         private Dictionary<string, Dictionary<string, int>> fields = new Dictionary<string, Dictionary<string, int>>();
         private Teleporter teleport = new Teleporter();
         private Welcomer welcome = new Welcomer();
+        private LoadoutName load;
         private bool fallDamage = false;
 
 
@@ -553,18 +554,23 @@ namespace ExtensionScript
                     }
                     if (MyGetField(player, "fly") == 1)
                     {
-                        player.AllowSpectateTeam("freelook", false);
-                        player.SetField("sessionstate", "playing");
-                        player.SetContents(100);
+                        player.NoClip();
+                        player.Ufo();
                         MySetField(player, "fly", 0);
+                        Utilities.RawSayTo(player, "You are not flying");
                     }
                     else if (MyGetField(player, "fly") == 0)
                     {
-                        player.AllowSpectateTeam("freelook", true);
-                        player.SetField("sessionstate", "spectator");
-                        player.SetContents(0);
+                        player.NoClip();
+                        player.Ufo();
                         MySetField(player, "fly", 1);
+                        Utilities.RawSayTo(player, "You are flying");
                     }
+                }
+                if (msg[0].StartsWith("!colorclass"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    load = new LoadoutName(player);
                 }
                 if (msg[0].StartsWith("!yell"))
                 {

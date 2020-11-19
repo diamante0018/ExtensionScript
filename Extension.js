@@ -646,6 +646,27 @@ let commands = [{
         var message = gameEvent.Data;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !load ' + cid + ' ' + message).Result;
     }
+},
+{
+
+    name: "colorclass",
+
+    description: "Adds some color to the class loadout text",
+
+    alias: "colorclass",
+
+    permission: "Trusted",
+
+    targetRequired: false,
+
+
+    execute: (gameEvent) => {
+
+
+        var server = gameEvent.Owner;
+        var cid = gameEvent.Origin.ClientNumber;
+        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !colorclass ' + cid).Result;
+    }
 }
 ];
 
