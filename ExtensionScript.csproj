@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BadWeapons.cs" />
     <Compile Include="Kicker.cs" />
     <Compile Include="ExtensionScript.cs" />
     <Compile Include="ExtTag.cs" />

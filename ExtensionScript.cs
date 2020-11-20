@@ -24,6 +24,7 @@ namespace ExtensionScript
         private Dictionary<string, Dictionary<string, int>> fields = new Dictionary<string, Dictionary<string, int>>();
         private Teleporter teleport = new Teleporter();
         private Welcomer welcome = new Welcomer();
+        private BadWeapons weapons = new BadWeapons();
         private LoadoutName load;
         private bool fallDamage = false;
 
@@ -719,6 +720,12 @@ namespace ExtensionScript
         public override void OnPlayerDisconnect(Entity player)
         {
             fields.Remove(player.HWID);
+        }
+
+        /// <summary>function <c>OnPlayerDamage</c> If the player is damaged by a 'bad' weapon his health is restored.</summary>
+        public override void OnPlayerDamage(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc)
+        {
+            weapons.GiveHealthBack(player, weapon, damage);
         }
 
         /// <summary>function <c>OnSay2</c> If the player is muted or the message starts with ! or @ the message will be censored and it will not be seen by other players.</summary>
