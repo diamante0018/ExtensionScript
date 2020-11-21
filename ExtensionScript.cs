@@ -27,7 +27,9 @@ namespace ExtensionScript
         private BadWeapons weapons = new BadWeapons();
         private LoadoutName load;
         private bool fallDamage = false;
-
+        //Noclip Related Code
+        private static int noClipAddress = 0x01AC56C0;
+        private bool noClip = false;
 
         public ExtensionScript()
         {
@@ -546,27 +548,20 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "Aimbot is switched on");
                     }
                 }
-                if (msg[0].StartsWith("!fly"))
+                if (msg[0].StartsWith("!noclip"))
                 {
-                    Entity player = GetPlayer(msg[1]);
-                    if (!MyHasField(player, "fly"))
+                    byte set;
+                    if (noClip)
+                        set = 0x00;
+                    else
+                        set = 0x01;
+                    noClip = !noClip;
+
+                    unsafe
                     {
-                        MySetField(player, "fly", 0);
+                        *(byte*)noClipAddress = set;
                     }
-                    if (MyGetField(player, "fly") == 1)
-                    {
-                        player.NoClip();
-                        player.Ufo();
-                        MySetField(player, "fly", 0);
-                        Utilities.RawSayTo(player, "You are not flying");
-                    }
-                    else if (MyGetField(player, "fly") == 0)
-                    {
-                        player.NoClip();
-                        player.Ufo();
-                        MySetField(player, "fly", 1);
-                        Utilities.RawSayTo(player, "You are flying");
-                    }
+                    Utilities.RawSayAll($"^1No clip is ^2{noClip}");
                 }
                 if (msg[0].StartsWith("!colorclass"))
                 {

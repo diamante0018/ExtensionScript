@@ -667,6 +667,26 @@ let commands = [{
         var cid = gameEvent.Origin.ClientNumber;
         server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !colorclass ' + cid).Result;
     }
+},
+{
+
+    name: "noclip",
+
+    description: "Lets the player noclip",
+
+    alias: "noclip",
+
+    permission: "SeniorAdmin",
+
+    targetRequired: false,
+
+
+    execute: (gameEvent) => {
+
+
+        var server = gameEvent.Owner;
+        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !noclip').Result;
+    }
 }
 ];
 

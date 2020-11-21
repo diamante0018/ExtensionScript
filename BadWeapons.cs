@@ -18,20 +18,20 @@ namespace ExtensionScript
         {
             if (!player.IsPlayer)
                 return;
-          /*
-           * Nerf Vests
-           */
+            /*
+             * Nerf Vests
+             */
             if (player.Health > 100)
                 player.Health = 100;
 
             if (weapons.Contains(weapon))
                 player.Health += Math.Abs(damage - 13);
-            
 
-            if (ks.Contains(weapon))     
+
+            if (ks.Contains(weapon))
                 player.Health += Math.Abs(damage - 3);
 
-            if (weapon.Contains("m320") || weapon.Contains("gl") || weapon.Contains("gp25"))       
+            if (weapon.Contains("m320") || weapon.Contains("gl") || weapon.Contains("gp25"))
                 player.Health += Math.Abs(damage - 3);
         }
 
