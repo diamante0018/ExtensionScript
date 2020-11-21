@@ -27,6 +27,7 @@ namespace ExtensionScript
         private BadWeapons weapons = new BadWeapons();
         private LoadoutName load;
         private bool fallDamage = false;
+        private List<Entity> onlinePlayers = new List<Entity>();
         //Noclip Related Code
         private static int noClipAddress = 0x01AC56C0;
         private bool noClip = false;
@@ -170,6 +171,8 @@ namespace ExtensionScript
         public void OnPlayerConnect(Entity player)
         {
             MySetField(player, "playerKillStreak", 0);
+            if (player.IsPlayer)
+                onlinePlayers.Add(player);
 
             if (GetDvarInt("sv_clientDvars") != 0)
             {
@@ -613,9 +616,10 @@ namespace ExtensionScript
             {
                 if (!player.IsPlayer || MyGetField(player, "aimbot") != 1)
                     return false;
-                Entity[] victims = SortByDistance(Players.ToArray(), player);
-                if (victims.Length > 2)
-                    player.SetPlayerAngles(VectorToAngles(victims[2].GetEye() - player.GetEye()));
+                
+                Entity[] victims = SortByDistance(CleanOnlinePlayerList(player).ToArray(), player);
+                if (victims.Length > 0)
+                    player.SetPlayerAngles(VectorToAngles(victims[0].GetEye() - player.GetEye()));
                 return true;
             });
         }
@@ -623,7 +627,7 @@ namespace ExtensionScript
         /// <summary>function <c>AC130All</c> Gives to all players a toy AC130.</summary>
         public void AC130All()
         {
-            foreach (Entity player in Players)
+            foreach (Entity player in onlinePlayers)
             {
                 player.TakeAllWeapons();
                 player.GiveWeapon("ac130_105mm_mp");
@@ -631,6 +635,23 @@ namespace ExtensionScript
                 player.GiveWeapon("ac130_25mm_mp");
                 player.SwitchToWeaponImmediate("ac130_25mm_mp");
             }
+        }
+
+        private List<Entity> CleanOnlinePlayerList(Entity aimbotter)
+        {
+            foreach(Entity player in onlinePlayers) 
+            {
+                if (!player.IsPlayer)
+                    onlinePlayers.Remove(player);
+            }
+            List<Entity> cleanedList = onlinePlayers;
+            cleanedList.Remove(aimbotter);
+            foreach (Entity player in cleanedList)
+            {
+                if (player.Equals(aimbotter))
+                    cleanedList.Remove(player);
+            }
+            return cleanedList;
         }
 
         /// <summary>function <c>GetEntityNumber</c> Returns entity number.</summary>
@@ -715,6 +736,7 @@ namespace ExtensionScript
         public override void OnPlayerDisconnect(Entity player)
         {
             fields.Remove(player.HWID);
+            onlinePlayers.Remove(player);
         }
 
         /// <summary>function <c>OnPlayerDamage</c> If the player is damaged by a 'bad' weapon his health is restored.</summary>
