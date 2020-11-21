@@ -445,6 +445,7 @@ namespace ExtensionScript
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.Teknoban(player);
+                    AfterDelay(3000, () => Utilities.ExecuteCommand($"dropclient {player.EntRef} You have been ^1permanently banned ^7from ^2Tekno^7MW3"));
                 }
                 if (msg[0].StartsWith("!givegun"))
                 {
@@ -488,13 +489,13 @@ namespace ExtensionScript
                 }
                 if (msg[0].StartsWith("!speed"))
                 {
-                    int.TryParse(msg[1], out int speed);
-                    Utilities.Speed = speed;
+                    if (int.TryParse(msg[1], out int speed))
+                        Utilities.Speed = speed;
                 }
                 if (msg[0].StartsWith("!gravity"))
                 {
-                    int.TryParse(msg[1], out int gravity);
-                    Utilities.Gravity = gravity;
+                    if (int.TryParse(msg[1], out int gravity))
+                        Utilities.Gravity = gravity;
                 }
                 if (msg[0].StartsWith("!falldamage"))
                 {
@@ -503,8 +504,8 @@ namespace ExtensionScript
                 }
                 if (msg[0].StartsWith("!jumpheight"))
                 {
-                    float.TryParse(msg[1], out float height);
-                    Utilities.JumpHeight = height;
+                    if (float.TryParse(msg[1], out float height))
+                        Utilities.JumpHeight = height;
                 }
                 if (msg[0].StartsWith("!moab"))
                 {
@@ -615,7 +616,7 @@ namespace ExtensionScript
             {
                 if (!player.IsPlayer || MyGetField(player, "aimbot") != 1)
                     return false;
-                
+
                 Entity[] victims = SortByDistance(CleanOnlinePlayerList(player).ToArray(), player);
                 if (victims.Length > 0)
                     player.SetPlayerAngles(VectorToAngles(victims[0].GetEye() - player.GetEye()));
