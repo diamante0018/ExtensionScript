@@ -171,8 +171,7 @@ namespace ExtensionScript
         public void OnPlayerConnect(Entity player)
         {
             MySetField(player, "playerKillStreak", 0);
-            if (player.IsPlayer)
-                onlinePlayers.Add(player);
+            onlinePlayers.Add(player);
 
             if (GetDvarInt("sv_clientDvars") != 0)
             {
@@ -612,7 +611,7 @@ namespace ExtensionScript
         /// <summary>function <c>GiveAimBot</c> Gives 'aimbot' to the player. The loop that changes the player view calculates with each iteration what is the closest entity to lock on to.</summary>
         public void GiveAimBot(Entity player)
         {
-            OnInterval(100, () =>
+            OnInterval(150, () =>
             {
                 if (!player.IsPlayer || MyGetField(player, "aimbot") != 1)
                     return false;
@@ -627,7 +626,7 @@ namespace ExtensionScript
         /// <summary>function <c>AC130All</c> Gives to all players a toy AC130.</summary>
         public void AC130All()
         {
-            foreach (Entity player in onlinePlayers)
+            foreach (Entity player in Players)
             {
                 player.TakeAllWeapons();
                 player.GiveWeapon("ac130_105mm_mp");
@@ -639,16 +638,11 @@ namespace ExtensionScript
 
         private List<Entity> CleanOnlinePlayerList(Entity aimbotter)
         {
-            foreach(Entity player in onlinePlayers) 
-            {
-                if (!player.IsPlayer)
-                    onlinePlayers.Remove(player);
-            }
             List<Entity> cleanedList = onlinePlayers;
             cleanedList.Remove(aimbotter);
             foreach (Entity player in cleanedList)
             {
-                if (player.Equals(aimbotter))
+                if (player.Equals(aimbotter) || !player.IsPlayer)
                     cleanedList.Remove(player);
             }
             return cleanedList;
