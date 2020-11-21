@@ -477,11 +477,6 @@ let commands = [{
 
     targetRequired: false,
 
-    arguments: [{
-        name: "Target Player",
-        required: true
-    }],
-
     execute: (gameEvent) => {
 
 
