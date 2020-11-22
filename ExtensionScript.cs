@@ -551,6 +551,26 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "Aimbot is switched on");
                     }
                 }
+                if (msg[0].StartsWith("!hide"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if (!MyHasField(player, "hide"))
+                    {
+                        MySetField(player, "hide", 0);
+                    }
+                    if (MyGetField(player, "hide") == 1)
+                    {
+                        player.Show();
+                        MySetField(player, "hide", 0);
+                        Utilities.RawSayTo(player, "Player is not hidden");
+                    }
+                    else if (MyGetField(player, "hide") == 0)
+                    {
+                        player.Hide();
+                        MySetField(player, "hide", 1);
+                        Utilities.RawSayTo(player, "Player is hidden");
+                    }
+                }
                 if (msg[0].StartsWith("!noclip"))
                 {
                     byte set;

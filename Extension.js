@@ -18,6 +18,24 @@ let commands = [{
 },
 {
 
+    name: "hide",
+
+    description: "Makes the player invisible",
+
+    alias: "hide",
+
+    permission: "Administrator",
+
+    execute: (gameEvent) => {
+
+
+        var server = gameEvent.Owner;
+        var cid = gameEvent.Origin.ClientNumber;
+        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !hide ' + cid).Result;
+    }
+},
+{
+
     name: "setafk",
 
     description: "Puts the target to spectator mode",
