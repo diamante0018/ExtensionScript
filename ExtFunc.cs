@@ -50,6 +50,22 @@ namespace ExtensionScript
             return name;
         }
 
+        public static unsafe void NoClip(this Entity player)
+        {
+            byte set = 0x01;
+            if (player.HasNoClip())
+                set = 0x00;
+
+            int address = 0x38A4 * player.EntRef + 0x01AC56C0;
+            *(byte*)address = set;
+        }
+
+        public static unsafe bool HasNoClip(this Entity player)
+        {
+            int address = 0x38A4 * player.EntRef + 0x01AC56C0;
+            return *(byte*)address == 1;
+        }
+
         public static void MyGiveMaxAmmo(this Entity player, bool feedback = true)
         {
             string gun = player.GetCurrentWeapon();

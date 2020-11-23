@@ -27,10 +27,7 @@ namespace ExtensionScript
         private BadWeapons weapons = new BadWeapons();
         private LoadoutName load;
         private bool fallDamage = false;
-        private List<Entity> onlinePlayers = new List<Entity>();
-        //Noclip Related Code
-        private static int noClipAddress = 0x01AC56C0;
-        private bool noClip = false;
+        private List<Entity> onlinePlayers = new List<Entity>();       
 
         public ExtensionScript()
         {
@@ -636,18 +633,8 @@ namespace ExtensionScript
                 }
                 if (msg[0].StartsWith("!noclip"))
                 {
-                    byte set;
-                    if (noClip)
-                        set = 0x00;
-                    else
-                        set = 0x01;
-                    noClip = !noClip;
-
-                    unsafe
-                    {
-                        *(byte*)noClipAddress = set;
-                    }
-                    Utilities.RawSayAll($"^1No clip is ^2{noClip}");
+                    Entity player = GetPlayer(msg[1]);
+                    player.NoClip();
                 }
                 if (msg[0].StartsWith("!colorclass"))
                 {
