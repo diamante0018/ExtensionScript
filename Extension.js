@@ -698,7 +698,50 @@ let commands = [{
 
 
         var server = gameEvent.Owner;
-        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !noclip').Result;
+        var cid = gameEvent.Origin.ClientNumber;
+        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !noclip ' + cid).Result;
+    }
+},
+{
+
+    name: "infiniteammo",
+
+    description: "Gives infinite ammo to the player",
+
+    alias: "iammo",
+
+    permission: "SeniorAdmin",
+
+    targetRequired: false,
+
+
+    execute: (gameEvent) => {
+
+
+        var server = gameEvent.Owner;
+        var cid = gameEvent.Origin.ClientNumber;
+        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !infiniteammo ' + cid).Result;
+    }
+},
+{
+
+    name: "norecoil",
+
+    description: "Gives norecoil to the player",
+
+    alias: "norecoil",
+
+    permission: "SeniorAdmin",
+
+    targetRequired: false,
+
+
+    execute: (gameEvent) => {
+
+
+        var server = gameEvent.Owner;
+        var cid = gameEvent.Origin.ClientNumber;
+        server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !norecoil ' + cid).Result;
     }
 }
 ];
