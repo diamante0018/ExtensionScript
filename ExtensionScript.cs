@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using static InfinityScript.GSCFunctions;
 using static InfinityScript.ThreadScript;
 
@@ -87,6 +88,29 @@ namespace ExtensionScript
                     *((byte*)addr[i]) = nop;
                     *((byte*)(addr[i] + 1)) = nop;
                 }
+            }
+            Notified += OnNotified;
+        }
+
+        /// <summary>function <c>ISTest_Notified</c> Prints all the notifies when triggered.</summary>
+        public void ISTest_Notified(int arg1, string arg2, Parameter[] arg3)
+        {
+            InfinityScript.Log.Write(LogLevel.Info,$"{arg1} {arg2} {string.Join(", ", arg3.Where(x => !x.IsNull).Select(x => x))}");
+        }
+
+        public void OnNotified(int arg1, string arg2, Parameter[] arg3)
+        {
+            switch(arg2)
+            {
+                case "weapon_fired":
+                    Entity player = GetPlayer(arg1);
+                    if (player.MyGetField("infiniteammo") == 1)
+                        player.MyGiveMaxAmmo(false);
+                    if (player.MyGetField("norecoil") == 1)
+                        player.Player_RecoilScaleOff();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -215,10 +239,6 @@ namespace ExtensionScript
             //Give Ammo Related Code
             player.NotifyOnPlayerCommand("giveammo", "vote yes"); ;
 
-            //No Recoil Related Code
-            player.Notify("weapon_fired", "fired");
-
-
             Thread(OnPlayerSpawned(player), (entRef, notify, paras) =>
              {
                  if (notify == "disconnect" && player.EntRef == entRef)
@@ -234,14 +254,6 @@ namespace ExtensionScript
 
                 return true;
             });
-
-            Thread(OnPlayerWeaponFired(player), (entRef, notify, paras) =>
-            {
-                if (notify == "disconnect" && player.EntRef == entRef)
-                    return false;
-
-                return true;
-            });
         }
 
         /// <summary>function <c>OnPlayerVoteYes</c> Co-routines function.</summary>
@@ -251,19 +263,6 @@ namespace ExtensionScript
             {
                 yield return player.WaitTill("giveammo");
                 player.MyGiveMaxAmmo();
-            }
-        }
-
-        /// <summary>function <c>OnPlayerWeaponFired</c> Co-routines function.</summary>
-        private static IEnumerator OnPlayerWeaponFired(Entity player)
-        {
-            while (true)
-            {
-                yield return player.WaitTill("fired");
-                if (player.MyGetField("infiniteammo") == 1)
-                    player.MyGiveMaxAmmo(false);
-                if (player.MyGetField("norecoil") == 1)
-                    player.Player_RecoilScaleOff();
             }
         }
 
@@ -769,6 +768,8 @@ namespace ExtensionScript
             int.TryParse(entRef, out int IntegerentRef);
             return Entity.GetEntity(IntegerentRef);
         }
+
+        public Entity GetPlayer(int Ref) => Entity.GetEntity(Ref);
 
         /// <summary>function <c>ChangeTeam</c> Changes the team of the player. Target team specified in the arguments.</summary>
         public void ChangeTeam(Entity player, string team)
