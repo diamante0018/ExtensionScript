@@ -720,10 +720,7 @@ namespace ExtensionScript
         }
 
         /// <summary>function <c>GetEntityNumber</c> Returns entity number.</summary>
-        public static int GetEntityNumber(Entity player)
-        {
-            return player.GetEntityNumber();
-        }
+        public static int GetEntityNumber(Entity player) => player.GetEntityNumber();
 
         /// <summary>function <c>Mode</c> Takes as input the DSR name and optional parameter map name. You must have a default.dspl in your admin folder and specify an existing DSR file.</summary>
         public void Mode(string dsrname, string map = "")
