@@ -21,7 +21,6 @@ namespace ExtensionScript
         public static bool activeUnlimitedAmmo = false;
 
         private Kicker proKicker = new Kicker();
-        private Dictionary<string, Dictionary<string, int>> fields = new Dictionary<string, Dictionary<string, int>>();
         private Teleporter teleport = new Teleporter();
         private Welcomer welcome = new Welcomer();
         private BadWeapons weapons = new BadWeapons();
@@ -170,7 +169,7 @@ namespace ExtensionScript
 
         public void OnPlayerConnect(Entity player)
         {
-            MySetField(player, "playerKillStreak", 0);
+            player.MySetField("playerKillStreak", 0);
             onlinePlayers.Add(player);
 
             if (GetDvarInt("sv_clientDvars") != 0)
@@ -216,8 +215,19 @@ namespace ExtensionScript
             //Give Ammo Related Code
             player.NotifyOnPlayerCommand("giveammo", "vote yes"); ;
 
+            //No Recoil Related Code
+            player.Notify("weapon_fired", "fired");
+
 
             Thread(OnPlayerSpawned(player), (entRef, notify, paras) =>
+             {
+                 if (notify == "disconnect" && player.EntRef == entRef)
+                     return false;
+
+                 return true;
+             });
+
+            Thread(OnPlayerVoteYes(player), (entRef, notify, paras) =>
             {
                 if (notify == "disconnect" && player.EntRef == entRef)
                     return false;
@@ -225,7 +235,7 @@ namespace ExtensionScript
                 return true;
             });
 
-            Thread(OnPlayerVoteYes(player), (entRef, notify, paras) =>
+            Thread(OnPlayerWeaponFired(player), (entRef, notify, paras) =>
             {
                 if (notify == "disconnect" && player.EntRef == entRef)
                     return false;
@@ -244,6 +254,19 @@ namespace ExtensionScript
             }
         }
 
+        /// <summary>function <c>OnPlayerWeaponFired</c> Co-routines function.</summary>
+        private static IEnumerator OnPlayerWeaponFired(Entity player)
+        {
+            while (true)
+            {
+                yield return player.WaitTill("fired");
+                if (player.MyGetField("infiniteammo") == 1)
+                    player.MyGiveMaxAmmo(false);
+                if (player.MyGetField("norecoil") == 1)
+                    player.Player_RecoilScaleOff();
+            }
+        }
+
         /// <summary>function <c>OnPlayerSpawned</c> Co-routines function.</summary>
         private static IEnumerator OnPlayerSpawned(Entity player)
         {
@@ -251,6 +274,10 @@ namespace ExtensionScript
             {
                 yield return player.WaitTill("spawned_player");
                 player.SetClientDvar("cg_objectiveText", GetDvar("sv_objText"));
+
+                if (player.MyGetField("wallhack") == 1)
+                    player.ThermalVisionFOFOverlayOn();
+
 
                 if (player.HasWeapon("stinger_mp"))
                 {
@@ -303,20 +330,20 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!godmode"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if (!MyHasField(player, "godmodeon"))
+                    if (!player.MyHasField("godmodeon"))
                     {
-                        MySetField(player, "godmodeon", 0);
+                        player.MySetField("godmodeon", 0);
                     }
-                    if (MyGetField(player, "godmodeon") == 1)
+                    if (player.MyGetField("godmodeon") == 1)
                     {
                         player.Health = 100;
-                        MySetField(player, "godmodeon", 0);
+                        player.MySetField("godmodeon", 0);
                         Utilities.SayTo(player, "^1GodMode has been deactivated.");
                     }
-                    else if (MyGetField(player, "godmodeon") == 0)
+                    else if (player.MyGetField("godmodeon") == 0)
                     {
                         player.Health = -1;
-                        MySetField(player, "godmodeon", 1);
+                        player.MySetField("godmodeon", 1);
                         Utilities.SayTo(player, "^1GodMode has been activated.");
                     }
                 }
@@ -367,38 +394,38 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!blockchat"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if (!MyHasField(player, "muted"))
+                    if (!player.MyHasField("muted"))
                     {
-                        MySetField(player, "muted", 0);
+                        player.MySetField("muted", 0);
                     }
-                    if (MyGetField(player, "muted") == 1)
+                    if (player.MyGetField("muted") == 1)
                     {
-                        MySetField(player, "muted", 0);
+                        player.MySetField("muted", 0);
                         Utilities.RawSayAll($"{player.Name} ^1chat has been unblocked.");
                     }
-                    else if (MyGetField(player, "muted") == 0)
+                    else if (player.MyGetField("muted") == 0)
                     {
-                        MySetField(player, "muted", 1);
+                        player.MySetField("muted", 1);
                         Utilities.RawSayAll($"{player.Name} ^1chat has been blocked.");
                     }
                 }
                 if (msg[0].StartsWith("!freeze"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if (!MyHasField(player, "frozen"))
+                    if (!player.MyHasField("frozen"))
                     {
-                        MySetField(player, "frozen", 0);
+                        player.MySetField("frozen", 0);
                     }
-                    if (MyGetField(player, "frozen") == 1)
+                    if (player.MyGetField("frozen") == 1)
                     {
                         player.FreezeControls(false);
-                        MySetField(player, "frozen", 0);
+                        player.MySetField("frozen", 0);
                         Utilities.RawSayAll($"{player.Name} ^1has been unfrozen.");
                     }
-                    else if (MyGetField(player, "frozen") == 0)
+                    else if (player.MyGetField("frozen") == 0)
                     {
                         player.FreezeControls(true);
-                        MySetField(player, "frozen", 1);
+                        player.MySetField("frozen", 1);
                         Utilities.RawSayAll($"{player.Name} ^1has been frozen.");
                     }
                 }
@@ -515,59 +542,96 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!wh"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if (!MyHasField(player, "wallhack"))
+                    if (!player.MyHasField("wallhack"))
                     {
-                        MySetField(player, "wallhack", 0);
+                        player.MySetField("wallhack", 0);
                     }
-                    if (MyGetField(player, "wallhack") == 1)
+                    if (player.MyGetField("wallhack") == 1)
                     {
                         player.ThermalVisionFOFOverlayOff();
-                        MySetField(player, "wallhack", 0);
+                        player.MySetField("wallhack", 0);
                         Utilities.RawSayTo(player, "Wallhack is switched off");
                     }
-                    else if (MyGetField(player, "wallhack") == 0)
+                    else if (player.MyGetField("wallhack") == 0)
                     {
                         player.ThermalVisionFOFOverlayOn();
-                        MySetField(player, "wallhack", 1);
+                        player.MySetField("wallhack", 1);
                         Utilities.RawSayTo(player, "Wallhack is switched on");
                     }
                 }
                 if (msg[0].StartsWith("!aimbot"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if (!MyHasField(player, "aimbot"))
+                    if (!player.MyHasField("aimbot"))
                     {
-                        MySetField(player, "aimbot", 0);
+                        player.MySetField("aimbot", 0);
                     }
-                    if (MyGetField(player, "aimbot") == 1)
+                    if (player.MyGetField("aimbot") == 1)
                     {
-                        MySetField(player, "aimbot", 0);
+                        player.MySetField("aimbot", 0);
                         Utilities.RawSayTo(player, "Aimbot is switched off");
                     }
-                    else if (MyGetField(player, "aimbot") == 0)
+                    else if (player.MyGetField("aimbot") == 0)
                     {
                         GiveAimBot(player);
-                        MySetField(player, "aimbot", 1);
+                        player.MySetField("aimbot", 1);
                         Utilities.RawSayTo(player, "Aimbot is switched on");
+                    }
+                }
+                if (msg[0].StartsWith("!norecoil"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if (!player.MyHasField("norecoil"))
+                    {
+                        player.MySetField("norecoil", 0);
+                    }
+                    if (player.MyGetField("norecoil") == 1)
+                    {
+                        player.MySetField("norecoil", 0);
+                        Utilities.RawSayTo(player, "No Recoil is switched off");
+                    }
+                    else if (player.MyGetField("norecoil") == 0)
+                    {
+                        player.Player_RecoilScaleOff();
+                        player.MySetField("norecoil", 1);
+                        Utilities.RawSayTo(player, "No Recoil is switched on");
+                    }
+                }
+                if (msg[0].StartsWith("!infiniteammo"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if (!player.MyHasField("infiniteammo"))
+                    {
+                        player.MySetField("infiniteammo", 0);
+                    }
+                    if (player.MyGetField("infiniteammo") == 1)
+                    {
+                        player.MySetField("infiniteammo", 0);
+                        Utilities.RawSayTo(player, "Infiniteammo is switched off");
+                    }
+                    else if (player.MyGetField("infiniteammo") == 0)
+                    {
+                        player.MySetField("infiniteammo", 1);
+                        Utilities.RawSayTo(player, "Infiniteammo is switched on");
                     }
                 }
                 if (msg[0].StartsWith("!hide"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if (!MyHasField(player, "hide"))
+                    if (!player.MyHasField("hide"))
                     {
-                        MySetField(player, "hide", 0);
+                        player.MySetField("hide", 0);
                     }
-                    if (MyGetField(player, "hide") == 1)
+                    if (player.MyGetField("hide") == 1)
                     {
                         player.Show();
-                        MySetField(player, "hide", 0);
+                        player.MySetField("hide", 0);
                         Utilities.RawSayTo(player, "Player is not hidden");
                     }
-                    else if (MyGetField(player, "hide") == 0)
+                    else if (player.MyGetField("hide") == 0)
                     {
                         player.Hide();
-                        MySetField(player, "hide", 1);
+                        player.MySetField("hide", 1);
                         Utilities.RawSayTo(player, "Player is hidden");
                     }
                 }
@@ -634,7 +698,7 @@ namespace ExtensionScript
         {
             OnInterval(150, () =>
             {
-                if (!player.IsPlayer || MyGetField(player, "aimbot") != 1)
+                if (!player.IsPlayer || player.MyGetField("aimbot") != 1)
                     return false;
 
                 Entity[] victims = SortByDistance(CleanOnlinePlayerList(player).ToArray(), player);
@@ -716,21 +780,21 @@ namespace ExtensionScript
         /// <summary>function <c>OnPlayerKilled</c> Killstreak counter.</summary>
         public override void OnPlayerKilled(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc)
         {
-            if (!MyHasField(player, "playerKillStreak") || !MyHasField(attacker, "playerKillStreak"))
+            if (!player.MyHasField("playerKillStreak") || !player.MyHasField("playerKillStreak"))
                 return;
             try
             {
                 if (player != attacker) //Suicide Alert!
                 {
-                    MySetField(attacker, "playerKillStreak", MyGetField(attacker, "playerKillStreak") + 1);
+                    attacker.MySetField("playerKillStreak", attacker.MyGetField("playerKillStreak") + 1);
                 }
-                MySetField(player, "playerKillStreak", 0);
+                player.MySetField("playerKillStreak", 0);
                 var attackerNoKills = NoKillsHudElem[GetEntityNumber(attacker)];
                 if (attackerNoKills == null)
                 {
                     throw new Exception("AttackerNoKills is null. Attacker: " + attacker.Name);
                 }
-                attackerNoKills.SetText("^2" + MyGetField(attacker, "playerKillStreak"));
+                attackerNoKills.SetText("^2" + attacker.MyGetField("playerKillStreak"));
                 NoKillsHudElem[GetEntityNumber(attacker)] = attackerNoKills;
 
                 var victimNoKills = NoKillsHudElem[GetEntityNumber(player)];
@@ -750,7 +814,7 @@ namespace ExtensionScript
 
         public override void OnPlayerDisconnect(Entity player)
         {
-            fields.Remove(player.HWID);
+            player.MyRemoveField();
             onlinePlayers.Remove(player);
         }
 
@@ -771,7 +835,7 @@ namespace ExtensionScript
                     return EventEat.EatGame;
             }
 
-            if (MyGetField(player, "muted") == 1)
+            if (player.MyGetField("muted") == 1)
             {
                 return EventEat.EatGame;
             }
@@ -802,37 +866,6 @@ namespace ExtensionScript
                     break;
             }
             return input;
-        }
-
-        private bool MyHasField(Entity player, string field)
-        {
-            if (!player.IsPlayer)
-                return false;
-            if (fields.ContainsKey(player.HWID))
-                return fields[player.HWID].ContainsKey(field);
-            return false;
-        }
-
-        private void MySetField(Entity player, string field, int value)
-        {
-            if (!player.IsPlayer)
-                return;
-            if (!fields.ContainsKey(player.HWID))
-                fields.Add(player.HWID, new Dictionary<string, int>());
-
-            if (!MyHasField(player, field))
-                fields[player.HWID].Add(field, value);
-            else
-                fields[player.HWID][field] = value;
-        }
-
-        private int MyGetField(Entity player, string field)
-        {
-            if (!player.IsPlayer)
-                return int.MinValue;
-            if (!MyHasField(player, field))
-                return int.MinValue;
-            return fields[player.HWID][field];
         }
     }
 }
