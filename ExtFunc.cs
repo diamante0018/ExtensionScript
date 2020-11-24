@@ -60,11 +60,8 @@ namespace ExtensionScript
             *(byte*)address = set;
         }
 
-        public static unsafe bool HasNoClip(this Entity player)
-        {
-            int address = 0x38A4 * player.EntRef + 0x01AC56C0;
-            return *(byte*)address == 1;
-        }
+        public static unsafe bool HasNoClip(this Entity player) => *(byte*)(0x38A4 * player.EntRef + 0x01AC56C0) == 1;
+        
 
         public static void MyGiveMaxAmmo(this Entity player, bool feedback = true)
         {
