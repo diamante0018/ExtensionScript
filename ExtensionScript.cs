@@ -27,7 +27,9 @@ namespace ExtensionScript
         private BadWeapons weapons = new BadWeapons();
         private LoadoutName load;
         private bool fallDamage = false;
-        private List<Entity> onlinePlayers = new List<Entity>();       
+        private List<Entity> onlinePlayers = new List<Entity>();
+        //private Regex rx = new Regex(@"^[\w\-. ]+\.dsr$");
+        private string DSRName = "";
 
         public ExtensionScript()
         {
@@ -86,17 +88,25 @@ namespace ExtensionScript
                 }
             }
             Notified += OnNotified;
+
+            OnInterval(50, () =>
+            {
+                DSRName = ExtUtil.GetDSRName();
+                if (!DSRName.Contains(".dsr"))
+                    return true;
+                return false;
+            });
         }
 
         /// <summary>function <c>ISTest_Notified</c> Prints all the notifies when triggered.</summary>
         public void ISTest_Notified(int arg1, string arg2, Parameter[] arg3)
         {
-            InfinityScript.Log.Write(LogLevel.Info,$"{arg1} {arg2} {string.Join(", ", arg3.Where(x => !x.IsNull).Select(x => x))}");
+            InfinityScript.Log.Write(LogLevel.Info, $"{arg1} {arg2} {string.Join(", ", arg3.Where(x => !x.IsNull).Select(x => x))}");
         }
 
         public void OnNotified(int arg1, string arg2, Parameter[] arg3)
         {
-            switch(arg2)
+            switch (arg2)
             {
                 case "weapon_fired":
                     Entity player = GetPlayer(arg1);
