@@ -28,8 +28,7 @@ namespace ExtensionScript
         private LoadoutName load;
         private bool fallDamage = false;
         private List<Entity> onlinePlayers = new List<Entity>();
-        //private Regex rx = new Regex(@"^[\w\-. ]+\.dsr$");
-        private string DSRName = "";
+        private string DSRName = ""; //private Regex rx = new Regex(@"^[\w\-. ]+\.dsr$");
 
         public ExtensionScript()
         {
