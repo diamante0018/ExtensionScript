@@ -28,7 +28,7 @@ namespace ExtensionScript
         private LoadoutName load;
         private bool fallDamage = false;
         private List<Entity> onlinePlayers = new List<Entity>();
-        private string DSRName = ""; //private Regex rx = new Regex(@"^[\w\-. ]+\.dsr$");
+        //private string DSRName = ""; //private Regex rx = new Regex(@"^[\w\-. ]+\.dsr$");
 
         public ExtensionScript()
         {
@@ -88,13 +88,14 @@ namespace ExtensionScript
             }
             Notified += OnNotified;
 
-            OnInterval(50, () =>
+            /*OnInterval(50, () =>
             {
                 DSRName = ExtUtil.GetDSRName();
                 if (!DSRName.Contains(".dsr"))
                     return true;
                 return false;
             });
+            */
         }
 
         /// <summary>function <c>ISTest_Notified</c> Prints all the notifies when triggered.</summary>
@@ -139,8 +140,8 @@ namespace ExtensionScript
                 SetDvar("maxVoicePacketsPerSec", 1000);
                 SetDvar("maxVoicePacketsPerSecForServer", 200);
                 SetDvar("cg_everyoneHearsEveryone", 1);
-                //Function.Call("makedvarserverinfo", "motd", Call<string>("getDvar", "sv_gmotd"));
-                //Function.Call("makedvarserverinfo", "didyouknow", Call<string>("getDvar", "sv_gmotd"));
+                MakeDvarServerInfo("motd", GetDvar("sv_gmotd"));
+                MakeDvarServerInfo("didyouknow", GetDvar("sv_gmotd"));
             }
         }
 
@@ -278,6 +279,7 @@ namespace ExtensionScript
             {
                 yield return player.WaitTill("spawned_player");
                 player.SetClientDvar("cg_objectiveText", GetDvar("sv_objText"));
+                player.MyGiveMaxAmmo(false);
 
                 if (player.MyGetField("wallhack") == 1)
                     player.ThermalVisionFOFOverlayOn();

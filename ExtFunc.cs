@@ -105,9 +105,6 @@ namespace ExtensionScript
             return fields[player.HWID][field];
         }
 
-        public static void MyRemoveField(this Entity player)
-        {
-            fields.Remove(player.HWID);
-        }
+        public static void MyRemoveField(this Entity player) => fields.Remove(player.HWID);
     }
 }
