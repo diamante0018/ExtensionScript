@@ -36,6 +36,24 @@ let commands = [{
     },
     {
 
+        name: "fly",
+
+        description: "Makes the player fly",
+
+        alias: "fly",
+
+        permission: "Administrator",
+
+        execute: (gameEvent) => {
+
+
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !fly ' + cid).Result;
+        }
+    },
+    {
+
         name: "setafk",
 
         description: "Puts the target to spectator mode",
