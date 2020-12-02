@@ -713,7 +713,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "You are flying");
                     }
                 }
-                else if (msg[0].StartsWith("!blowup"))
+                else if (msg[0].StartsWith("!explode"))
                 {
                     foreach (Entity player in Players)
                     {
@@ -733,7 +733,7 @@ namespace ExtensionScript
                             if (player.IsAlive)
                                 player.Suicide();
                         });
-                        player.IPrintLnBold("You have been ^1Blown ^2Up^0!");
+                        player.IPrintLnBold("You have been ^1Killed ^7in a very ^6Fancy ^7Way ^2Up^0!");
                     }
                 }
                 else if (msg[0].StartsWith("!noweapon"))
@@ -887,11 +887,8 @@ namespace ExtensionScript
         }
 
         /// <summary>function <c>OnPlayerDamage</c> If the player is damaged by a 'bad' weapon his health is restored.</summary>
-        public override void OnPlayerDamage(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc)
-        {
-            weapons.GiveHealthBack(player, weapon, damage);
-        }
-
+        public override void OnPlayerDamage(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc) => weapons.GiveHealthBack(player, weapon, damage);
+        
         /// <summary>function <c>OnSay2</c> If the player is muted or the message starts with ! or @ the message will be censored and it will not be seen by other players.</summary>
         public override EventEat OnSay2(Entity player, string name, string message)
         {
@@ -916,33 +913,31 @@ namespace ExtensionScript
             if (GetDvar("g_gametype") == "ffa" || GetDvar("g_gametype") == "gg")
                 return;
 
-            List<Entity> list = new List<Entity>();
-            List<Entity> list2 = new List<Entity>();
+            List<Entity> axis = new List<Entity>();
+            List<Entity> allies = new List<Entity>();
             foreach (Entity player in Players)
             {
                 switch (player.SessionTeam)
                 {
                     case "allies":
-                        list2.Add(player);
+                        allies.Add(player);
                         break;
                     case "axis":
-                        list.Add(player);
+                        axis.Add(player);
                         break;
                     default:
                         break;
                 }
             }
-            int num = (int)Math.Floor(Math.Abs(list.Count - list2.Count) / 2.0);
-            if (num > 0)
+
+            int difference = Convert.ToInt32(Math.Abs(axis.Count - allies.Count) / 2.0);
+
+            if (difference > 0)
             {
-                IEnumerable<Entity> enumerable = (list.Count <= list2.Count) ? list2.OrderBy((Entity ent) => ent.MyGetField("playerKillStreak")).Take(num).ToList() : list.OrderBy((Entity ent) => ent.MyGetField("playerKillStreak")).Take(num).ToList();
-                foreach (Entity player in enumerable)
+                IEnumerable<Entity> sortByKillstreak = (axis.Count <= allies.Count) ? allies.OrderBy((Entity player) => player.MyGetField("playerKillStreak")).Take(difference).ToList() : axis.OrderBy((Entity player) => player.MyGetField("playerKillStreak")).Take(difference).ToList();
+                foreach (Entity player in sortByKillstreak)
                 {
-                    string field = player.SessionTeam;
-                    if (field == "axis")
-                        player.ChangeTeam("allies");
-                    else
-                        player.ChangeTeam("axis");
+                    player.ChangeTeam();
                     player.IPrintLnBold("You have been balanced");
                 }
             }

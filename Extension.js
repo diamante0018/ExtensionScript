@@ -730,11 +730,11 @@ let commands = [{
     },
     {
 
-        name: "blowup",
+        name: "explode",
 
         description: "Blows up the entire lobby",
 
-        alias: "bw",
+        alias: "blowup",
 
         permission: "SeniorAdmin",
 
@@ -742,7 +742,7 @@ let commands = [{
 
         execute: (gameEvent) => {
             var server = gameEvent.Owner;
-            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !blowup').Result;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !explode').Result;
         }
     },
     {
