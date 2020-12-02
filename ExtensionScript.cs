@@ -12,15 +12,12 @@ namespace ExtensionScript
     {
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
-
         private HudElem top;
         private HudElem bottom;
         private HudElem right;
         private HudElem left;
-
         volatile string MapRotation = "";
         public static bool activeUnlimitedAmmo = false;
-
         private Kicker proKicker = new Kicker();
         private Teleporter teleport = new Teleporter();
         private Welcomer welcome = new Welcomer();
@@ -34,7 +31,6 @@ namespace ExtensionScript
         {
             IPrintLn("^1I am Diavolo and I lost my Mind. ^7DIA Script for 1.5 IS");
             InfinityScript.Log.Write(LogLevel.Info, "^1I am Diavolo and I lost my Mind.");
-
             SetDvarIfUninitialized("sv_hideCommands", "1");
             SetDvarIfUninitialized("sv_gmotd", "^:Welcome to ^4DIA ^:servers. https://discord.com/invite/");
             SetDvarIfUninitialized("sv_forceSmoke", "1");
@@ -86,6 +82,7 @@ namespace ExtensionScript
                     *((byte*)(addr[i] + 1)) = nop;
                 }
             }
+
             Notified += OnNotified;
 
             OnInterval(60000, () =>
@@ -217,9 +214,7 @@ namespace ExtensionScript
 
             }
             if (GetDvarInt("sv_forceSmoke") != 0)
-            {
                 player.SetClientDvar("fx_draw", "1");
-            }
 
             //Killstreak Related Code
             var killstreakHud = HudElem.CreateFontString(player, HudElem.Fonts.HudSmall, 0.8f);
@@ -243,10 +238,7 @@ namespace ExtensionScript
             elem.GlowAlpha = 0f;
 
             //Welcomer Related Code
-            AfterDelay(5000, () =>
-            {
-                welcome.TellPlayer(player, "^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo");
-            });
+            AfterDelay(5000, () =>  welcome.TellPlayer(player, "^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo"));
 
             //Give Ammo Related Code
             player.NotifyOnPlayerCommand("giveammo", "vote yes"); ;
@@ -290,25 +282,19 @@ namespace ExtensionScript
                 if (player.MyGetField("wallhack") == 1)
                     player.ThermalVisionFOFOverlayOn();
 
-
                 if (player.HasWeapon("stinger_mp"))
                 {
                     player.TakeWeapon("stinger_mp");
                     player.GiveWeapon("iw5_usp45_mp");
                     player.SetWeaponAmmoClip("iw5_usp45_mp", 0);
                     player.SetWeaponAmmoStock("iw5_usp45_mp", 0);
-
                 }
 
                 if (player.HasWeapon("flash_grenade_mp"))
-                {
                     player.SetWeaponAmmoStock("flash_grenade_mp", 1);
-                }
 
                 else if (player.HasWeapon("concussion_grenade_mp"))
-                {
                     player.SetWeaponAmmoStock("concussion_grenade_mp", 1);
-                }
             }
         }
 
@@ -324,12 +310,12 @@ namespace ExtensionScript
                     Entity player = GetPlayer(msg[1]);
                     player.ChangeTeam("spectator");
                 }
-                if (msg[0].StartsWith("!setafk"))
+                else if (msg[0].StartsWith("!setafk"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.ChangeTeam("spectator");
                 }
-                if (msg[0].StartsWith("!kill"))
+                else if (msg[0].StartsWith("!kill"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (player.MyGetField("fly") != 1 && player.SessionTeam != "spectator")
@@ -340,7 +326,7 @@ namespace ExtensionScript
                     else
                         Utilities.RawSayAll($"{player.Name} can't be killed since he is flying/spectator");
                 }
-                if (msg[0].StartsWith("!suicide"))
+                else if (msg[0].StartsWith("!suicide"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (player.MyGetField("fly") != 1 && player.SessionTeam != "spectator")
@@ -351,7 +337,7 @@ namespace ExtensionScript
                     else
                         Utilities.SayTo(player, "You can't commit suicide");
                 }
-                if (msg[0].StartsWith("!godmode"))
+                else if (msg[0].StartsWith("!godmode"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("godmodeon"))
@@ -371,13 +357,13 @@ namespace ExtensionScript
                         Utilities.SayTo(player, "^1GodMode has been activated.");
                     }
                 }
-                if (msg[0].StartsWith("!teleport"))
+                else if (msg[0].StartsWith("!teleport"))
                 {
                     Entity teleporter = GetPlayer(msg[1]);
                     Entity reciever = GetPlayer(msg[2]);
                     teleport.Teleport2Players(teleporter, reciever);
                 }
-                if (msg[0].StartsWith("!mode"))
+                else if (msg[0].StartsWith("!mode"))
                 {
                     if (!System.IO.File.Exists($@"admin\{msg[1]}.dsr"))
                     {
@@ -386,7 +372,7 @@ namespace ExtensionScript
                     }
                     Mode(msg[1]);
                 }
-                if (msg[0].StartsWith("!gametype"))
+                else if (msg[0].StartsWith("!gametype"))
                 {
                     if (!System.IO.File.Exists($@"admin\{msg[1]}.dsr"))
                     {
@@ -396,7 +382,7 @@ namespace ExtensionScript
                     string newMap = msg[2];
                     Mode(msg[1], newMap);
                 }
-                if (msg[0].StartsWith("!ac130"))
+                else if (msg[0].StartsWith("!ac130"))
                 {
                     if (msg[1].StartsWith("*all*"))
                     {
@@ -415,7 +401,7 @@ namespace ExtensionScript
                         });
                     }
                 }
-                if (msg[0].StartsWith("!blockchat"))
+                else if (msg[0].StartsWith("!blockchat"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("muted"))
@@ -433,7 +419,7 @@ namespace ExtensionScript
                         Utilities.RawSayAll($"{player.Name} ^1chat has been blocked.");
                     }
                 }
-                if (msg[0].StartsWith("!freeze"))
+                else if (msg[0].StartsWith("!freeze"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("frozen"))
@@ -453,50 +439,50 @@ namespace ExtensionScript
                         Utilities.RawSayAll($"{player.Name} ^1has been frozen.");
                     }
                 }
-                if (msg[0].StartsWith("!changeteam"))
+                else if (msg[0].StartsWith("!changeteam"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.ChangeTeam();
                 }
-                if (msg[0].StartsWith("!giveammo"))
+                else if (msg[0].StartsWith("!giveammo"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.MyGiveMaxAmmo();
                 }
-                if (msg[0].StartsWith("!crash"))
+                else if (msg[0].StartsWith("!crash"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.Crasher(player);
                     IPrintLn(string.Format("^1{0}'s game has been crashed", player.Name));
                 }
-                if (msg[0].StartsWith("!reset"))
+                else if (msg[0].StartsWith("!reset"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.Reset(player);
                 }
-                if (msg[0].StartsWith("!close"))
+                else if (msg[0].StartsWith("!close"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.Close(player);
                 }
-                if (msg[0].StartsWith("!teknoban"))
+                else if (msg[0].StartsWith("!teknoban"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.Teknoban(player);
                     AfterDelay(3000, () => Utilities.ExecuteCommand($"dropclient {player.EntRef} You have been ^1permanently banned ^7from ^2Tekno^7MW3"));
                 }
-                if (msg[0].StartsWith("!givegun"))
+                else if (msg[0].StartsWith("!givegun"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     string gun = msg[2];
                     player.GiveWeapon(gun);
                     player.SwitchToWeaponImmediate(gun);
                 }
-                if (msg[0].StartsWith("!servername"))
+                else if (msg[0].StartsWith("!servername"))
                 {
                     Utilities.ExecuteCommand(string.Format("set sv_hostname {0}", msg[1]));
                 }
-                if (msg[0].StartsWith("!clientdvar"))
+                else if (msg[0].StartsWith("!clientdvar"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (msg.Length < 4)
@@ -506,7 +492,7 @@ namespace ExtensionScript
                     }
                     player.SetClientDvar(msg[2], msg[3]);
                 }
-                if (msg[0].StartsWith("!dvar"))
+                else if (msg[0].StartsWith("!dvar"))
                 {
                     if (msg.Length < 3)
                     {
@@ -515,49 +501,49 @@ namespace ExtensionScript
                     }
                     Utilities.ExecuteCommand(string.Format("set {0} {1}", msg[1], msg[2]));
                 }
-                if (msg[0].StartsWith("!name"))
+                else if (msg[0].StartsWith("!name"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.SetName(CalculateString(msg[2]));
                 }
-                if (msg[0].StartsWith("!clantag"))
+                else if (msg[0].StartsWith("!clantag"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.SetClanTag(CalculateString(msg[2]));
                 }
-                if (msg[0].StartsWith("!speed"))
+                else if (msg[0].StartsWith("!speed"))
                 {
                     if (int.TryParse(msg[1], out int speed))
                         Utilities.Speed = speed;
                 }
-                if (msg[0].StartsWith("!gravity"))
+                else if (msg[0].StartsWith("!gravity"))
                 {
                     if (int.TryParse(msg[1], out int gravity))
                         Utilities.Gravity = gravity;
                 }
-                if (msg[0].StartsWith("!falldamage"))
+                else if (msg[0].StartsWith("!falldamage"))
                 {
                     fallDamage = !fallDamage;
                     Utilities.FallDamage = fallDamage;
                 }
-                if (msg[0].StartsWith("!jumpheight"))
+                else if (msg[0].StartsWith("!jumpheight"))
                 {
                     if (float.TryParse(msg[1], out float height))
                         Utilities.JumpHeight = height;
                 }
-                if (msg[0].StartsWith("!knife"))
+                else if (msg[0].StartsWith("!knife"))
                 {
                     if (IsKnifeEnabled())
                         DisableKnife();
                     else
                         EnableKnife();
                 }
-                if (msg[0].StartsWith("!moab"))
+                else if (msg[0].StartsWith("!moab"))
                 {
                     //Entity player = GetPlayer(msg[1]);
                     //TODO
                 }
-                if (msg[0].StartsWith("!wh"))
+                else if (msg[0].StartsWith("!wh"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("wallhack"))
@@ -577,7 +563,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "Wallhack is switched on");
                     }
                 }
-                if (msg[0].StartsWith("!aimbot"))
+                else if (msg[0].StartsWith("!aimbot"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("aimbot"))
@@ -596,7 +582,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "Aimbot is switched on");
                     }
                 }
-                if (msg[0].StartsWith("!norecoil"))
+                else if (msg[0].StartsWith("!norecoil"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("norecoil"))
@@ -615,7 +601,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "No Recoil is switched on");
                     }
                 }
-                if (msg[0].StartsWith("!infiniteammo"))
+                else if (msg[0].StartsWith("!infiniteammo"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("infiniteammo"))
@@ -633,7 +619,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "Infiniteammo is switched on");
                     }
                 }
-                if (msg[0].StartsWith("!hide"))
+                else if (msg[0].StartsWith("!hide"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("hide"))
@@ -653,7 +639,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "You are hidden");
                     }
                 }
-                if (msg[0].StartsWith("!noclip"))
+                else if (msg[0].StartsWith("!noclip"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (player.MyGetField("fly") != 1 && player.SessionTeam != "spectator")
@@ -661,12 +647,12 @@ namespace ExtensionScript
                     else
                         Utilities.SayTo(player, "You can't noclip as a spectator or when you are flying");
                 }
-                if (msg[0].StartsWith("!colorclass"))
+                else if (msg[0].StartsWith("!colorclass"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     load = new LoadoutName(player);
                 }
-                if (msg[0].StartsWith("!yell"))
+                else if (msg[0].StartsWith("!yell"))
                 {
                     if (msg.Length < 2)
                         return;
@@ -677,7 +663,7 @@ namespace ExtensionScript
 
                     IPrintLnBold(yell);
                 }
-                if (msg[0].StartsWith("!tell"))
+                else if (msg[0].StartsWith("!tell"))
                 {
                     if (msg.Length < 2)
                         return;
@@ -689,15 +675,15 @@ namespace ExtensionScript
                     foreach (Entity player in Players)
                         welcome.TellPlayer(player, tell);
                 }
-                if (msg[0].StartsWith("!save"))
+                else if (msg[0].StartsWith("!save"))
                 {
                     teleport.Save(msg[1], msg[2]);
                 }
-                if (msg[0].StartsWith("!load"))
+                else if (msg[0].StartsWith("!load"))
                 {
                     teleport.Load(msg[1], msg[2]);
                 }
-                if (msg[0].StartsWith("!fly"))
+                else if (msg[0].StartsWith("!fly"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("fly"))
@@ -727,10 +713,12 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "You are flying");
                     }
                 }
-                if (msg[0].StartsWith("!blowup"))
+                else if (msg[0].StartsWith("!blowup"))
                 {
                     foreach (Entity player in Players)
                     {
+                        if (player.SessionTeam == "spectator")
+                            continue;
                         Vector3 offset1 = player.Origin;
                         Vector3 offset2 = player.Origin;
                         offset1.Z -= 1000f;
@@ -745,10 +733,10 @@ namespace ExtensionScript
                             if (player.IsAlive)
                                 player.Suicide();
                         });
+                        player.IPrintLnBold("You have been ^1Blown ^2Up^0!");
                     }
-                    IPrintLnBold("You have been ^1Blown ^2Up^0!");
                 }
-                if (msg[0].StartsWith("!noweapon"))
+                else if (msg[0].StartsWith("!noweapon"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("noweapon"))
