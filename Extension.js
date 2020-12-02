@@ -84,7 +84,7 @@ let commands = [{
 
         description: "Kills the target",
 
-        alias: "kill",
+        alias: "killplayer",
 
         permission: "Administrator",
 
@@ -102,6 +102,26 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !kill ' + cid).Result;
+        }
+    },
+    {
+
+        name: "suicide",
+
+        description: "Kills the target",
+
+        alias: "suicide",
+
+        permission: "User",
+
+        targetRequired: false,
+
+        execute: (gameEvent) => {
+
+
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !suicide ' + cid).Result;
         }
     },
     {

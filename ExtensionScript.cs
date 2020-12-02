@@ -326,12 +326,24 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!kill"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    player.Suicide();
+                    if (player.MyGetField("fly") != 1 && player.SessionTeam != "spectator")
+                    {
+                        player.Suicide();
+                        Utilities.RawSayAll($"{player.Name} was killed");
+                    }
+                    else
+                        Utilities.RawSayAll($"{player.Name} can't be killed since he is flying/spectator");
                 }
                 if (msg[0].StartsWith("!suicide"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    player.Suicide();
+                    if (player.MyGetField("fly") != 1 && player.SessionTeam != "spectator")
+                    {
+                        player.Suicide();
+                        Utilities.SayTo(player, "You commited suicide");
+                    }
+                    else
+                        Utilities.SayTo(player, "You can't commit suicide");
                 }
                 if (msg[0].StartsWith("!godmode"))
                 {
@@ -644,7 +656,10 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!noclip"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    player.NoClip();
+                    if (player.MyGetField("fly") != 1 && player.SessionTeam != "spectator")
+                        player.NoClip();
+                    else
+                        Utilities.SayTo(player, "You can't noclip as a spectator or when you are flying");
                 }
                 if (msg[0].StartsWith("!colorclass"))
                 {
@@ -699,6 +714,12 @@ namespace ExtensionScript
                     }
                     else if (player.MyGetField("fly") == 0)
                     {
+                        if (player.SessionTeam == "spectator")
+                        {
+                            Utilities.SayTo(player, "You can't fly as a spectator");
+                            return;
+                        }
+
                         player.AllowSpectateTeam("freelook", true);
                         player.SessionState = "spectator";
                         player.SetContents(0);
