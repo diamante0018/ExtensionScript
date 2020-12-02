@@ -438,7 +438,7 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!changeteam"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    string playerteam = player.GetField<string>("sessionteam");
+                    string playerteam = player.SessionTeam;
 
                     switch (playerteam)
                     {
@@ -632,13 +632,13 @@ namespace ExtensionScript
                     {
                         player.Show();
                         player.MySetField("hide", 0);
-                        Utilities.RawSayTo(player, "Player is not hidden");
+                        Utilities.RawSayTo(player, "You are not hidden");
                     }
                     else if (player.MyGetField("hide") == 0)
                     {
                         player.Hide();
                         player.MySetField("hide", 1);
-                        Utilities.RawSayTo(player, "Player is hidden");
+                        Utilities.RawSayTo(player, "You are hidden");
                     }
                 }
                 if (msg[0].StartsWith("!noclip"))
@@ -681,6 +681,30 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!load"))
                 {
                     teleport.Load(msg[1], msg[2]);
+                }
+                if (msg[0].StartsWith("!fly"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if (!player.MyHasField("fly"))
+                    {
+                        player.MySetField("fly", 0);
+                    }
+                    if (player.MyGetField("fly") == 1)
+                    {
+                        player.AllowSpectateTeam("freelook", false);
+                        player.SessionState = "playing";
+                        player.SetContents(100);
+                        player.MySetField("fly", 0);
+                        Utilities.RawSayTo(player, "You are not flying");
+                    }
+                    else if (player.MyGetField("fly") == 0)
+                    {
+                        player.AllowSpectateTeam("freelook", true);
+                        player.SessionState = "spectator";
+                        player.SetContents(0);
+                        player.MySetField("fly", 1);
+                        Utilities.RawSayTo(player, "You are flying");
+                    }
                 }
             }
             catch (Exception e)
@@ -768,7 +792,7 @@ namespace ExtensionScript
         /// <summary>function <c>ChangeTeam</c> Changes the team of the player. Target team specified in the arguments.</summary>
         public void ChangeTeam(Entity player, string team)
         {
-            player.SetField("sessionteam", team);
+            player.SessionTeam = team;
             player.Notify("menuresponse", "team_marinesopfor", team);
         }
 
