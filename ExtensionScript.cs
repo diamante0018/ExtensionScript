@@ -88,6 +88,12 @@ namespace ExtensionScript
             }
             Notified += OnNotified;
 
+            OnInterval(60000, () =>
+            {
+                BalanceTeams();
+                return true;
+            });
+
             /*OnInterval(50, () =>
             {
                 DSRName = ExtUtil.GetDSRName();
@@ -316,12 +322,12 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!afk"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    ChangeTeam(player, "spectator");
+                    player.ChangeTeam("spectator");
                 }
                 if (msg[0].StartsWith("!setafk"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    ChangeTeam(player, "spectator");
+                    player.ChangeTeam("spectator");
                 }
                 if (msg[0].StartsWith("!kill"))
                 {
@@ -450,20 +456,7 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!changeteam"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    string playerteam = player.SessionTeam;
-
-                    switch (playerteam)
-                    {
-                        case "axis":
-                            ChangeTeam(player, "allies");
-                            break;
-                        case "allies":
-                            ChangeTeam(player, "axis");
-                            break;
-                        case "spectator":
-                            Utilities.RawSayAll($"^1{player.Name} team can't be changed because he is already spectator.");
-                            break;
-                    }
+                    player.ChangeTeam();
                 }
                 if (msg[0].StartsWith("!giveammo"))
                 {
@@ -551,6 +544,13 @@ namespace ExtensionScript
                 {
                     if (float.TryParse(msg[1], out float height))
                         Utilities.JumpHeight = height;
+                }
+                if (msg[0].StartsWith("!knife"))
+                {
+                    if (IsKnifeEnabled())
+                        DisableKnife();
+                    else
+                        EnableKnife();
                 }
                 if (msg[0].StartsWith("!moab"))
                 {
@@ -727,6 +727,53 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "You are flying");
                     }
                 }
+                if (msg[0].StartsWith("!blowup"))
+                {
+                    foreach (Entity player in Players)
+                    {
+                        Vector3 offset1 = player.Origin;
+                        Vector3 offset2 = player.Origin;
+                        offset1.Z -= 1000f;
+                        offset2.Z += 6000f;
+                        MagicBullet("uav_strike_projectile_mp",offset2,offset1,player);
+                        offset2.X += 2000f;
+                        MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+                        offset2.X -= 4000f;
+                        MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+                        AfterDelay(3000, () =>
+                        {
+                            if (player.IsAlive)
+                                player.Suicide();
+                        });
+                    }
+                    IPrintLnBold("You have been ^1Blown ^2Up^0!");
+                }
+                if (msg[0].StartsWith("!noweapon"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if (!player.MyHasField("noweapon"))
+                    {
+                        player.MySetField("noweapon", 0);
+                    }
+                    if (player.MyGetField("noweapon") == 1)
+                    {
+                        player.EnableWeaponSwitch();
+                        player.EnableWeaponPickup();
+                        player.EnableWeapons();
+                        player.GiveWeapon("rpg_mp");
+                        player.MySetField("noweapon", 0);
+                        Utilities.RawSayAll($"{player.Name} can fight back now");
+                    }
+                    else if (player.MyGetField("noweapon") == 0)
+                    {
+                        player.TakeWeapon(player.CurrentWeapon);
+                        player.DisableWeaponSwitch();
+                        player.DisableWeaponPickup();
+                        player.DisableWeapons(); 
+                        player.MySetField("noweapon", 1);
+                        Utilities.RawSayAll($"{player.Name} weapons have been taken away from him");
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -810,13 +857,6 @@ namespace ExtensionScript
 
         public Entity GetPlayer(int Ref) => Entity.GetEntity(Ref);
 
-        /// <summary>function <c>ChangeTeam</c> Changes the team of the player. Target team specified in the arguments.</summary>
-        public void ChangeTeam(Entity player, string team)
-        {
-            player.SessionTeam = team;
-            player.Notify("menuresponse", "team_marinesopfor", team);
-        }
-
         /// <summary>function <c>OnPlayerKilled</c> Killstreak counter.</summary>
         public override void OnPlayerKilled(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc)
         {
@@ -832,7 +872,7 @@ namespace ExtensionScript
                 var attackerNoKills = NoKillsHudElem[GetEntityNumber(attacker)];
                 if (attackerNoKills == null)
                 {
-                    throw new Exception("AttackerNoKills is null. Attacker: " + attacker.Name);
+                    throw new Exception($"AttackerNoKills is null. Attacker: {attacker.Name}");
                 }
                 attackerNoKills.SetText("^2" + attacker.MyGetField("playerKillStreak"));
                 NoKillsHudElem[GetEntityNumber(attacker)] = attackerNoKills;
@@ -840,14 +880,14 @@ namespace ExtensionScript
                 var victimNoKills = NoKillsHudElem[GetEntityNumber(player)];
                 if (victimNoKills == null)
                 {
-                    throw new Exception("VictimNoKills is null. Victim: " + player.Name);
+                    throw new Exception($"VictimNoKills is null. Victim: {player.Name}");
                 }
                 victimNoKills.SetText("0");
                 NoKillsHudElem[GetEntityNumber(player)] = victimNoKills;
             }
             catch (Exception ex)
             {
-                InfinityScript.Log.Write(LogLevel.Error, "Error in Killstreak: " + ex.Message + ex.StackTrace);
+                InfinityScript.Log.Write(LogLevel.Error, $"Error in Killstreak: {ex.Message} {ex.StackTrace}");
                 return;
             }
         }
@@ -882,6 +922,44 @@ namespace ExtensionScript
             return EventEat.EatNone;
         }
 
+        /// <summary>function <c>BalanceTeams</c> Balances teams. It makes sure that if you are on a high killstreak you won't be balanced.</summary>
+        public void BalanceTeams()
+        {
+            if (GetDvar("g_gametype") == "ffa" || GetDvar("g_gametype") == "gg")
+                return;
+
+            List<Entity> list = new List<Entity>();
+            List<Entity> list2 = new List<Entity>();
+            foreach (Entity player in Players)
+            {
+                switch (player.SessionTeam)
+                {
+                    case "allies":
+                        list2.Add(player);
+                        break;
+                    case "axis":
+                        list.Add(player);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            int num = (int)Math.Floor(Math.Abs(list.Count - list2.Count) / 2.0);
+            if (num > 0)
+            {
+                IEnumerable<Entity> enumerable = (list.Count <= list2.Count) ? list2.OrderBy((Entity ent) => ent.MyGetField("playerKillStreak")).Take(num).ToList() : list.OrderBy((Entity ent) => ent.MyGetField("playerKillStreak")).Take(num).ToList();
+                foreach (Entity player in enumerable)
+                {
+                    string field = player.SessionTeam;
+                    if (field == "axis")
+                        player.ChangeTeam("allies");
+                    else
+                        player.ChangeTeam("axis");
+                    player.IPrintLnBold("You have been balanced");
+                }
+            }
+        }
+
         /// <summary>function <c>CalculateString</c> Takes as input what the player typed when using !clantag or !name and check if it matches a keyword, it then returns a new string.</summary>
         private string CalculateString(string input)
         {
@@ -907,5 +985,13 @@ namespace ExtensionScript
             }
             return input;
         }
+
+        /// <summary>function <c>DisableKnife</c> Disables knifes, useful for iSnipe.</summary>
+        private unsafe void DisableKnife() => *(float*)95880920 = 0f;
+
+        /// <summary>function <c>EnableKnife</c> Enables knifes.</summary>
+        private unsafe void EnableKnife() => *(float*)95880920 = 64f;
+
+        private unsafe bool IsKnifeEnabled() => *(float*)95880920 == 64f;
     }
 }

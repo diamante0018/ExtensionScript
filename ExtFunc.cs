@@ -83,6 +83,26 @@ namespace ExtensionScript
             return false;
         }
 
+        public static void ChangeTeam(this Entity player, string team)
+        {
+            player.SessionTeam = team;
+            player.Notify("menuresponse", "team_marinesopfor", team);
+        }
+        public static void ChangeTeam(this Entity player)
+        {
+            switch(player.SessionTeam)
+            {
+                case "allies":
+                    player.ChangeTeam("allies");
+                    break;
+                case "axis":
+                    player.ChangeTeam("axis");
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public static void MySetField(this Entity player, string field, int value)
         {
             if (!player.IsPlayer)
