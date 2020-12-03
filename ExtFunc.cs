@@ -8,6 +8,7 @@ namespace ExtensionScript
     {
         private static Dictionary<string, Dictionary<string, int>> fields = new Dictionary<string, Dictionary<string, int>>();
 
+        /// <summary>function <c>SetClanTag</c> Sets the clantag of the player. A clantag must be already present (active) for it to be changed. It resets after UAV is called, team is changed or map rotates.</summary>
         public static unsafe void SetClanTag(this Entity player, string tag)
         {
             if (player == null || !player.IsPlayer || tag.Length > 8)
@@ -21,6 +22,7 @@ namespace ExtensionScript
             *(byte*)(address + tag.Length) = 0;
         }
 
+        /// <summary>function <c>GetClanTag</c> Gets the clantag of the player.</summary>
         public static unsafe string GetClanTag(this Entity player)
         {
             if (player == null || !player.IsPlayer)
@@ -36,6 +38,7 @@ namespace ExtensionScript
             return result.ToString();
         }
 
+        /// <summary>function <c>SetName</c> Sets the nickname of the player. Same conditions of SetClanTag apply.</summary>
         public static unsafe string SetName(this Entity player, string name)
         {
             if (player == null || !player.IsPlayer || name.Length > 15)
@@ -50,6 +53,7 @@ namespace ExtensionScript
             return name;
         }
 
+        /// <summary>function <c>NoClip</c> Makes the player noclip.</summary>
         public static unsafe void NoClip(this Entity player)
         {
             byte set = 0x01;
@@ -83,6 +87,7 @@ namespace ExtensionScript
             return false;
         }
 
+        /// <summary>function <c>ChangeTeam</c> Changes the team of the player.</summary>
         public static void ChangeTeam(this Entity player, string team)
         {
             player.SessionTeam = team;
@@ -101,6 +106,16 @@ namespace ExtensionScript
                 default:
                     break;
             }
+        }
+
+        public static void TellPlayer(this Entity player, string text = "^5Welcome")
+        {
+            HudElem welcomer = HudElem.CreateFontString(player, HudElem.Fonts.Objective, 1.8f);
+            welcomer.SetPoint("CENTER", "CENTER", 0, -110);
+            welcomer.SetText(text);
+            welcomer.GlowAlpha = 1f;
+            welcomer.SetPulseFX(100, 0x1b58, 600);
+            welcomer.HideWhenInMenu = true;
         }
 
         public static void MySetField(this Entity player, string field, int value)

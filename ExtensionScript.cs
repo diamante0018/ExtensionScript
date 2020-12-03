@@ -20,7 +20,6 @@ namespace ExtensionScript
         public static bool activeUnlimitedAmmo = false;
         private Kicker proKicker = new Kicker();
         private Teleporter teleport = new Teleporter();
-        private Welcomer welcome = new Welcomer();
         private BadWeapons weapons = new BadWeapons();
         private LoadoutName load;
         private bool fallDamage = false;
@@ -238,7 +237,7 @@ namespace ExtensionScript
             elem.GlowAlpha = 0f;
 
             //Welcomer Related Code
-            AfterDelay(5000, () =>  welcome.TellPlayer(player, "^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo"));
+            AfterDelay(5000, () =>  player.TellPlayer("^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo"));
 
             //Give Ammo Related Code
             player.NotifyOnPlayerCommand("giveammo", "vote yes"); ;
@@ -673,7 +672,7 @@ namespace ExtensionScript
                         tell = tell + " " + msg[i];
 
                     foreach (Entity player in Players)
-                        welcome.TellPlayer(player, tell);
+                        player.TellPlayer(tell);
                 }
                 else if (msg[0].StartsWith("!save"))
                 {
@@ -733,7 +732,7 @@ namespace ExtensionScript
                             if (player.IsAlive)
                                 player.Suicide();
                         });
-                        player.IPrintLnBold("You have been ^1Killed ^7in a very ^6Fancy ^7Way ^2Up^0!");
+                        player.IPrintLnBold("You have been ^1Killed ^7in a ^2very ^6Fancy ^7Way^0!");
                     }
                 }
                 else if (msg[0].StartsWith("!noweapon"))
