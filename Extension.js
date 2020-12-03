@@ -767,6 +767,24 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !noweapon ' + cid).Result;
         }
+    },
+    {
+
+        name: "juggsuit",
+
+        description: "Blows up the entire lobby",
+
+        alias: "givejugg",
+
+        permission: "SeniorAdmin",
+
+        targetRequired: false,
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !juggsuit ' + cid).Result;
+        }
     }
 ];
 

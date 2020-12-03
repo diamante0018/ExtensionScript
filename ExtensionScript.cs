@@ -237,7 +237,7 @@ namespace ExtensionScript
             elem.GlowAlpha = 0f;
 
             //Welcomer Related Code
-            AfterDelay(5000, () =>  player.TellPlayer("^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo"));
+            AfterDelay(5000, () => player.TellPlayer("^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo"));
 
             //Give Ammo Related Code
             player.NotifyOnPlayerCommand("giveammo", "vote yes"); ;
@@ -386,19 +386,18 @@ namespace ExtensionScript
                     if (msg[1].StartsWith("*all*"))
                     {
                         AC130All();
+                        return;
                     }
-                    else
+
+                    Entity player = GetPlayer(msg[1]);
+                    AfterDelay(500, () =>
                     {
-                        Entity player = GetPlayer(msg[1]);
-                        AfterDelay(500, () =>
-                        {
-                            player.TakeAllWeapons();
-                            player.GiveWeapon("ac130_105mm_mp");
-                            player.GiveWeapon("ac130_40mm_mp");
-                            player.GiveWeapon("ac130_25mm_mp");
-                            player.SwitchToWeaponImmediate("ac130_25mm_mp");
-                        });
-                    }
+                        player.TakeAllWeapons();
+                        player.GiveWeapon("ac130_105mm_mp");
+                        player.GiveWeapon("ac130_40mm_mp");
+                        player.GiveWeapon("ac130_25mm_mp");
+                        player.SwitchToWeaponImmediate("ac130_25mm_mp");
+                    });
                 }
                 else if (msg[0].StartsWith("!blockchat"))
                 {
@@ -722,7 +721,7 @@ namespace ExtensionScript
                         Vector3 offset2 = player.Origin;
                         offset1.Z -= 1000f;
                         offset2.Z += 6000f;
-                        MagicBullet("uav_strike_projectile_mp",offset2,offset1,player);
+                        MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
                         offset2.X += 2000f;
                         MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
                         offset2.X -= 4000f;
@@ -756,10 +755,26 @@ namespace ExtensionScript
                         player.TakeWeapon(player.CurrentWeapon);
                         player.DisableWeaponSwitch();
                         player.DisableWeaponPickup();
-                        player.DisableWeapons(); 
+                        player.DisableWeapons();
                         player.MySetField("noweapon", 1);
                         Utilities.RawSayAll($"{player.Name} weapons have been taken away from him");
                     }
+                }
+                else if (msg[0].StartsWith("!juggsuit"))
+                {
+                    if (msg[1].StartsWith("*all*"))
+                    {
+                        JuggSuitAll();
+                        return;
+                    }
+
+                    Entity player = GetPlayer(msg[1]);
+                    player.DetachAll();
+                    player.ShowAllParts();
+                    player.SetViewModel("viewhands_juggernaut_opforce");
+                    player.SetModel("mp_fullbody_opforce_juggernaut");
+                    player.Health += 2500;
+                    player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
                 }
             }
             catch (Exception e)
@@ -793,6 +808,20 @@ namespace ExtensionScript
                 player.GiveWeapon("ac130_40mm_mp");
                 player.GiveWeapon("ac130_25mm_mp");
                 player.SwitchToWeaponImmediate("ac130_25mm_mp");
+            }
+        }
+
+        /// <summary>function <c>JuggSuitAll</c> Gives to all players a Jugg Suit.</summary>
+        public void JuggSuitAll()
+        {
+            foreach (Entity player in Players)
+            {
+                player.DetachAll();
+                player.ShowAllParts();
+                player.SetViewModel("viewhands_juggernaut_opforce");
+                player.SetModel("mp_fullbody_opforce_juggernaut");
+                player.Health += 2500;
+                player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
             }
         }
 
@@ -887,7 +916,7 @@ namespace ExtensionScript
 
         /// <summary>function <c>OnPlayerDamage</c> If the player is damaged by a 'bad' weapon his health is restored.</summary>
         public override void OnPlayerDamage(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc) => weapons.GiveHealthBack(player, weapon, damage);
-        
+
         /// <summary>function <c>OnSay2</c> If the player is muted or the message starts with ! or @ the message will be censored and it will not be seen by other players.</summary>
         public override EventEat OnSay2(Entity player, string name, string message)
         {

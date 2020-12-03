@@ -95,7 +95,7 @@ namespace ExtensionScript
         }
         public static void ChangeTeam(this Entity player)
         {
-            switch(player.SessionTeam)
+            switch (player.SessionTeam)
             {
                 case "allies":
                     player.ChangeTeam("allies");
