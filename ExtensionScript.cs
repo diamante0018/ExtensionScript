@@ -964,8 +964,11 @@ namespace ExtensionScript
                         break;
                 }
             }
-
-            int difference = Convert.ToInt32(Math.Abs(axis.Count - allies.Count) / 2.0);
+            /*
+             * Convert.ToInt32() Rounds the value so in the case of 1 player -> Math.Abs returns 1, which divided by 2 is 0.5 therefore, difference ends up being 1, which is not what we wanted.
+             *  The cast (int) will truncate the value, i.e. 0.5 will end up being 0 when cast to an integer. Math.Truncate() would work as well and would be more explicit but who cares.
+             */
+            int difference = (int)(Math.Abs(axis.Count - allies.Count) / 2.0);
 
             if (difference > 0)
             {

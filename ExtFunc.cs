@@ -105,10 +105,10 @@ namespace ExtensionScript
             switch (player.SessionTeam)
             {
                 case "allies":
-                    player.ChangeTeam("allies");
+                    player.ChangeTeam("axis");
                     break;
                 case "axis":
-                    player.ChangeTeam("axis");
+                    player.ChangeTeam("allies");
                     break;
                 default:
                     break;
