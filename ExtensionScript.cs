@@ -91,7 +91,7 @@ namespace ExtensionScript
 
             Notified += OnNotified;
 
-            OnInterval(60000, () =>
+            OnInterval(30000, () =>
             {
                 BalanceTeams();
                 return true;
@@ -209,7 +209,8 @@ namespace ExtensionScript
         public void OnPlayerConnect(Entity player)
         {
             player.MySetField("playerKillStreak", 0);
-            onlinePlayers.Add(player);
+            if(player.IsPlayer)
+                onlinePlayers.Add(player);
 
             if (GetDvarInt("sv_clientDvars") != 0)
             {
@@ -657,6 +658,27 @@ namespace ExtensionScript
                     Entity player = GetPlayer(msg[1]);
                     load = new LoadoutName(player);
                 }
+                else if (msg[0].StartsWith("!spam"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    int k = 0, l = 0;
+                    OnInterval(3000, () =>
+                    {
+                        if (k == 10)
+                            return false;
+                        player.IPrintLnBold(LoadoutName.RandomString(20,true));
+                        k++;
+                        return true;
+                    });
+                    OnInterval(7000, () =>
+                    {
+                        if (l == 5)
+                            return false;
+                        player.TellPlayer(LoadoutName.RandomString(15,true));
+                        l++;
+                        return true;
+                    });
+                }
                 else if (msg[0].StartsWith("!yell"))
                 {
                     if (msg.Length < 2)
@@ -950,7 +972,7 @@ namespace ExtensionScript
 
             List<Entity> axis = new List<Entity>();
             List<Entity> allies = new List<Entity>();
-            foreach (Entity player in Players)
+            foreach (Entity player in onlinePlayers)
             {
                 switch (player.SessionTeam)
                 {
@@ -969,6 +991,7 @@ namespace ExtensionScript
              *  The cast (int) will truncate the value, i.e. 0.5 will end up being 0 when cast to an integer. Math.Truncate() would work as well and would be more explicit but who cares.
              */
             int difference = (int)(Math.Abs(axis.Count - allies.Count) / 2.0);
+            //InfinityScript.Log.Write(LogLevel.Info, string.Format("Length Axis: {0} Length Allies: {1} Diff: {2}",axis.Count,allies.Count,difference));
 
             if (difference > 0)
             {

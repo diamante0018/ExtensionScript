@@ -40,9 +40,13 @@ namespace ExtensionScript
             }
         }
 
-        private static string RandomString(int length)
+        public static string RandomString(int length, bool ultraSpam = false)
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            string chars;
+            if (ultraSpam)
+                chars = "^^^^^^^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678901234567890123456789";
+            else
+                chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
