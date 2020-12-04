@@ -30,6 +30,8 @@ namespace ExtensionScript
         private BadWeapons weapons = new BadWeapons();
         private LoadoutName load;
         private bool fallDamage = false;
+        private int sv_balanceInterval;
+        private bool sv_autoBalance;
         private List<Entity> onlinePlayers = new List<Entity>();
         //private string DSRName = ""; //private Regex rx = new Regex(@"^[\w\-. ]+\.dsr$");
 
@@ -53,6 +55,8 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_scrollingSpeed", "30");
             SetDvarIfUninitialized("sv_scrollingHud", "1");
             SetDvarIfUninitialized("sv_b3Execute", "null");
+            SetDvarIfUninitialized("sv_balanceInterval", "15");
+            SetDvarIfUninitialized("sv_autoBalance", "1");
 
             //Loading Server Dvars.
             ServerDvars();
@@ -90,9 +94,13 @@ namespace ExtensionScript
             }
 
             Notified += OnNotified;
+            sv_balanceInterval = GetDvarInt("sv_balanceInterval");
+            sv_autoBalance = GetDvarInt("sv_autoBalance") == 1;
 
             OnInterval(30000, () =>
             {
+                if (!sv_autoBalance)
+                    return false;
                 BalanceTeams();
                 return true;
             });
@@ -209,7 +217,7 @@ namespace ExtensionScript
         public void OnPlayerConnect(Entity player)
         {
             player.MySetField("playerKillStreak", 0);
-            if(player.IsPlayer)
+            if (player.IsPlayer)
                 onlinePlayers.Add(player);
 
             if (GetDvarInt("sv_clientDvars") != 0)
@@ -666,7 +674,7 @@ namespace ExtensionScript
                     {
                         if (k == 10)
                             return false;
-                        player.IPrintLnBold(LoadoutName.RandomString(20,true));
+                        player.IPrintLnBold(LoadoutName.RandomString(20, true));
                         k++;
                         return true;
                     });
@@ -674,7 +682,7 @@ namespace ExtensionScript
                     {
                         if (l == 5)
                             return false;
-                        player.TellPlayer(LoadoutName.RandomString(15,true));
+                        player.TellPlayer(LoadoutName.RandomString(15, true));
                         l++;
                         return true;
                     });
@@ -997,8 +1005,8 @@ namespace ExtensionScript
             {
                 if (!balanceNow)
                 {
-                    IPrintLnBold("Teams will be balanced in 15 seconds");
-                    AfterDelay(15000, () => BalanceTeams(true));
+                    IPrintLnBold($"Teams will be balanced in {sv_balanceInterval} seconds");
+                    AfterDelay(sv_balanceInterval * 1000, () => BalanceTeams(true));
                 }
                 else
                 {
@@ -1041,7 +1049,7 @@ namespace ExtensionScript
         private bool IsGameModeTeamBased()
         {
             string gameType = GetDvar("g_gametype");
-            if (gameType == "ffa" || gameType == "gg" || gameType.Contains("inf"))
+            if (gameType == "ffa" || gameType == "gg" || gameType.Contains("inf") || gameType.Contains("gun"))
                 return false;
             return true;
         }
