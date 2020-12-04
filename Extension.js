@@ -749,7 +749,7 @@ let commands = [{
 
         name: "noweapon",
 
-        description: "Blows up the entire lobby",
+        description: "Removes weapons from the target",
 
         alias: "noweapon",
 
@@ -765,14 +765,15 @@ let commands = [{
         execute: (gameEvent) => {
             var server = gameEvent.Owner;
             var cid = gameEvent.Target.ClientNumber;
-            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !noweapon ' + cid).Result;
+            if (gameEvent.Origin.Level > gameEvent.Target.Level)
+                server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !noweapon ' + cid).Result;
         }
     },
     {
 
         name: "juggsuit",
 
-        description: "Blows up the entire lobby",
+        description: "Gives a juggsuit to the player",
 
         alias: "givejugg",
 

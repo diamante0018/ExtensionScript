@@ -731,7 +731,7 @@ namespace ExtensionScript
                             if (player.IsAlive)
                                 player.Suicide();
                         });
-                        player.IPrintLnBold("You have been ^1Killed ^7in a ^2very ^6Fancy ^7Way^0!");
+                        player.TellPlayer("You have been ^1Killed ^7in a ^2very ^6Fancy ^7Way^0!");
                     }
                 }
                 else if (msg[0].StartsWith("!noweapon"))
