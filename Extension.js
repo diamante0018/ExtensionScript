@@ -1,3 +1,5 @@
+var permission_error = "Your rank is lower than "
+
 let commands = [{
 
         name: "afk",
@@ -68,6 +70,8 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !setafk ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
         }
     },
     {
@@ -92,6 +96,8 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !spam ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
         }
     },
     {
@@ -116,6 +122,8 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !kill ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
         }
     },
     {
@@ -218,6 +226,8 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !blockchat ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
         }
     },
     {
@@ -242,6 +252,8 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !freeze ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
         }
     },
     {
@@ -266,6 +278,8 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !changeteam ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
         }
     },
     {
@@ -308,6 +322,8 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !crash ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
         }
     },
     {
@@ -332,6 +348,8 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !reset ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
         }
     },
     {
@@ -356,6 +374,8 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !close ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
         }
     },
     {
@@ -380,6 +400,8 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !teknoban ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
         }
     },
     {
@@ -791,6 +813,8 @@ let commands = [{
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !noweapon ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
         }
     },
     {
