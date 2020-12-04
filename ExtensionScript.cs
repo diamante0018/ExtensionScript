@@ -29,7 +29,7 @@ namespace ExtensionScript
         private Teleporter teleport = new Teleporter();
         private BadWeapons weapons = new BadWeapons();
         private LoadoutName load;
-        private bool fallDamage = false;
+        private bool fallDamage = true;
         private int sv_balanceInterval;
         private bool sv_autoBalance;
         private List<Entity> onlinePlayers = new List<Entity>();
@@ -529,28 +529,30 @@ namespace ExtensionScript
                 {
                     if (int.TryParse(msg[1], out int speed))
                         Utilities.Speed = speed;
+                    Utilities.RawSayAll($"Speed is {speed}");
                 }
                 else if (msg[0].StartsWith("!gravity"))
                 {
                     if (int.TryParse(msg[1], out int gravity))
                         Utilities.Gravity = gravity;
+                    Utilities.RawSayAll($"Gravity is {gravity}");
                 }
                 else if (msg[0].StartsWith("!falldamage"))
                 {
                     fallDamage = !fallDamage;
                     Utilities.FallDamage = fallDamage;
+                    Utilities.RawSayAll($"Fall damage is {fallDamage}");
                 }
                 else if (msg[0].StartsWith("!jumpheight"))
                 {
                     if (float.TryParse(msg[1], out float height))
                         Utilities.JumpHeight = height;
+                    Utilities.RawSayAll($"Jumpe height is {height}");
                 }
                 else if (msg[0].StartsWith("!knife"))
                 {
-                    if (IsKnifeEnabled())
-                        DisableKnife();
-                    else
-                        EnableKnife();
+                    DisableKnife();
+                    Utilities.RawSayAll("Knife as been disabled");
                 }
                 else if (msg[0].StartsWith("!moab"))
                 {
@@ -1056,10 +1058,5 @@ namespace ExtensionScript
 
         /// <summary>function <c>DisableKnife</c> Disables knifes, useful for iSnipe.</summary>
         private unsafe void DisableKnife() => *(float*)95880920 = 0f;
-
-        /// <summary>function <c>EnableKnife</c> Enables knifes.</summary>
-        private unsafe void EnableKnife() => *(float*)95880920 = 64f;
-
-        private unsafe bool IsKnifeEnabled() => *(float*)95880920 == 64f;
     }
 }

@@ -834,6 +834,52 @@ let commands = [{
             var cid = gameEvent.Origin.ClientNumber;
             server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !juggsuit ' + cid).Result;
         }
+    },
+    {
+
+        name: "speed",
+
+        description: "Changes the speed",
+
+        alias: "speed",
+
+        permission: "SeniorAdmin",
+
+        targetRequired: false,
+
+        arguments: [{
+            name: "Speed",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !speed ' + message).Result;
+        }
+    },
+    {
+
+        name: "jumpheight",
+
+        description: "Changes the jump height",
+
+        alias: "jump",
+
+        permission: "SeniorAdmin",
+
+        targetRequired: false,
+
+        arguments: [{
+            name: "Jump height",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !jumpheight ' + message).Result;
+        }
     }
 ];
 
