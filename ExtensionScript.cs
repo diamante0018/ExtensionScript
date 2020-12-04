@@ -23,7 +23,7 @@ namespace ExtensionScript
         private HudElem bottom;
         private HudElem right;
         private HudElem left;
-        volatile string MapRotation = "";
+        string MapRotation = "";
         public static bool activeUnlimitedAmmo = false;
         private Kicker proKicker = new Kicker();
         private Teleporter teleport = new Teleporter();
