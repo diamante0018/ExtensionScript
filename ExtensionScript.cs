@@ -965,9 +965,9 @@ namespace ExtensionScript
         }
 
         /// <summary>function <c>BalanceTeams</c> Balances teams. It makes sure that if you are on a high killstreak you won't be balanced.</summary>
-        public void BalanceTeams()
+        public void BalanceTeams(bool balanceNow = false)
         {
-            if (GetDvar("g_gametype") == "ffa" || GetDvar("g_gametype") == "gg")
+            if (!IsGameModeTeamBased())
                 return;
 
             List<Entity> axis = new List<Entity>();
@@ -995,11 +995,19 @@ namespace ExtensionScript
 
             if (difference > 0)
             {
-                IEnumerable<Entity> sortByKillstreak = (axis.Count <= allies.Count) ? allies.OrderBy((Entity player) => player.MyGetField("playerKillStreak")).Take(difference).ToList() : axis.OrderBy((Entity player) => player.MyGetField("playerKillStreak")).Take(difference).ToList();
-                foreach (Entity player in sortByKillstreak)
+                if (!balanceNow)
                 {
-                    player.ChangeTeam();
-                    player.IPrintLnBold("You have been balanced");
+                    IPrintLnBold("Teams will be balanced in 15 seconds");
+                    AfterDelay(15000, () => BalanceTeams(true));
+                }
+                else
+                {
+                    IEnumerable<Entity> sortByKillstreak = (axis.Count <= allies.Count) ? allies.OrderBy((Entity player) => player.MyGetField("playerKillStreak")).Take(difference).ToList() : axis.OrderBy((Entity player) => player.MyGetField("playerKillStreak")).Take(difference).ToList();
+                    foreach (Entity player in sortByKillstreak)
+                    {
+                        player.ChangeTeam();
+                        player.IPrintLnBold("You have been balanced");
+                    }
                 }
             }
         }
@@ -1028,6 +1036,14 @@ namespace ExtensionScript
                     break;
             }
             return input;
+        }
+
+        private bool IsGameModeTeamBased()
+        {
+            string gameType = GetDvar("g_gametype");
+            if (gameType == "ffa" || gameType == "gg" || gameType.Contains("inf"))
+                return false;
+            return true;
         }
 
         /// <summary>function <c>DisableKnife</c> Disables knifes, useful for iSnipe.</summary>
