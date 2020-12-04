@@ -72,6 +72,30 @@ let commands = [{
     },
     {
 
+        name: "spam",
+
+        description: "Spams the player with random strings",
+
+        alias: "spam",
+
+        permission: "Administrator",
+
+        targetRequired: true,
+
+        arguments: [{
+            name: "Target Player",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Target.ClientNumber;
+            if (gameEvent.Origin.Level > gameEvent.Target.Level)
+                server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !spam ' + cid).Result;
+        }
+    },
+    {
+
         name: "kill",
 
         description: "Kills the target",
