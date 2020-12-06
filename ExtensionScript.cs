@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using static InfinityScript.GSCFunctions;
 using static InfinityScript.ThreadScript;
 
@@ -17,6 +18,9 @@ namespace ExtensionScript
 {
     public class ExtensionScript : BaseScript
     {
+        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int NopTheFuckOut(); 
+
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
         private HudElem top;
@@ -81,11 +85,10 @@ namespace ExtensionScript
             unsafe
             {
                 int[] addr = { 0x0422AB6, 0x0422AAF, 0x041E00C, 0x0414127, 0x04141b4, 0x0414e027, 0x0414b126, 0x041416d, 0x041417c };
-
+                
                 byte nop = 0x90;
                 for (int i = 0; i < 7; ++i)
                 {
-
                     *((byte*)addr[7] + i) = nop;
                     *((byte*)addr[8] + i) = nop;
                     *((byte*)addr[i]) = nop;
@@ -93,6 +96,7 @@ namespace ExtensionScript
                 }
             }
 
+            Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X")));
             Notified += OnNotified;
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");
             sv_autoBalance = GetDvarInt("sv_autoBalance") == 1;
