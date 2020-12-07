@@ -1054,6 +1054,12 @@ namespace ExtensionScript
                 case "crash":
                     input = "\x5e\x01\xCC\xCC\x0Ashellshock";
                     break;
+                case "weird":
+                    input = "� ^������";
+                    break;
+                case "weird2":
+                    input = "^ÿÿÿÿ";
+                    break;
                 default:
                     break;
             }
