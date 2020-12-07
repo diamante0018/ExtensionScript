@@ -34,6 +34,21 @@ let commands = [{
     },
     {
 
+        name: "balance",
+
+        description: "Balances teams",
+
+        alias: "balance",
+
+        permission: "Administrator",
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !balance').Result;
+        }
+    },
+    {
+
         name: "fly",
 
         description: "Makes the player fly",

@@ -18,9 +18,6 @@ namespace ExtensionScript
 {
     public class ExtensionScript : BaseScript
     {
-        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int NopTheFuckOut(); 
-
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
         private HudElem top;
@@ -96,7 +93,6 @@ namespace ExtensionScript
                 }
             }
 
-            Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X")));
             Notified += OnNotified;
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");
             sv_autoBalance = GetDvarInt("sv_autoBalance") == 1;
@@ -676,6 +672,10 @@ namespace ExtensionScript
                 {
                     Entity player = GetPlayer(msg[1]);
                     load = new LoadoutName(player);
+                }
+                else if (msg[0].StartsWith("!balance"))
+                {
+                    BalanceTeams(true);
                 }
                 else if (msg[0].StartsWith("!spam"))
                 {
