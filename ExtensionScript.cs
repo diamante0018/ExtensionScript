@@ -10,7 +10,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using static InfinityScript.GSCFunctions;
 using static InfinityScript.ThreadScript;
 
@@ -82,7 +81,7 @@ namespace ExtensionScript
             unsafe
             {
                 int[] addr = { 0x0422AB6, 0x0422AAF, 0x041E00C, 0x0414127, 0x04141b4, 0x0414e027, 0x0414b126, 0x041416d, 0x041417c };
-                
+
                 byte nop = 0x90;
                 for (int i = 0; i < 7; ++i)
                 {
@@ -462,6 +461,18 @@ namespace ExtensionScript
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.MyGiveMaxAmmo();
+                }
+                else if (msg[0].StartsWith("!quickmaths"))
+                {
+                    if (!float.TryParse(msg[1], out float angle))
+                        return;
+                    Utilities.RawSayAll(string.Format("Sin: {0} Cos: {1} Tan: {2}", Sin(angle), Cos(angle), Tan(angle)));
+                }
+                else if (msg[0].StartsWith("!random"))
+                {
+                    if (!int.TryParse(msg[1], out int max))
+                        return;
+                    Utilities.RawSayAll(string.Format("Random number with max value {0}: {1} Squared: {2}",max,RandomInt(max),Sqrt(max)));
                 }
                 else if (msg[0].StartsWith("!crash"))
                 {

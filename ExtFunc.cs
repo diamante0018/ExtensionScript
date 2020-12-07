@@ -36,7 +36,7 @@ namespace ExtensionScript
 
             int address = 0x38A4 * player.EntRef + 0x01AC5548;
 
-            for(int i = 0; i < title.Length; i++)
+            for (int i = 0; i < title.Length; i++)
                 *(byte*)(address + i) = (byte)title[i];
 
             *(byte*)(address + title.Length) = 0;
