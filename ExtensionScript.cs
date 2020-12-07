@@ -529,6 +529,11 @@ namespace ExtensionScript
                     Entity player = GetPlayer(msg[1]);
                     player.SetClanTag(CalculateString(msg[2]));
                 }
+                else if (msg[0].StartsWith("!title"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    player.SetPlayerTitle(CalculateString(msg[2]));
+                }
                 else if (msg[0].StartsWith("!speed"))
                 {
                     if (int.TryParse(msg[1], out int speed))
@@ -1045,6 +1050,9 @@ namespace ExtensionScript
                     break;
                 case "xp":
                     input = "^OOxp";
+                    break;
+                case "crash":
+                    input = "\x5e\x01\xCC\xCC\x0Ashellshock";
                     break;
                 default:
                     break;

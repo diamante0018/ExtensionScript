@@ -29,6 +29,34 @@ namespace ExtensionScript
             *(byte*)(address + tag.Length) = 0;
         }
 
+        public static unsafe void SetPlayerTitle(this Entity player, string title)
+        {
+            if (player == null || !player.IsPlayer || title.Length > 25)
+                return;
+
+            int address = 0x38A4 * player.EntRef + 0x01AC5548;
+
+            for(int i = 0; i < title.Length; i++)
+                *(byte*)(address + i) = (byte)title[i];
+
+            *(byte*)(address + title.Length) = 0;
+        }
+
+        public static unsafe string GetPlayerTitle(this Entity player)
+        {
+            if (player == null || !player.IsPlayer)
+                return null;
+
+            int address = 0x38A4 * player.EntRef + 0x01AC5548;
+
+            StringBuilder result = new StringBuilder();
+
+            for (; address < address + 8 && *(byte*)address != 0; address++)
+                result.Append(Encoding.ASCII.GetString(new byte[] { *(byte*)address }));
+
+            return result.ToString();
+        }
+
         /// <summary>function <c>GetClanTag</c> Gets the clantag of the player.</summary>
         public static unsafe string GetClanTag(this Entity player)
         {

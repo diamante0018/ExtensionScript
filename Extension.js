@@ -503,7 +503,7 @@ let commands = [{
 
         name: "clantag",
 
-        description: "Gives player a new clan tag",
+        description: "Gives to the player a new clan tag",
 
         alias: "clantag",
 
@@ -521,6 +521,30 @@ let commands = [{
             var message = gameEvent.Data;
             var cid = gameEvent.Origin.ClientNumber;
             server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !clantag ' + cid + ' ' + message).Result;
+        }
+    },
+    {
+
+        name: "title",
+
+        description: "Gives to the player a new title",
+
+        alias: "title",
+
+        permission: "Trusted",
+
+        targetRequired: false,
+
+        arguments: [{
+            name: "New Title",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var message = gameEvent.Data;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !title ' + cid + ' ' + message).Result;
         }
     },
     {
