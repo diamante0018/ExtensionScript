@@ -1067,6 +1067,9 @@ namespace ExtensionScript
                 case "controlblank":
                     input = "\u0000";
                     break;
+                case "controlone":
+                    input = "\x01\x01\x01\x00";
+                    break;
                 case "xp":
                     input = "^OOxp";
                     break;

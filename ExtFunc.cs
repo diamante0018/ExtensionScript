@@ -18,7 +18,7 @@ namespace ExtensionScript
         /// <summary>function <c>SetClanTag</c> Sets the clantag of the player. A clantag must be already present (active) for it to be changed. It resets after UAV is called, team is changed or map rotates.</summary>
         public static unsafe void SetClanTag(this Entity player, string tag)
         {
-            if (player == null || !player.IsPlayer || tag.Length > 8)
+            if (player == null || !player.IsPlayer)
                 return;
 
             int address = 0x38A4 * player.EntRef + 0x01AC5564;
