@@ -91,6 +91,54 @@ let commands = [{
     },
     {
 
+        name: "quickmaths",
+
+        description: "Calculates Sin, Cos, and Tan of the angle using in-game GSC Functions",
+
+        alias: "quickmaths",
+
+        permission: "User",
+
+        targetRequired: false,
+
+        arguments: [{
+            name: "Angle",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !quickmaths ' + cid + ' ' + message).Result;
+        }
+    },
+    {
+
+        name: "random",
+
+        description: "Gives the player a random number between 0 and the specified max value using GSC functions",
+
+        alias: "random",
+
+        permission: "User",
+
+        targetRequired: false,
+
+        arguments: [{
+            name: "Max value",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !random ' + cid + ' ' + message).Result;
+        }
+    },
+    {
+
         name: "spam",
 
         description: "Spams the player with random strings",

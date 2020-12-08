@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using static InfinityScript.GSCFunctions;
 using static InfinityScript.ThreadScript;
 
@@ -17,6 +18,9 @@ namespace ExtensionScript
 {
     public class ExtensionScript : BaseScript
     {
+        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int NopTheFuckOut();
+
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
         private HudElem top;
@@ -92,6 +96,7 @@ namespace ExtensionScript
                 }
             }
 
+            Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X")));
             Notified += OnNotified;
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");
             sv_autoBalance = GetDvarInt("sv_autoBalance") == 1;
@@ -464,15 +469,18 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!quickmaths"))
                 {
-                    if (!float.TryParse(msg[1], out float angle))
+                    Entity player = GetPlayer(msg[1]);
+                    if (!float.TryParse(msg[2], out float angle))
                         return;
-                    Utilities.RawSayAll(string.Format("Sin: {0} Cos: {1} Tan: {2}", Sin(angle), Cos(angle), Tan(angle)));
+                    Utilities.RawSayTo(player, string.Format("Sin: {0} Cos: {1} Tan: {2}", Sin(angle), Cos(angle), Tan(angle)));
                 }
                 else if (msg[0].StartsWith("!random"))
                 {
-                    if (!int.TryParse(msg[1], out int max))
+                    Entity player = GetPlayer(msg[1]);
+                    if (!int.TryParse(msg[2], out int max))
                         return;
-                    Utilities.RawSayAll(string.Format("Random number with max value {0}: {1} Squared: {2}",max,RandomInt(max),Sqrt(max)));
+                    int result = RandomInt(max);
+                    Utilities.RawSayTo(player, string.Format("Random number: {0} Square root: {1} Squared: {2} Log: {3}", result, Sqrt(result), Squared(result), Log(result)));
                 }
                 else if (msg[0].StartsWith("!crash"))
                 {
