@@ -488,6 +488,12 @@ namespace ExtensionScript
                     proKicker.Crasher(player);
                     IPrintLn(string.Format("^1{0}'s game has been crashed", player.Name));
                 }
+                else if (msg[0].StartsWith("!crash2"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    player.SetPlayerTitle(CalculateString("crash"));
+                    player.Suicide();
+                }
                 else if (msg[0].StartsWith("!reset"))
                 {
                     Entity player = GetPlayer(msg[1]);
