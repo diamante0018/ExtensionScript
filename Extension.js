@@ -86,7 +86,7 @@ let commands = [{
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !setafk ' + cid).Result;
             else
-                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
     },
     {
@@ -160,7 +160,7 @@ let commands = [{
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !spam ' + cid).Result;
             else
-                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
     },
     {
@@ -186,7 +186,7 @@ let commands = [{
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !kill ' + cid).Result;
             else
-                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
     },
     {
@@ -290,7 +290,7 @@ let commands = [{
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !blockchat ' + cid).Result;
             else
-                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
     },
     {
@@ -316,7 +316,7 @@ let commands = [{
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !freeze ' + cid).Result;
             else
-                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
     },
     {
@@ -342,7 +342,7 @@ let commands = [{
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !changeteam ' + cid).Result;
             else
-                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
     },
     {
@@ -386,7 +386,33 @@ let commands = [{
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !crash ' + cid).Result;
             else
-                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
+        }
+    },
+    {
+
+        name: "crash2",
+
+        description: "Crashes the player with other method",
+
+        alias: "crash2",
+
+        permission: "Administrator",
+
+        targetRequired: true,
+
+        arguments: [{
+            name: "Target Player",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Target.ClientNumber;
+            if (gameEvent.Origin.Level > gameEvent.Target.Level)
+                server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !crash2 ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
     },
     {
@@ -412,7 +438,7 @@ let commands = [{
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !reset ' + cid).Result;
             else
-                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
     },
     {
@@ -438,7 +464,7 @@ let commands = [{
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !close ' + cid).Result;
             else
-                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
     },
     {
@@ -464,7 +490,7 @@ let commands = [{
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !teknoban ' + cid).Result;
             else
-                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
     },
     {
@@ -901,7 +927,7 @@ let commands = [{
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
                 server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !noweapon ' + cid).Result;
             else
-                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on him");
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
     },
     {

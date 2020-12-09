@@ -830,7 +830,7 @@ namespace ExtensionScript
                         player.DisableWeaponPickup();
                         player.DisableWeapons();
                         player.MySetField("noweapon", 1);
-                        Utilities.RawSayAll($"{player.Name} weapons have been taken away from him");
+                        Utilities.RawSayAll($"{player.Name} weapons have been taken away from them");
                     }
                 }
                 else if (msg[0].StartsWith("!juggsuit"))
