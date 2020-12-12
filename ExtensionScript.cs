@@ -21,6 +21,9 @@ namespace ExtensionScript
         [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int NopTheFuckOut();
 
+        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void PrintErrorToConsole([MarshalAs(UnmanagedType.LPStr)] string message);
+
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
         private HudElem top;
@@ -832,6 +835,17 @@ namespace ExtensionScript
                         player.MySetField("noweapon", 1);
                         Utilities.RawSayAll($"{player.Name} weapons have been taken away from them");
                     }
+                }
+                else if (msg[0].StartsWith("!kickallplayers"))
+                {
+                    if (msg.Length < 2)
+                        return;
+
+                    string exitMessage = "";
+                    for (int i = 1; i < msg.Length; i++)
+                        exitMessage = exitMessage + " " + msg[i];
+
+                    PrintErrorToConsole(exitMessage);
                 }
                 else if (msg[0].StartsWith("!juggsuit"))
                 {

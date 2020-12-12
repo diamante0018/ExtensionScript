@@ -18,6 +18,29 @@ let commands = [{
     },
     {
 
+        name: "kickall",
+
+        description: "Kicks all players with a custom error message and shuts down the server",
+
+        alias: "kickall",
+
+        permission: "Owner",
+
+        targetRequired: false,
+
+        arguments: [{
+            name: "Message",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !kickallplayers ' + message).Result;
+        }
+    },
+    {
+
         name: "hideplayer",
 
         description: "Makes the player invisible",
