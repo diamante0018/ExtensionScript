@@ -15,7 +15,7 @@ namespace ExtensionScript
 {
     public static class ExtFunc
     {
-        private static Dictionary<string, Dictionary<string, int>> fields = new Dictionary<string, Dictionary<string, int>>();
+        private static Dictionary<string, Dictionary<string, Parameter>> fields = new Dictionary<string, Dictionary<string, Parameter>>();
 
         /// <summary>function <c>SetClanTag</c> Sets the clantag of the player. A clantag must be already present (active) for it to be changed. It resets after UAV is called, team is changed or map rotates.</summary>
         public static unsafe void SetClanTag(this Entity player, string tag)
@@ -155,12 +155,12 @@ namespace ExtensionScript
             welcomer.HideWhenInMenu = true;
         }
 
-        public static void MySetField(this Entity player, string field, int value)
+        public static void MySetField(this Entity player, string field, Parameter value)
         {
             if (!player.IsPlayer)
                 return;
             if (!fields.ContainsKey(player.HWID))
-                fields.Add(player.HWID, new Dictionary<string, int>());
+                fields.Add(player.HWID, new Dictionary<string, Parameter>());
 
             if (!MyHasField(player, field))
                 fields[player.HWID].Add(field, value);
@@ -168,12 +168,12 @@ namespace ExtensionScript
                 fields[player.HWID][field] = value;
         }
 
-        public static int MyGetField(this Entity player, string field)
+        public static Parameter MyGetField(this Entity player, string field)
         {
             if (!player.IsPlayer)
-                return int.MinValue;
+                return new Parameter(int.MinValue);
             if (!MyHasField(player, field))
-                return int.MinValue;
+                return new Parameter(int.MinValue);
             return fields[player.HWID][field];
         }
 

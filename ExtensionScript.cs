@@ -130,9 +130,9 @@ namespace ExtensionScript
             {
                 case "weapon_fired":
                     Entity player = GetPlayer(arg1);
-                    if (player.MyGetField("infiniteammo") == 1)
+                    if (player.MyGetField("infiniteammo").As<int>() == 1)
                         player.MyGiveMaxAmmo(false);
-                    if (player.MyGetField("norecoil") == 1)
+                    if (player.MyGetField("norecoil").As<int>() == 1)
                         player.Player_RecoilScaleOff();
                     break;
                 default:
@@ -297,7 +297,7 @@ namespace ExtensionScript
                 player.SetClientDvar("cg_objectiveText", GetDvar("sv_objText"));
                 player.MyGiveMaxAmmo(false);
 
-                if (player.MyGetField("wallhack") == 1)
+                if (player.MyGetField("wallhack").As<int>() == 1)
                     player.ThermalVisionFOFOverlayOn();
 
                 if (player.HasWeapon("stinger_mp"))
@@ -314,7 +314,7 @@ namespace ExtensionScript
                 else if (player.HasWeapon("concussion_grenade_mp"))
                     player.SetWeaponAmmoStock("concussion_grenade_mp", 1);
 
-                if (player.MyGetField("Naughty") == 1)
+                if (player.MyGetField("Naughty").As<int>() == 1)
                 {
                     Utilities.RawSayTo(player, "You wanted ^6God ^1Mode ^7now you suffer");
                     SetDvar("sv_b3Execute", $"!explode {player.EntRef}");
@@ -333,7 +333,7 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!afk"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if (player.MyGetField("fly") != 1)
+                    if (player.MyGetField("fly").As<int>() != 1)
                         player.ChangeTeam("spectator");
                     else
                     {
@@ -344,7 +344,7 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!setafk"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if (player.MyGetField("fly") != 1)
+                    if (player.MyGetField("fly").As<int>() != 1)
                         player.ChangeTeam("spectator");
                     else
                         Utilities.RawSayAll($"{player.Name} can't be moved since he is flying");
@@ -352,7 +352,7 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!kill"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if (player.MyGetField("fly") != 1 && player.SessionTeam != "spectator")
+                    if (player.MyGetField("fly").As<int>() != 1 && player.SessionTeam != "spectator")
                     {
                         player.Suicide();
                         Utilities.RawSayAll($"{player.Name} was killed");
@@ -363,7 +363,7 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!suicide"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if (player.MyGetField("fly") != 1 && player.SessionTeam != "spectator")
+                    if (player.MyGetField("fly").As<int>() != 1 && player.SessionTeam != "spectator")
                     {
                         player.Suicide();
                         Utilities.SayTo(player, "You commited suicide");
@@ -381,13 +381,13 @@ namespace ExtensionScript
                     {
                         player.MySetField("godmodeon", 0);
                     }
-                    if (player.MyGetField("godmodeon") == 1)
+                    if (player.MyGetField("godmodeon").As<int>() == 1)
                     {
                         player.Health = 100;
                         player.MySetField("godmodeon", 0);
                         Utilities.SayTo(player, "^1GodMode has been deactivated.");
                     }
-                    else if (player.MyGetField("godmodeon") == 0)
+                    else if (player.MyGetField("godmodeon").As<int>() == 0)
                     {
                         player.Health = -1;
                         player.MySetField("godmodeon", 1);
@@ -444,12 +444,12 @@ namespace ExtensionScript
                     {
                         player.MySetField("muted", 0);
                     }
-                    if (player.MyGetField("muted") == 1)
+                    if (player.MyGetField("muted").As<int>() == 1)
                     {
                         player.MySetField("muted", 0);
                         Utilities.RawSayAll($"{player.Name} ^1chat has been unblocked.");
                     }
-                    else if (player.MyGetField("muted") == 0)
+                    else if (player.MyGetField("muted").As<int>() == 0)
                     {
                         player.MySetField("muted", 1);
                         Utilities.RawSayAll($"{player.Name} ^1chat has been blocked.");
@@ -462,13 +462,13 @@ namespace ExtensionScript
                     {
                         player.MySetField("frozen", 0);
                     }
-                    if (player.MyGetField("frozen") == 1)
+                    if (player.MyGetField("frozen").As<int>() == 1)
                     {
                         player.FreezeControls(false);
                         player.MySetField("frozen", 0);
                         Utilities.RawSayAll($"{player.Name} ^1has been unfrozen.");
                     }
-                    else if (player.MyGetField("frozen") == 0)
+                    else if (player.MyGetField("frozen").As<int>() == 0)
                     {
                         player.FreezeControls(true);
                         player.MySetField("frozen", 1);
@@ -614,13 +614,13 @@ namespace ExtensionScript
                     {
                         player.MySetField("wallhack", 0);
                     }
-                    if (player.MyGetField("wallhack") == 1)
+                    if (player.MyGetField("wallhack").As<int>() == 1)
                     {
                         player.ThermalVisionFOFOverlayOff();
                         player.MySetField("wallhack", 0);
                         Utilities.RawSayTo(player, "Wallhack is switched off");
                     }
-                    else if (player.MyGetField("wallhack") == 0)
+                    else if (player.MyGetField("wallhack").As<int>() == 0)
                     {
                         player.ThermalVisionFOFOverlayOn();
                         player.MySetField("wallhack", 1);
@@ -634,12 +634,12 @@ namespace ExtensionScript
                     {
                         player.MySetField("aimbot", 0);
                     }
-                    if (player.MyGetField("aimbot") == 1)
+                    if (player.MyGetField("aimbot").As<int>() == 1)
                     {
                         player.MySetField("aimbot", 0);
                         Utilities.RawSayTo(player, "Aimbot is switched off");
                     }
-                    else if (player.MyGetField("aimbot") == 0)
+                    else if (player.MyGetField("aimbot").As<int>() == 0)
                     {
                         GiveAimBot(player);
                         player.MySetField("aimbot", 1);
@@ -653,12 +653,12 @@ namespace ExtensionScript
                     {
                         player.MySetField("norecoil", 0);
                     }
-                    if (player.MyGetField("norecoil") == 1)
+                    if (player.MyGetField("norecoil").As<int>() == 1)
                     {
                         player.MySetField("norecoil", 0);
                         Utilities.RawSayTo(player, "No Recoil is switched off");
                     }
-                    else if (player.MyGetField("norecoil") == 0)
+                    else if (player.MyGetField("norecoil").As<int>() == 0)
                     {
                         player.Player_RecoilScaleOff();
                         player.MySetField("norecoil", 1);
@@ -672,12 +672,12 @@ namespace ExtensionScript
                     {
                         player.MySetField("infiniteammo", 0);
                     }
-                    if (player.MyGetField("infiniteammo") == 1)
+                    if (player.MyGetField("infiniteammo").As<int>() == 1)
                     {
                         player.MySetField("infiniteammo", 0);
                         Utilities.RawSayTo(player, "Infiniteammo is switched off");
                     }
-                    else if (player.MyGetField("infiniteammo") == 0)
+                    else if (player.MyGetField("infiniteammo").As<int>() == 0)
                     {
                         player.MySetField("infiniteammo", 1);
                         Utilities.RawSayTo(player, "Infiniteammo is switched on");
@@ -690,13 +690,13 @@ namespace ExtensionScript
                     {
                         player.MySetField("hide", 0);
                     }
-                    if (player.MyGetField("hide") == 1)
+                    if (player.MyGetField("hide").As<int>() == 1)
                     {
                         player.Show();
                         player.MySetField("hide", 0);
                         Utilities.RawSayTo(player, "You are not hidden");
                     }
-                    else if (player.MyGetField("hide") == 0)
+                    else if (player.MyGetField("hide").As<int>() == 0)
                     {
                         player.Hide();
                         player.MySetField("hide", 1);
@@ -706,7 +706,7 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!noclip"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    if (player.MyGetField("fly") != 1 && player.SessionTeam != "spectator")
+                    if (player.MyGetField("fly").As<int>() != 1 && player.SessionTeam != "spectator")
                         player.NoClip();
                     else
                         Utilities.SayTo(player, "You can't noclip as a spectator or when you are flying");
@@ -779,7 +779,7 @@ namespace ExtensionScript
                     {
                         player.MySetField("fly", 0);
                     }
-                    if (player.MyGetField("fly") == 1)
+                    if (player.MyGetField("fly").As<int>() == 1)
                     {
                         player.AllowSpectateTeam("freelook", false);
                         player.SessionState = "playing";
@@ -787,7 +787,7 @@ namespace ExtensionScript
                         player.MySetField("fly", 0);
                         Utilities.RawSayTo(player, "You are not flying");
                     }
-                    else if (player.MyGetField("fly") == 0)
+                    else if (player.MyGetField("fly").As<int>() == 0)
                     {
                         if (player.SessionTeam == "spectator")
                         {
@@ -838,7 +838,7 @@ namespace ExtensionScript
                     {
                         player.MySetField("noweapon", 0);
                     }
-                    if (player.MyGetField("noweapon") == 1)
+                    if (player.MyGetField("noweapon").As<int>() == 1)
                     {
                         player.EnableWeaponSwitch();
                         player.EnableWeaponPickup();
@@ -847,7 +847,7 @@ namespace ExtensionScript
                         player.MySetField("noweapon", 0);
                         Utilities.RawSayAll($"{player.Name} can fight back now");
                     }
-                    else if (player.MyGetField("noweapon") == 0)
+                    else if (player.MyGetField("noweapon").As<int>() == 0)
                     {
                         player.TakeWeapon(player.CurrentWeapon);
                         player.DisableWeaponSwitch();
@@ -881,7 +881,8 @@ namespace ExtensionScript
                     player.ShowAllParts();
                     player.SetViewModel("viewhands_juggernaut_opforce");
                     player.SetModel("mp_fullbody_opforce_juggernaut");
-                    player.CreateTemplateOverlay("goggles_overlay");
+                    HudElem element = player.CreateTemplateOverlay("goggles_overlay");
+                    player.MySetField("juggernaut", element);
                     player.Health += 2500;
                     player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
                 }
@@ -897,7 +898,7 @@ namespace ExtensionScript
         {
             OnInterval(150, () =>
             {
-                if (!player.IsPlayer || player.MyGetField("aimbot") != 1)
+                if (!player.IsPlayer || player.MyGetField("aimbot").As<int>() != 1)
                     return false;
 
                 Entity[] victims = SortByDistance(CleanOnlinePlayerList(player).ToArray(), player);
@@ -958,7 +959,8 @@ namespace ExtensionScript
                 player.ShowAllParts();
                 player.SetViewModel("viewhands_juggernaut_opforce");
                 player.SetModel("mp_fullbody_opforce_juggernaut");
-                player.CreateTemplateOverlay("goggles_overlay");
+                HudElem element = player.CreateTemplateOverlay("goggles_overlay");
+                player.MySetField("juggernaut", element);
                 player.Health += 2500;
                 player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
             }
@@ -1023,7 +1025,7 @@ namespace ExtensionScript
             {
                 if (player != attacker) //Suicide Alert!
                 {
-                    attacker.MySetField("playerKillStreak", attacker.MyGetField("playerKillStreak") + 1);
+                    attacker.MySetField("playerKillStreak", attacker.MyGetField("playerKillStreak").As<int>() + 1);
                 }
                 player.MySetField("playerKillStreak", 0);
                 var attackerNoKills = NoKillsHudElem[GetEntityNumber(attacker)];
@@ -1041,6 +1043,16 @@ namespace ExtensionScript
                 }
                 victimNoKills.SetText("0");
                 NoKillsHudElem[GetEntityNumber(player)] = victimNoKills;
+
+                if (player.MyHasField("juggernaut"))
+                {
+                    Parameter parameter = player.MyGetField("juggernaut");
+                    if(parameter.Type != VariableType.Integer)
+                    {
+                        parameter.As<HudElem>().Destroy();
+                        player.MySetField("juggernaut", 0);
+                    }                      
+                }    
             }
             catch (Exception ex)
             {
@@ -1069,7 +1081,7 @@ namespace ExtensionScript
                     return EventEat.EatGame;
             }
 
-            if (player.MyGetField("muted") == 1)
+            if (player.MyGetField("muted").As<int>() == 1)
             {
                 return EventEat.EatGame;
             }
