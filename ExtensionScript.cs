@@ -39,6 +39,7 @@ namespace ExtensionScript
         private bool fallDamage = true;
         private int sv_balanceInterval;
         private bool sv_autoBalance;
+        private bool sv_Bounce;
         private List<Entity> onlinePlayers = new List<Entity>();
         //private string DSRName = ""; //private Regex rx = new Regex(@"^[\w\-. ]+\.dsr$");
 
@@ -64,6 +65,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_b3Execute", "null");
             SetDvarIfUninitialized("sv_balanceInterval", "15");
             SetDvarIfUninitialized("sv_autoBalance", "1");
+            SetDvarIfUninitialized("sv_Bounce", "1");
 
             //Loading Server Dvars.
             ServerDvars();
@@ -84,18 +86,23 @@ namespace ExtensionScript
                 }
                 return true;
             });
-            //Bounce and Bunny Hop related code
-            unsafe
-            {
-                int[] addr = { 0x0422AB6, 0x0422AAF, 0x041E00C, 0x0414127, 0x04141b4, 0x0414e027, 0x0414b126, 0x041416d, 0x041417c };
 
-                byte nop = 0x90;
-                for (int i = 0; i < 7; ++i)
+            sv_Bounce = GetDvarInt("sv_Bounce") == 1;
+
+            if (sv_Bounce)
+            {
+                unsafe
                 {
-                    *((byte*)addr[7] + i) = nop;
-                    *((byte*)addr[8] + i) = nop;
-                    *((byte*)addr[i]) = nop;
-                    *((byte*)(addr[i] + 1)) = nop;
+                    int[] addr = { 0x0422AB6, 0x0422AAF, 0x041E00C, 0x0414127, 0x04141b4, 0x0414e027, 0x0414b126, 0x041416d, 0x041417c };
+
+                    byte nop = 0x90;
+                    for (int i = 0; i < 7; ++i)
+                    {
+                        *((byte*)addr[7] + i) = nop;
+                        *((byte*)addr[8] + i) = nop;
+                        *((byte*)addr[i]) = nop;
+                        *((byte*)(addr[i] + 1)) = nop;
+                    }
                 }
             }
 
@@ -106,20 +113,9 @@ namespace ExtensionScript
 
             OnInterval(30000, () =>
             {
-                if (!sv_autoBalance)
-                    return false;
                 BalanceTeams();
-                return true;
+                return sv_autoBalance;
             });
-
-            /*OnInterval(50, () =>
-            {
-                DSRName = ExtUtil.GetDSRName();
-                if (!DSRName.Contains(".dsr"))
-                    return true;
-                return false;
-            });
-            */
         }
 
         /// <summary>function <c>ISTest_Notified</c> Prints all the notifies when triggered.</summary>
@@ -137,7 +133,7 @@ namespace ExtensionScript
                     if (player.MyGetField("infiniteammo") == 1)
                         player.MyGiveMaxAmmo(false);
                     if (player.MyGetField("norecoil") == 1)
-                        player.Player_RecoilScaleOn(0);
+                        player.Player_RecoilScaleOff();
                     break;
                 default:
                     break;
@@ -266,12 +262,12 @@ namespace ExtensionScript
             player.NotifyOnPlayerCommand("giveammo", "vote yes"); ;
 
             Thread(OnPlayerSpawned(player), (entRef, notify, paras) =>
-             {
-                 if (notify == "disconnect" && player.EntRef == entRef)
-                     return false;
+            {
+                if (notify == "disconnect" && player.EntRef == entRef)
+                    return false;
 
-                 return true;
-             });
+                return true;
+            });
 
             Thread(OnPlayerVoteYes(player), (entRef, notify, paras) =>
             {
@@ -317,6 +313,13 @@ namespace ExtensionScript
 
                 else if (player.HasWeapon("concussion_grenade_mp"))
                     player.SetWeaponAmmoStock("concussion_grenade_mp", 1);
+
+                if (player.MyGetField("Naughty") == 1)
+                {
+                    Utilities.RawSayTo(player, "You wanted ^6God ^1Mode ^7now you suffer");
+                    SetDvar("sv_b3Execute", $"!explode {player.EntRef}");
+                    player.MySetField("Naughty", 0);
+                }
             }
         }
 
@@ -330,12 +333,21 @@ namespace ExtensionScript
                 if (msg[0].StartsWith("!afk"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    player.ChangeTeam("spectator");
+                    if (player.MyGetField("fly") != 1)
+                        player.ChangeTeam("spectator");
+                    else
+                    {
+                        Utilities.RawSayTo(player, "You can't go afk since you are flying");
+                        player.MySetField("Naughty", 1);
+                    }
                 }
                 else if (msg[0].StartsWith("!setafk"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    player.ChangeTeam("spectator");
+                    if (player.MyGetField("fly") != 1)
+                        player.ChangeTeam("spectator");
+                    else
+                        Utilities.RawSayAll($"{player.Name} can't be moved since he is flying");
                 }
                 else if (msg[0].StartsWith("!kill"))
                 {
@@ -357,7 +369,10 @@ namespace ExtensionScript
                         Utilities.SayTo(player, "You commited suicide");
                     }
                     else
-                        Utilities.SayTo(player, "You can't commit suicide");
+                    {
+                        Utilities.SayTo(player, "You can't commit suicide you naughty player");
+                        player.MySetField("Naughty", 1);
+                    }
                 }
                 else if (msg[0].StartsWith("!godmode"))
                 {
@@ -777,6 +792,7 @@ namespace ExtensionScript
                         if (player.SessionTeam == "spectator")
                         {
                             Utilities.SayTo(player, "You can't fly as a spectator");
+                            player.MySetField("Naughty", 1);
                             return;
                         }
 
@@ -789,26 +805,31 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!explode"))
                 {
-                    foreach (Entity player in Players)
+                    if (msg[1].StartsWith("*all*"))
                     {
-                        if (player.SessionTeam == "spectator")
-                            continue;
-                        Vector3 offset1 = player.Origin;
-                        Vector3 offset2 = player.Origin;
-                        offset1.Z -= 1000f;
-                        offset2.Z += 6000f;
-                        MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
-                        offset2.X += 2000f;
-                        MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
-                        offset2.X -= 4000f;
-                        MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
-                        AfterDelay(3000, () =>
-                        {
-                            if (player.IsAlive)
-                                player.Suicide();
-                        });
-                        player.TellPlayer("You have been ^1Killed ^7in a ^2very ^6Fancy ^7Way^0!");
+                        ExplodeAll();
+                        return;
                     }
+
+                    Entity player = GetPlayer(msg[1]);
+                    if (player.SessionTeam == "spectator")
+                        return;
+                    Vector3 offset1 = player.Origin;
+                    Vector3 offset2 = player.Origin;
+                    offset1.Z -= 1000f;
+                    offset2.Z += 6000f;
+                    MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+                    offset2.X += 2000f;
+                    MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+                    offset2.X -= 4000f;
+                    MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+                    AfterDelay(3000, () =>
+                    {
+                        if (player.IsAlive)
+                            player.Suicide();
+                    });
+                    player.TellPlayer("You have been ^1Killed ^7in a ^2very ^6Fancy ^7Way^0!");
+
                 }
                 else if (msg[0].StartsWith("!noweapon"))
                 {
@@ -860,6 +881,7 @@ namespace ExtensionScript
                     player.ShowAllParts();
                     player.SetViewModel("viewhands_juggernaut_opforce");
                     player.SetModel("mp_fullbody_opforce_juggernaut");
+                    player.CreateTemplateOverlay("goggles_overlay");
                     player.Health += 2500;
                     player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
                 }
@@ -890,6 +912,8 @@ namespace ExtensionScript
         {
             foreach (Entity player in Players)
             {
+                if (player.SessionTeam == "spectator")
+                    continue;
                 player.TakeAllWeapons();
                 player.GiveWeapon("ac130_105mm_mp");
                 player.GiveWeapon("ac130_40mm_mp");
@@ -898,15 +922,43 @@ namespace ExtensionScript
             }
         }
 
+        /// <summary>function <c>ExplodeAll</c> Explodes all players in the lobby.</summary>
+        public void ExplodeAll()
+        {
+            foreach (Entity player in Players)
+            {
+                if (player.SessionTeam == "spectator")
+                    continue;
+                Vector3 offset1 = player.Origin;
+                Vector3 offset2 = player.Origin;
+                offset1.Z -= 1000f;
+                offset2.Z += 6000f;
+                MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+                offset2.X += 2000f;
+                MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+                offset2.X -= 4000f;
+                MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+                AfterDelay(3000, () =>
+                {
+                    if (player.IsAlive)
+                        player.Suicide();
+                });
+                player.TellPlayer("You have been ^1Killed ^7in a ^2very ^6Fancy ^7Way^0!");
+            }
+        }
+
         /// <summary>function <c>JuggSuitAll</c> Gives to all players a Jugg Suit.</summary>
         public void JuggSuitAll()
         {
             foreach (Entity player in Players)
             {
+                if (player.SessionTeam == "spectator")
+                    continue;
                 player.DetachAll();
                 player.ShowAllParts();
                 player.SetViewModel("viewhands_juggernaut_opforce");
                 player.SetModel("mp_fullbody_opforce_juggernaut");
+                player.CreateTemplateOverlay("goggles_overlay");
                 player.Health += 2500;
                 player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
             }
@@ -918,6 +970,8 @@ namespace ExtensionScript
             cleanedList.Remove(aimbotter);
             foreach (Entity player in cleanedList)
             {
+                if (player.SessionTeam == "spectator")
+                    cleanedList.Remove(player);
                 if (player.Equals(aimbotter) || !player.IsPlayer)
                     cleanedList.Remove(player);
             }
@@ -1108,6 +1162,7 @@ namespace ExtensionScript
             return input;
         }
 
+        /// <summary>function <c>IsGameModeTeamBased</c> If the game type is free-for-all infected or 'gun' it is not team based.</summary>
         private bool IsGameModeTeamBased()
         {
             string gameType = GetDvar("g_gametype");

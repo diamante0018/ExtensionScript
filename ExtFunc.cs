@@ -8,6 +8,8 @@
 using InfinityScript;
 using System.Collections.Generic;
 using System.Text;
+using static InfinityScript.GSCFunctions;
+using static InfinityScript.HudElem;
 
 namespace ExtensionScript
 {
@@ -176,5 +178,20 @@ namespace ExtensionScript
         }
 
         public static void MyRemoveField(this Entity player) => fields.Remove(player.HWID);
+
+        public static HudElem CreateTemplateOverlay(this Entity player, string shader = "")
+        {
+            HudElem overlay = NewClientHudElem(player);
+            overlay.X = 0;
+            overlay.Y = 0;
+            overlay.AlignX = XAlignments.Left;
+            overlay.AlignY = YAlignments.Top;
+            overlay.HorzAlign = HorzAlignments.Fullscreen;
+            overlay.VertAlign = VertAlignments.Fullscreen;
+            overlay.SetShader(shader, 640, 480);
+            overlay.Sort = -10;
+            overlay.Alpha = 1;
+            return overlay;
+        }
     }
 }
