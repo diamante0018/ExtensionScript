@@ -1047,12 +1047,12 @@ namespace ExtensionScript
                 if (player.MyHasField("juggernaut"))
                 {
                     Parameter parameter = player.MyGetField("juggernaut");
-                    if(parameter.Type != VariableType.Integer)
+                    if (parameter.Type != VariableType.Integer)
                     {
                         parameter.As<HudElem>().Destroy();
                         player.MySetField("juggernaut", 0);
-                    }                      
-                }    
+                    }
+                }
             }
             catch (Exception ex)
             {
