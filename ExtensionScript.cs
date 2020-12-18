@@ -394,6 +394,26 @@ namespace ExtensionScript
                         Utilities.SayTo(player, "^1GodMode has been activated.");
                     }
                 }
+                else if (msg[0].StartsWith("!gscaimassist"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if (!player.MyHasField("aimassist"))
+                    {
+                        player.MySetField("aimassist", 0);
+                    }
+                    if (player.MyGetField("aimassist").As<int>() == 1)
+                    {
+                        player.DisableAimAssist();
+                        player.MySetField("aimassist", 0);
+                        Utilities.SayTo(player, "AimAssist has been deactivated.");
+                    }
+                    else if (player.MyGetField("aimassist").As<int>() == 0)
+                    {
+                        player.EnableAimAssist();
+                        player.MySetField("aimassist", 1);
+                        Utilities.SayTo(player, "AimAssist has been activated.");
+                    }
+                }
                 else if (msg[0].StartsWith("!teleport"))
                 {
                     Entity teleporter = GetPlayer(msg[1]);
@@ -884,12 +904,13 @@ namespace ExtensionScript
                     HudElem element = player.CreateTemplateOverlay("goggles_overlay");
                     player.MySetField("juggernaut", element);
                     player.Health += 2500;
+                    player.EnableWeaponPickup();
                     player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
                 }
             }
             catch (Exception e)
             {
-                InfinityScript.Log.Write(LogLevel.Error, "Error in Command Processing. Error:" + e.Message + e.StackTrace);
+                InfinityScript.Log.Write(LogLevel.Error, $"Error in Command Processing. Error: {e.Message} {e.StackTrace}");
             }
         }
 
@@ -962,6 +983,7 @@ namespace ExtensionScript
                 HudElem element = player.CreateTemplateOverlay("goggles_overlay");
                 player.MySetField("juggernaut", element);
                 player.Health += 2500;
+                player.EnableWeaponPickup();
                 player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
             }
         }

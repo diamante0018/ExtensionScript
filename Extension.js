@@ -18,6 +18,22 @@ let commands = [{
     },
     {
 
+        name: "aimassist",
+
+        description: "Gives the player aim assist",
+
+        alias: "aimassist",
+
+        permission: "Administrator",
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !gscaimassist ' + cid).Result;
+        }
+    },
+    {
+
         name: "kickall",
 
         description: "Kicks all players with a custom error message and shuts down the server",
