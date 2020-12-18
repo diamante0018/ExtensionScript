@@ -296,6 +296,7 @@ namespace ExtensionScript
                 yield return player.WaitTill("spawned_player");
                 player.SetClientDvar("cg_objectiveText", GetDvar("sv_objText"));
                 player.MyGiveMaxAmmo(false);
+                player.DisableGrenadeTouchDamage();
 
                 if (player.MyGetField("wallhack").As<int>() == 1)
                     player.ThermalVisionFOFOverlayOn();
