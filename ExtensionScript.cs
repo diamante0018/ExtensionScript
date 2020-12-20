@@ -40,6 +40,7 @@ namespace ExtensionScript
         private int sv_balanceInterval;
         private bool sv_autoBalance;
         private bool sv_Bounce;
+        private bool sv_NopAddresses;
         private List<Entity> onlinePlayers = new List<Entity>();
         //private string DSRName = ""; //private Regex rx = new Regex(@"^[\w\-. ]+\.dsr$");
 
@@ -66,6 +67,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_balanceInterval", "15");
             SetDvarIfUninitialized("sv_autoBalance", "1");
             SetDvarIfUninitialized("sv_Bounce", "1");
+            SetDvarIfUninitialized("sv_NopAddresses", "0");
 
             //Loading Server Dvars.
             ServerDvars();
@@ -88,6 +90,7 @@ namespace ExtensionScript
             });
 
             sv_Bounce = GetDvarInt("sv_Bounce") == 1;
+            sv_NopAddresses = GetDvarInt("sv_NopAddresses") == 1;
 
             if (sv_Bounce)
             {
@@ -106,7 +109,8 @@ namespace ExtensionScript
                 }
             }
 
-            Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X")));
+            if(sv_NopAddresses)
+                Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X")));
             Notified += OnNotified;
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");
             sv_autoBalance = GetDvarInt("sv_autoBalance") == 1;
