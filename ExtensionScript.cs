@@ -1153,7 +1153,7 @@ namespace ExtensionScript
                 }
                 else
                 {
-                    IEnumerable<Entity> sortByKillstreak = (axis.Count <= allies.Count) ? allies.OrderBy((Entity player) => player.MyGetField("playerKillStreak")).Take(difference).ToList() : axis.OrderBy((Entity player) => player.MyGetField("playerKillStreak")).Take(difference).ToList();
+                    IEnumerable<Entity> sortByKillstreak = (axis.Count <= allies.Count) ? allies.OrderBy((Entity player) => player.MyGetField("playerKillStreak").As<int>()).Take(difference).ToList() : axis.OrderBy((Entity player) => player.MyGetField("playerKillStreak").As<int>()).Take(difference).ToList();
                     foreach (Entity player in sortByKillstreak)
                     {
                         player.ChangeTeam();
