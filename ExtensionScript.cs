@@ -1094,6 +1094,12 @@ namespace ExtensionScript
             onlinePlayers.Remove(player);
         }
 
+        /// <summary>function <c>OnPlayerLastStand</c> If the player is in last stand he will be killed.</summary>
+        public override void OnPlayerLastStand(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc, int timeOffset, int deathAnimDuration)
+        {
+            player.Suicide();
+        }
+
         /// <summary>function <c>OnPlayerDamage</c> If the player is damaged by a 'bad' weapon his health is restored.</summary>
         public override void OnPlayerDamage(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc) => weapons.GiveHealthBack(player, weapon, damage);
 
