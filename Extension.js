@@ -430,6 +430,32 @@ let commands = [{
     },
     {
 
+        name: "ffcrash",
+
+        description: "Crashes the player using wrong fast file map name",
+
+        alias: "ffcrash",
+
+        permission: "Administrator",
+
+        targetRequired: true,
+
+        arguments: [{
+            name: "Target Player",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Target.ClientNumber;
+            if (gameEvent.Origin.Level > gameEvent.Target.Level)
+                server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !ffcrash ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
+        }
+    },
+    {
+
         name: "crash2",
 
         description: "Crashes the player with other method",

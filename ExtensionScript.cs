@@ -24,6 +24,9 @@ namespace ExtensionScript
         [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void PrintErrorToConsole([MarshalAs(UnmanagedType.LPStr)] string message);
 
+        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int NET_Print(int b, int entRef, [MarshalAs(UnmanagedType.LPStr)] string message);
+
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
         private HudElem top;
@@ -857,6 +860,11 @@ namespace ExtensionScript
                     });
                     player.TellPlayer("You have been ^1Killed ^7in a ^2very ^6Fancy ^7Way^0!");
 
+                }
+                else if(msg[0].StartsWith("!ffcrash"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    NET_Print(10, player.EntRef, "loadingnewmap\n mp_favela \ncum");
                 }
                 else if (msg[0].StartsWith("!noweapon"))
                 {
