@@ -41,6 +41,7 @@ namespace ExtensionScript
         private bool sv_autoBalance;
         private bool sv_Bounce;
         private bool sv_NopAddresses;
+        private bool sv_KnifeEnabled;
         private List<Entity> onlinePlayers = new List<Entity>();
         //private string DSRName = ""; //private Regex rx = new Regex(@"^[\w\-. ]+\.dsr$");
 
@@ -68,6 +69,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_autoBalance", "1");
             SetDvarIfUninitialized("sv_Bounce", "1");
             SetDvarIfUninitialized("sv_NopAddresses", "0");
+            SetDvarIfUninitialized("sv_KnifeEnabled", "0");
 
             //Loading Server Dvars.
             ServerDvars();
@@ -91,6 +93,7 @@ namespace ExtensionScript
 
             sv_Bounce = GetDvarInt("sv_Bounce") == 1;
             sv_NopAddresses = GetDvarInt("sv_NopAddresses") == 1;
+            sv_KnifeEnabled = GetDvarInt("sv_KnifeEnabled") == 1;
 
             if (sv_Bounce)
             {
@@ -109,17 +112,21 @@ namespace ExtensionScript
                 }
             }
 
-            if(sv_NopAddresses)
+            if (sv_NopAddresses)
                 Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X")));
             Notified += OnNotified;
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");
             sv_autoBalance = GetDvarInt("sv_autoBalance") == 1;
+            BalanceTeams(true);
 
-            OnInterval(30000, () =>
+            OnInterval(15000, () =>
             {
                 BalanceTeams();
                 return sv_autoBalance;
             });
+
+            if (!sv_KnifeEnabled)
+                weapons.DisableKnife();
         }
 
         /// <summary>function <c>ISTest_Notified</c> Prints all the notifies when triggered.</summary>
@@ -621,11 +628,6 @@ namespace ExtensionScript
                     if (float.TryParse(msg[1], out float height))
                         Utilities.JumpHeight = height;
                     Utilities.RawSayAll($"Jumpe height is {height}");
-                }
-                else if (msg[0].StartsWith("!knife"))
-                {
-                    DisableKnife();
-                    Utilities.RawSayAll("Knife as been disabled");
                 }
                 else if (msg[0].StartsWith("!moab"))
                 {
@@ -1148,7 +1150,7 @@ namespace ExtensionScript
              *  The cast (int) will truncate the value, i.e. 0.5 will end up being 0 when cast to an integer. Math.Truncate() would work as well and would be more explicit but who cares.
              */
             int difference = (int)(Math.Abs(axis.Count - allies.Count) / 2.0);
-            //InfinityScript.Log.Write(LogLevel.Info, string.Format("Length Axis: {0} Length Allies: {1} Diff: {2}",axis.Count,allies.Count,difference));
+            //InfinityScript.Log.Write(LogLevel.Info, string.Format("Length Axis: {0} Length Allies: {1} Diff: {2}", axis.Count, allies.Count, difference));
 
             if (difference > 0)
             {
@@ -1215,8 +1217,5 @@ namespace ExtensionScript
                 return false;
             return true;
         }
-
-        /// <summary>function <c>DisableKnife</c> Disables knifes, useful for iSnipe.</summary>
-        private unsafe void DisableKnife() => *(float*)95880920 = 0f;
     }
 }

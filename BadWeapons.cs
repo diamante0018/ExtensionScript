@@ -15,10 +15,15 @@ namespace ExtensionScript
     {
         private HashSet<string> weapons;
         private HashSet<string> ks;
+        private int DefaultKnifeAddress;
+        private unsafe int* KnifeRange;
+        private unsafe int* ZeroAddress;
+
         public BadWeapons()
         {
             weapons = Constructor();
             ks = Constructor2();
+            SetupKnife();
         }
 
         public void GiveHealthBack(Entity player, string weapon, int damage)
@@ -38,7 +43,7 @@ namespace ExtensionScript
             if (ks.Contains(weapon))
                 player.Health += Math.Abs(damage - 3);
 
-            if (weapon.Contains("m320") || weapon.Contains("gl") || weapon.Contains("gp25"))
+            if (!weapon.Contains("desert") && (weapon.Contains("m320") || weapon.Contains("gl") || weapon.Contains("gp25")))
                 player.Health += Math.Abs(damage - 3);
         }
 
@@ -83,5 +88,157 @@ namespace ExtensionScript
             weapons.Add("remote_turret_mp");
             return weapons;
         }
+
+        private unsafe int FindMem(byte?[] search, int num = 1, int start = 16777216, int end = 63963136)
+        {
+            try
+            {
+                int num1 = 0;
+                for (int index1 = start; index1 < end; ++index1)
+                {
+                    byte* numPtr = (byte*)index1;
+                    bool flag = false;
+                    for (int index2 = 0; index2 < search.Length; ++index2)
+                    {
+                        if (search[index2].HasValue)
+                        {
+                            int num2 = *numPtr;
+                            byte? nullable = search[index2];
+                            if ((num2 != nullable.GetValueOrDefault() ? 1 : (!nullable.HasValue ? 1 : 0)) != 0)
+                                break;
+                        }
+                        if (index2 == search.Length - 1)
+                        {
+                            if (num == 1)
+                            {
+                                flag = true;
+                            }
+                            else
+                            {
+                                ++num1;
+                                if (num1 == num)
+                                    flag = true;
+                            }
+                        }
+                        else
+                            ++numPtr;
+                    }
+                    if (flag)
+                        return index1;
+                }
+            }
+            catch (Exception ex)
+            {
+                Utilities.PrintToConsole("Error in FindMem: " + ex.Message);
+            }
+            return 0;
+        }
+
+        public unsafe void SetupKnife()
+        {
+            try
+            {
+                byte?[] search1 = new byte?[23]
+                {
+                  new byte?(139),
+                  new byte?(),
+                  new byte?(),
+                  new byte?(),
+                  new byte?(131),
+                  new byte?(),
+                  new byte?(4),
+                  new byte?(),
+                  new byte?(131),
+                  new byte?(),
+                  new byte?(12),
+                  new byte?(217),
+                  new byte?(),
+                  new byte?(),
+                  new byte?(),
+                  new byte?(139),
+                  new byte?(),
+                  new byte?(217),
+                  new byte?(),
+                  new byte?(),
+                  new byte?(),
+                  new byte?(217),
+                  new byte?(5)
+                };
+                KnifeRange = (int*)(FindMem(search1, 1, 4194304, 5242880) + search1.Length);
+                if ((int)KnifeRange == search1.Length)
+                {
+                    byte?[] search2 = new byte?[25]
+                    {
+                        new byte?(139),
+                        new byte?(),
+                        new byte?(),
+                        new byte?(),
+                        new byte?(131),
+                        new byte?(),
+                        new byte?(24),
+                        new byte?(),
+                        new byte?(131),
+                        new byte?(),
+                        new byte?(12),
+                        new byte?(217),
+                        new byte?(),
+                        new byte?(),
+                        new byte?(),
+                        new byte?(141),
+                        new byte?(),
+                        new byte?(),
+                        new byte?(),
+                        new byte?(217),
+                        new byte?(),
+                        new byte?(),
+                        new byte?(),
+                        new byte?(217),
+                        new byte?(5)
+                    };
+                    KnifeRange = (int*)(FindMem(search2, 1, 4194304, 5242880) + search2.Length);
+                    if ((int)KnifeRange == search2.Length)
+                        KnifeRange = null;
+                }
+                DefaultKnifeAddress = *KnifeRange;
+                byte?[] search3 = new byte?[24]
+                {
+                  new byte?((byte) 217),
+                  new byte?((byte) 92),
+                  new byte?(),
+                  new byte?(),
+                  new byte?((byte) 216),
+                  new byte?(),
+                  new byte?(),
+                  new byte?((byte) 216),
+                  new byte?(),
+                  new byte?(),
+                  new byte?((byte) 217),
+                  new byte?((byte) 92),
+                  new byte?(),
+                  new byte?(),
+                  new byte?((byte) 131),
+                  new byte?(),
+                  new byte?((byte) 1),
+                  new byte?((byte) 15),
+                  new byte?((byte) 134),
+                  new byte?(),
+                  new byte?((byte) 0),
+                  new byte?((byte) 0),
+                  new byte?((byte) 0),
+                  new byte?((byte) 217)
+                };
+                ZeroAddress = (int*)(FindMem(search3, 1, 4194304, 5242880) + search3.Length + 2);
+
+                if (!((int)KnifeRange != 0 && DefaultKnifeAddress != 0 && (int)ZeroAddress != 0))
+                    Utilities.PrintToConsole("Error finding address: NoKnife");
+            }
+            catch (Exception ex)
+            {
+                Utilities.PrintToConsole("Error in NoKnife Plugin.");
+                Utilities.PrintToConsole(ex.ToString());
+            }
+        }
+
+        public unsafe void DisableKnife() => *KnifeRange = (int)ZeroAddress;
     }
 }
