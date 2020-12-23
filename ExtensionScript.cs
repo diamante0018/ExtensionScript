@@ -1107,6 +1107,7 @@ namespace ExtensionScript
         /// <summary>function <c>OnPlayerLastStand</c> If the player is in last stand he will be killed.</summary>
         public override void OnPlayerLastStand(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc, int timeOffset, int deathAnimDuration)
         {
+            player.IPrintLnBold("Last Stand is not allowed");
             player.Suicide();
         }
 
