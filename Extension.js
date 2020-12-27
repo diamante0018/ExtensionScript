@@ -1038,6 +1038,29 @@ let commands = [{
     },
     {
 
+        name: "gravity",
+
+        description: "Changes the gravity",
+
+        alias: "gravity",
+
+        permission: "SeniorAdmin",
+
+        targetRequired: false,
+
+        arguments: [{
+            name: "Gravity",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !gravity ' + message).Result;
+        }
+    },
+    {
+
         name: "jumpheight",
 
         description: "Changes the jump height",
