@@ -44,6 +44,7 @@ namespace ExtensionScript
             *(byte*)(address + title.Length) = 0;
         }
 
+        /// <summary>function <c>GetPlayerTitle</c> Gets the player title from the player card.</summary>
         public static unsafe string GetPlayerTitle(this Entity player)
         {
             if (player == null || !player.IsPlayer)
