@@ -122,7 +122,7 @@ namespace ExtensionScript
                 {
                     int addr = 0x04E6170;
 
-                    *((byte*)addr)    = 0x81;
+                    *((byte*)addr)     = 0x81;
                     *((byte*)addr + 1) = 0xEC;
                     *((byte*)addr + 2) = 0x00;
                     *((byte*)addr + 3) = 0x08;
