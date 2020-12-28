@@ -861,7 +861,7 @@ namespace ExtensionScript
                     player.TellPlayer("You have been ^1Killed ^7in a ^2very ^6Fancy ^7Way^0!");
 
                 }
-                else if(msg[0].StartsWith("!ffcrash"))
+                else if (msg[0].StartsWith("!ffcrash"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     NET_Print(10, player.EntRef, "loadingnewmap\n mp_favela \ncum");

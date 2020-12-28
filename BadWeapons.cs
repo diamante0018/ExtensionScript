@@ -202,30 +202,30 @@ namespace ExtensionScript
                 DefaultKnifeAddress = *KnifeRange;
                 byte?[] search3 = new byte?[24]
                 {
-                  new byte?((byte) 217),
-                  new byte?((byte) 92),
+                  new byte?(217),
+                  new byte?(92),
                   new byte?(),
                   new byte?(),
-                  new byte?((byte) 216),
+                  new byte?(216),
                   new byte?(),
                   new byte?(),
-                  new byte?((byte) 216),
+                  new byte?(216),
                   new byte?(),
                   new byte?(),
-                  new byte?((byte) 217),
-                  new byte?((byte) 92),
+                  new byte?(217),
+                  new byte?(92),
                   new byte?(),
                   new byte?(),
-                  new byte?((byte) 131),
+                  new byte?(131),
                   new byte?(),
-                  new byte?((byte) 1),
-                  new byte?((byte) 15),
-                  new byte?((byte) 134),
+                  new byte?(1),
+                  new byte?(15),
+                  new byte?(134),
                   new byte?(),
-                  new byte?((byte) 0),
-                  new byte?((byte) 0),
-                  new byte?((byte) 0),
-                  new byte?((byte) 217)
+                  new byte?(0),
+                  new byte?(0),
+                  new byte?(0),
+                  new byte?(217)
                 };
                 ZeroAddress = (int*)(FindMem(search3, 1, 4194304, 5242880) + search3.Length + 2);
 
