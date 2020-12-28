@@ -22,3 +22,4 @@ In the server.cfg set these dvars with the values you wish or they will be set t
 - sv_killStreakCounter 1
 - sv_scrollingHud 1
 - sv_scrollingSpeed 30
+- sv_UndoRCE 1 //Removes SteamAuth RCE one line 'patch' (restores one address to it's original states allowing buffer overflow)

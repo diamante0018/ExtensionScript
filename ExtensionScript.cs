@@ -45,6 +45,7 @@ namespace ExtensionScript
         private bool sv_Bounce;
         private bool sv_NopAddresses;
         private bool sv_KnifeEnabled;
+        private bool sv_UndoRCE;
         private List<Entity> onlinePlayers = new List<Entity>();
         //private string DSRName = ""; //private Regex rx = new Regex(@"^[\w\-. ]+\.dsr$");
 
@@ -73,6 +74,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_Bounce", "1");
             SetDvarIfUninitialized("sv_NopAddresses", "0");
             SetDvarIfUninitialized("sv_KnifeEnabled", "0");
+            SetDvarIfUninitialized("sv_UndoRCE", "1");
             SetDvarIfUninitialized("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
 
             //Loading Server Dvars.
@@ -98,24 +100,37 @@ namespace ExtensionScript
             sv_Bounce = GetDvarInt("sv_Bounce") == 1;
             sv_NopAddresses = GetDvarInt("sv_NopAddresses") == 1;
             sv_KnifeEnabled = GetDvarInt("sv_KnifeEnabled") == 1;
+            sv_UndoRCE = GetDvarInt("sv_UndoRCE") == 1;
 
-            if (sv_Bounce)
+            unsafe
             {
-                unsafe
+                if (sv_Bounce)
                 {
-                    int[] addr = { 0x0422AB6, 0x0422AAF, 0x041E00C, 0x0414127, 0x04141b4, 0x0414e027, 0x0414b126, 0x041416d, 0x041417c };
+                    int[] addr = { 0x0422AB6, 0x0422AAF, 0x041E00C, 0x0414127, 0x04141B4, 0x0414E027, 0x0414B126, 0x041416B, 0x041417C };
 
                     byte nop = 0x90;
                     for (int i = 0; i < 7; ++i)
                     {
-                        *((byte*)addr[7] + i) = nop;
-                        *((byte*)addr[8] + i) = nop;
-                        *((byte*)addr[i]) = nop;
+                        *((byte*)addr[7] + i)   = nop;
+                        *((byte*)addr[8] + i)   = nop;
+                        *((byte*)addr[i])       = nop;
                         *((byte*)(addr[i] + 1)) = nop;
                     }
                 }
-            }
 
+                if (sv_UndoRCE)
+                {
+                    int addr = 0x04E6170;
+
+                    *((byte*)addr)    = 0x81;
+                    *((byte*)addr + 1) = 0xEC;
+                    *((byte*)addr + 2) = 0x00;
+                    *((byte*)addr + 3) = 0x08;
+                    *((byte*)addr + 4) = 0x00;
+                    *((byte*)addr + 5) = 0x00;
+                }
+            }
+            
             if (sv_NopAddresses)
                 Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X")));
             Notified += OnNotified;
