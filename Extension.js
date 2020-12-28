@@ -827,6 +827,33 @@ let commands = [{
     },
     {
 
+        name: "tphere",
+
+        description: "Teleports target to player",
+
+        alias: "tphere",
+
+        permission: "Trusted",
+
+        targetRequired: true,
+
+        arguments: [{
+            name: "Target Player",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            var target = gameEvent.Target.ClientNumber;
+            if (gameEvent.Origin.Level > gameEvent.Target.Level)
+                server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !teleport ' + target + ' ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
+        }
+    },
+    {
+
         name: "save",
 
         description: "Saves current location",

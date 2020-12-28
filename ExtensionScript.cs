@@ -432,8 +432,8 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!teleport"))
                 {
                     Entity teleporter = GetPlayer(msg[1]);
-                    Entity reciever = GetPlayer(msg[2]);
-                    teleport.Teleport2Players(teleporter, reciever);
+                    Entity receiver = GetPlayer(msg[2]);
+                    teleport.Teleport2Players(teleporter, receiver);
                 }
                 else if (msg[0].StartsWith("!mode"))
                 {
