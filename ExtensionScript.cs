@@ -73,6 +73,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_Bounce", "1");
             SetDvarIfUninitialized("sv_NopAddresses", "0");
             SetDvarIfUninitialized("sv_KnifeEnabled", "0");
+            SetDvarIfUninitialized("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
 
             //Loading Server Dvars.
             ServerDvars();
