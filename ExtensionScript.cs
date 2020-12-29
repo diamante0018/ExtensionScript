@@ -27,6 +27,10 @@ namespace ExtensionScript
         [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int NET_Print(int b, int entRef, [MarshalAs(UnmanagedType.LPStr)] string message);
 
+        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        public static extern string DvarFindDvar([MarshalAs(UnmanagedType.LPStr)] string dvarName);
+
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
         private HudElem top;
@@ -371,6 +375,13 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "You can't go afk since you are flying");
                         player.MySetField("Naughty", 1);
                     }
+                }
+                else if(msg[0].StartsWith("!finddvar"))
+                {
+                    //Has been tested for dvars of type string such as sv_current_dsr and sv_serverFullMsg
+                    string dvar = DvarFindDvar(msg[1]);
+                    Utilities.PrintToConsole(dvar);
+                    Utilities.RawSayAll(dvar);
                 }
                 else if (msg[0].StartsWith("!setafk"))
                 {
