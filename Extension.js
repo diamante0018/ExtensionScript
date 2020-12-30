@@ -290,6 +290,23 @@ let commands = [{
     },
     {
 
+        name: "randommap",
+
+        description: "Random Map Selector",
+
+        alias: "randommap",
+
+        permission: "Administrator",
+
+        targetRequired: false,
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !randommap').Result;
+        }
+    },
+    {
+
         name: "ac130",
 
         description: "Gives AC130 to the player",
@@ -627,6 +644,29 @@ let commands = [{
             var message = gameEvent.Data;
             var cid = gameEvent.Origin.ClientNumber;
             server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !clientdvar ' + cid + ' ' + message).Result;
+        }
+    },
+    {
+
+        name: "finddvar",
+
+        description: "Gets a string dvar current value",
+
+        alias: "finddvar",
+
+        permission: "Trusted",
+
+        targetRequired: false,
+
+        arguments: [{
+            name: "Name of the dvar",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !finddvar ' + message).Result;
         }
     },
     {

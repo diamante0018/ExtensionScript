@@ -52,6 +52,7 @@
     <Compile Include="ExtFunc.cs" />
     <Compile Include="LoadoutName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomMap.cs" />
     <Compile Include="Teleporter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
