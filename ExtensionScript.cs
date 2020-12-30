@@ -138,7 +138,7 @@ namespace ExtensionScript
 
             if (sv_NopAddresses)
                 Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X")));
-            Notified += OnNotified;
+            //Notified += OnNotified;
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");
             sv_autoBalance = GetDvarInt("sv_autoBalance") == 1;
             BalanceTeams(true);
@@ -163,12 +163,7 @@ namespace ExtensionScript
         {
             switch (arg2)
             {
-                case "weapon_fired":
-                    Entity player = GetPlayer(arg1);
-                    if (player.MyGetField("infiniteammo").As<int>() == 1)
-                        player.MyGiveMaxAmmo(false);
-                    if (player.MyGetField("norecoil").As<int>() == 1)
-                        player.Player_RecoilScaleOff();
+                case "weapon_fired":          
                     break;
                 case "game_win":
                     ISTest_Notified(arg1, arg2, arg3);
@@ -325,9 +320,17 @@ namespace ExtensionScript
 
                 return true;
             });
+
+            Thread(OnPlayerFire(player), (entRef, notify, paras) =>
+            {
+                if (notify == "disconnect" && player.EntRef == entRef)
+                    return false;
+
+                return true;
+            });
         }
 
-        /// <summary>function <c>OnPlayerVoteYes</c> Co-routines function.</summary>
+        /// <summary>function <c>OnPlayerVoteYes</c> Coroutine function. Triggers when the player "votes yes".</summary>
         private static IEnumerator OnPlayerVoteYes(Entity player)
         {
             while (true)
@@ -337,7 +340,20 @@ namespace ExtensionScript
             }
         }
 
-        /// <summary>function <c>OnPlayerSpawned</c> Co-routines function.</summary>
+        /// <summary>function <c>OnPlayerFire</c> Coroutine function. Triggers when the player fires their weapon.</summary>
+        private static IEnumerator OnPlayerFire(Entity player)
+        {
+            while (true)
+            {
+                yield return player.WaitTill("weapon_fired");
+                if (player.MyGetField("infiniteammo").As<int>() == 1)
+                    player.MyGiveMaxAmmo(false);
+                if (player.MyGetField("norecoil").As<int>() == 1)
+                    player.Player_RecoilScaleOff();
+            }
+        }
+
+        /// <summary>function <c>OnPlayerSpawned</c> Coroutine function. Triggers when the player spawns.</summary>
         private static IEnumerator OnPlayerSpawned(Entity player)
         {
             while (true)
