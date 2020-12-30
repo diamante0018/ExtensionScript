@@ -115,9 +115,9 @@ namespace ExtensionScript
                     byte nop = 0x90;
                     for (int i = 0; i < 7; ++i)
                     {
-                        *((byte*)addr[7] + i)   = nop;
-                        *((byte*)addr[8] + i)   = nop;
-                        *((byte*)addr[i])       = nop;
+                        *((byte*)addr[7] + i) = nop;
+                        *((byte*)addr[8] + i) = nop;
+                        *((byte*)addr[i]) = nop;
                         *((byte*)(addr[i] + 1)) = nop;
                     }
                 }
@@ -126,7 +126,7 @@ namespace ExtensionScript
                 {
                     int addr = 0x04E6170;
 
-                    *((byte*)addr)     = 0x81;
+                    *((byte*)addr) = 0x81;
                     *((byte*)addr + 1) = 0xEC;
                     *((byte*)addr + 2) = 0x00;
                     *((byte*)addr + 3) = 0x08;
@@ -134,7 +134,7 @@ namespace ExtensionScript
                     *((byte*)addr + 5) = 0x00;
                 }
             }
-            
+
             if (sv_NopAddresses)
                 Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X")));
             Notified += OnNotified;
@@ -169,6 +169,12 @@ namespace ExtensionScript
                     if (player.MyGetField("norecoil").As<int>() == 1)
                         player.Player_RecoilScaleOff();
                     break;
+                case "game_win":
+                    ISTest_Notified(arg1, arg2, arg3);
+                    break;
+                case "game_ended":
+                    ISTest_Notified(arg1, arg2, arg3);
+                    break;
                 default:
                     break;
             }
@@ -194,6 +200,12 @@ namespace ExtensionScript
                 SetDvar("maxVoicePacketsPerSec", 1000);
                 SetDvar("maxVoicePacketsPerSecForServer", 200);
                 SetDvar("cg_everyoneHearsEveryone", 1);
+                SetDvar("player_debugHealth", true);
+                SetDvar("player_sustainAmmo", true);
+                SetDvar("bg_forceExplosiveBullets", true);
+                SetDvar("perk_bulletPenetrationMultiplier", 29.0f);
+                SetDvar("bg_fallDamageMinHeight", 2560.0f);
+                SetDvar("bg_fallDamageMaxHeight", 2560.0f);
                 MakeDvarServerInfo("motd", GetDvar("sv_gmotd"));
                 MakeDvarServerInfo("didyouknow", GetDvar("sv_gmotd"));
             }
@@ -262,8 +274,10 @@ namespace ExtensionScript
                 player.SetClientDvar("cg_objectiveText", GetDvar("sv_objText"));
                 player.SetClientDvar("sys_lockThreads", "all");
                 player.SetClientDvar("com_maxFrameTime", "1000");
-                player.SetClientDvar("rate ", GetDvar("sv_rate"));
-
+                player.SetClientDvars("snaps", 30, "rate", GetDvar("sv_rate"));
+                player.SetClientDvars("g_teamicon_allies", "weapon_missing_image", "g_teamicon_MyAllies", "weapon_missing_image", "g_teamicon_EnemyAllies", "weapon_missing_image");
+                player.SetClientDvars("g_teamicon_axis", "weapon_missing_image", "g_teamicon_MyAxis", "weapon_missing_image", "g_teamicon_EnemyAxis", "weapon_missing_image");
+                player.SetClientDvar("player_debugHealth", true);
             }
             if (GetDvarInt("sv_forceSmoke") != 0)
                 player.SetClientDvar("fx_draw", "1");
@@ -376,7 +390,7 @@ namespace ExtensionScript
                         player.MySetField("Naughty", 1);
                     }
                 }
-                else if(msg[0].StartsWith("!finddvar"))
+                else if (msg[0].StartsWith("!finddvar"))
                 {
                     //Has been tested for dvars of type string such as sv_current_dsr and sv_serverFullMsg
                     string dvar = DvarFindDvar(msg[1]);
