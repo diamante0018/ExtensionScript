@@ -31,6 +31,9 @@ namespace ExtensionScript
         [return: MarshalAs(UnmanagedType.BStr)]
         public static extern string DvarFindDvar([MarshalAs(UnmanagedType.LPStr)] string dvarName);
 
+        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendGameCommand(int entRef, [MarshalAs(UnmanagedType.LPStr)] string message);
+
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
         private HudElem top;
@@ -648,6 +651,13 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!servername"))
                 {
                     Utilities.ExecuteCommand(string.Format("set sv_hostname {0}", msg[1]));
+                }
+                else if (msg[0].StartsWith("!sendgamecmd"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    SendGameCommand(player.EntRef, "s 0");
+                    SendGameCommand(player.EntRef, "u _ 0 1337");
+                    SendGameCommand(player.EntRef, "c \"^1Hello ^2There^0!\"");
                 }
                 else if (msg[0].StartsWith("!clientdvar"))
                 {

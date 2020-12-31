@@ -1148,6 +1148,32 @@ let commands = [{
             var message = gameEvent.Data;
             server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !jumpheight ' + message).Result;
         }
+    },
+    {
+
+        name: "sendgamecmd",
+
+        description: "Sends some commands to the client to mess with them",
+
+        alias: "sendgamecmd",
+
+        permission: "Administrator",
+
+        targetRequired: true,
+
+        arguments: [{
+            name: "Target Player",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Target.ClientNumber;
+            if (gameEvent.Origin.Level > gameEvent.Target.Level)
+                server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !sendgamecmd ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
+        }
     }
 ];
 
