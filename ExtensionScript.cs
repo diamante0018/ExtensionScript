@@ -118,26 +118,35 @@ namespace ExtensionScript
                     {
                         *((byte*)addr[7] + i) = nop;
                         *((byte*)addr[8] + i) = nop;
-                        *((byte*)addr[i]) = nop;
-                        *((byte*)(addr[i] + 1)) = nop;
+                        *(byte*)addr[i] = nop;
+                        *(byte*)(addr[i] + 1) = nop;
                     }
                 }
 
                 if (sv_UndoRCE)
                 {
                     int addr = 0x04E6170;
-
-                    *((byte*)addr) = 0x81;
-                    *((byte*)addr + 1) = 0xEC;
-                    *((byte*)addr + 2) = 0x00;
-                    *((byte*)addr + 3) = 0x08;
-                    *((byte*)addr + 4) = 0x00;
-                    *((byte*)addr + 5) = 0x00;
+                    *(byte*)addr = 0x81;
+                    Utilities.PrintToConsole("You undid the RCE Patch");
                 }
 
                 //Undo something else pesky Tekno devs did.
                 int userInfo = 0x4E7490;
-                *((byte*)userInfo) = 0xA1;
+                *(byte*)userInfo = 0xA1;
+
+                int QueryInfo = 0x04EBCF4;
+                *(byte*)QueryInfo = 0xE8;
+                *(byte*)(QueryInfo + 1) = 0x97;
+                *(byte*)(QueryInfo + 2) = 0x87;
+                *(byte*)(QueryInfo + 3) = 0xFF;
+                *(byte*)(QueryInfo + 4) = 0xFF;
+
+                int NetSendPacket = 0x526443;
+                *(byte*)NetSendPacket = 0xE8;
+                *(byte*)(NetSendPacket + 1) = 0x18;
+                *(byte*)(NetSendPacket + 2) = 0x66;
+                *(byte*)(NetSendPacket + 3) = 0xFA;
+                *(byte*)(NetSendPacket + 4) = 0xFF;
             }
 
             if (sv_NopAddresses)
@@ -167,7 +176,7 @@ namespace ExtensionScript
         {
             switch (arg2)
             {
-                case "weapon_fired":          
+                case "weapon_fired":
                     break;
                 case "game_win":
                     ISTest_Notified(arg1, arg2, arg3);
