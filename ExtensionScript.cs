@@ -134,6 +134,10 @@ namespace ExtensionScript
                     *((byte*)addr + 4) = 0x00;
                     *((byte*)addr + 5) = 0x00;
                 }
+
+                //Undo something else pesky Tekno devs did.
+                int userInfo = 0x4E7490;
+                *((byte*)userInfo) = 0xA1;
             }
 
             if (sv_NopAddresses)
