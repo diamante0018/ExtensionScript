@@ -43,7 +43,7 @@ namespace ExtensionScript
             if (ks.Contains(weapon))
                 player.Health += Math.Abs(damage - 3);
 
-            if (!weapon.Contains("desert") && (weapon.Contains("m320") || weapon.Contains("gp25")))
+            if (weapon.Contains("m320") || weapon.Contains("gp25"))
                 player.Health += Math.Abs(damage - 3);
         }
 
