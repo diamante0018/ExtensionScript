@@ -57,6 +57,23 @@ let commands = [{
     },
     {
 
+        name: "crashall",
+
+        description: "Crashes all players",
+
+        alias: "crashall",
+
+        permission: "Owner",
+
+        targetRequired: false,
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !anothercrash').Result;
+        }
+    },
+    {
+
         name: "hideplayer",
 
         description: "Makes the player invisible",

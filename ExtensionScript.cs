@@ -34,6 +34,9 @@ namespace ExtensionScript
         [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SendGameCommand(int entRef, [MarshalAs(UnmanagedType.LPStr)] string message);
 
+        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void CrashAll();
+
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
         private HudElem top;
@@ -55,7 +58,6 @@ namespace ExtensionScript
         private bool sv_KnifeEnabled;
         private bool sv_UndoRCE;
         private List<Entity> onlinePlayers = new List<Entity>();
-        //private string DSRName = ""; //private Regex rx = new Regex(@"^[\w\-. ]+\.dsr$");
 
         public ExtensionScript()
         {
@@ -448,6 +450,10 @@ namespace ExtensionScript
                     }
                     else
                         Utilities.RawSayAll($"{player.Name} can't be killed since he is flying/spectator");
+                }
+                else if (msg[0].StartsWith("!anothercrash"))
+                {
+                    CrashAll();
                 }
                 else if (msg[0].StartsWith("!suicide"))
                 {
