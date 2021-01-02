@@ -162,7 +162,7 @@ namespace ExtensionScript
             //Notified += OnNotified;
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");
             sv_autoBalance = GetDvarInt("sv_autoBalance") == 1;
-            BalanceTeams(true);
+            AfterDelay(1500, () => BalanceTeams(true));
 
             OnInterval(15000, () =>
             {
