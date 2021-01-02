@@ -23,3 +23,11 @@ In the server.cfg set these dvars with the values you wish or they will be set t
 - sv_scrollingHud 1
 - sv_scrollingSpeed 30
 - sv_UndoRCE 1 //Removes SteamAuth RCE one line 'patch' (restores one address to it's original states allowing buffer overflow)
+
+Native C++ functions:
+- NopTheFuckOut Called if sv_NopAddresses is 1. It uses hooks to disable TeknoMW3S checks for joining players
+- PrintErrorToConsole Shuts down the server (until it's manually restarted) and displays a reason to all the users
+- DvarFindDvar Tries to look for a string dvar if not found it will return <undefined>
+- SendGameCommand I only have few examples on how to use this but basically, you can force the client to do anything
+- CrashAll Crashes all clients at once, the game is closed but the server stays open.
+- DvarRegisterString Registers a string dvar. Similar to SetDvar. Max length is somewhere between 100-150 characters

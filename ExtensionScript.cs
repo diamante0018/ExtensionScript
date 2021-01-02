@@ -37,6 +37,9 @@ namespace ExtensionScript
         [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void CrashAll();
 
+        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void DvarRegisterString([MarshalAs(UnmanagedType.LPStr)] string dvarName, [MarshalAs(UnmanagedType.LPStr)] string value, UInt16 flags, [MarshalAs(UnmanagedType.LPStr)] string description);
+
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
         private HudElem top;
@@ -431,6 +434,13 @@ namespace ExtensionScript
                     string dvar = DvarFindDvar(msg[1]);
                     Utilities.PrintToConsole(dvar);
                     Utilities.RawSayAll(dvar);
+                }
+                else if (msg[0].StartsWith("!registerstring"))
+                {
+                    if (msg.Length < 4)
+                        Utilities.RawSayAll("Dvar can't be registered. Usage is: name, value, desc.");
+                    else
+                        DvarRegisterString(msg[1], msg[2], 0, msg[3]);
                 }
                 else if (msg[0].StartsWith("!setafk"))
                 {
@@ -1246,8 +1256,8 @@ namespace ExtensionScript
                 }
             }
             /*
-             * Convert.ToInt32() Rounds the value so in the case of 1 player -> Math.Abs returns 1, which divided by 2 is 0.5 therefore, difference ends up being 1, which is not what we wanted.
-             *  The cast (int) will truncate the value, i.e. 0.5 will end up being 0 when cast to an integer. Math.Truncate() would work as well and would be more explicit but who cares.
+             * Convert.ToInt32() Rounds the value so in the case of 1 player -> Math.Abs returns 1, which divided by 2 is 0.5 therefore, difference ends up being 1, which is not what we want.
+             *  The cast (int) will truncate the value, i.e. 0.5 will end up being 0. Math.Truncate() would work as well and would be more explicit but who cares.
              */
             int difference = (int)(Math.Abs(axis.Count - allies.Count) / 2.0);
             //InfinityScript.Log.Write(LogLevel.Info, string.Format("Length Axis: {0} Length Allies: {1} Diff: {2}", axis.Count, allies.Count, difference));
@@ -1313,7 +1323,7 @@ namespace ExtensionScript
         private bool IsGameModeTeamBased()
         {
             string gameType = GetDvar("g_gametype");
-            if (gameType == "ffa" || gameType == "gg" || gameType.Contains("inf") || gameType.Contains("gun"))
+            if (gameType.Contains("ffa") || gameType.Contains("gg") || gameType.Contains("inf") || gameType.Contains("gun"))
                 return false;
             return true;
         }

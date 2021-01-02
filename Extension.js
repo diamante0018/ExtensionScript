@@ -1191,6 +1191,29 @@ let commands = [{
             else
                 gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
+    },
+    {
+
+        name: "registerstring",
+
+        description: "Registers a string dvar using native C++ functions",
+
+        alias: "registerstring",
+
+        permission: "Owner",
+
+        targetRequired: false,
+
+        arguments: [{
+            name: "Message",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !registerstring ' + message).Result;
+        }
     }
 ];
 
