@@ -13,6 +13,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using static InfinityScript.GSCFunctions;
 using static InfinityScript.ThreadScript;
+using static InfinityScript.HudElem;
 
 namespace ExtensionScript
 {
@@ -38,7 +39,7 @@ namespace ExtensionScript
         public static extern void CrashAll();
 
         [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void DvarRegisterString([MarshalAs(UnmanagedType.LPStr)] string dvarName, [MarshalAs(UnmanagedType.LPStr)] string value, UInt16 flags, [MarshalAs(UnmanagedType.LPStr)] string description);
+        public static extern void DvarRegisterString([MarshalAs(UnmanagedType.LPStr)] string dvarName, [MarshalAs(UnmanagedType.LPStr)] string value, [MarshalAs(UnmanagedType.LPStr)] string description);
 
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
@@ -234,28 +235,28 @@ namespace ExtensionScript
             {
                 if (GetDvar("sv_hudTop") != "null")
                 {
-                    top = HudElem.CreateServerFontString(HudElem.Fonts.HudBig, 0.5f);
+                    top = CreateServerFontString(Fonts.HudBig, 0.5f);
                     top.SetPoint("TOPCENTER", "TOPCENTER", 0, 5);
                     top.HideWhenInMenu = true;
                     top.SetText(GetDvar("sv_hudTop"));
                 }
                 if (GetDvar("sv_hudRight") != "null")
                 {
-                    right = HudElem.CreateServerFontString(HudElem.Fonts.HudBig, 0.5f);
+                    right = CreateServerFontString(Fonts.HudBig, 0.5f);
                     right.SetPoint("TOPRIGHT", "TOPRIGHT", -5, 5);
                     right.HideWhenInMenu = true;
                     right.SetText(GetDvar("sv_hudRight"));
                 }
                 if (GetDvar("sv_hudRight") != "null")
                 {
-                    left = HudElem.CreateServerFontString(HudElem.Fonts.HudBig, 0.5f);
+                    left = CreateServerFontString(Fonts.HudBig, 0.5f);
                     left.SetPoint("TOPLEFT", "TOPLEFT", 6, 105);
                     left.HideWhenInMenu = true;
                     left.SetText(GetDvar("sv_hudLeft"));
                 }
                 if ((GetDvar("sv_hudBottom") != "null") && (GetDvarInt("sv_scrollingHud") != 0) && (GetDvarInt("sv_scrollingSpeed") != 0))
                 {
-                    bottom = HudElem.CreateServerFontString(HudElem.Fonts.HudBig, 0.4f);
+                    bottom = CreateServerFontString(Fonts.HudBig, 0.4f);
                     bottom.SetPoint("CENTER", "BOTTOM", 0, -5);
                     bottom.Foreground = true;
                     bottom.HideWhenInMenu = true;
@@ -271,7 +272,7 @@ namespace ExtensionScript
                 }
                 else if (GetDvar("sv_hudBottom") != "null")
                 {
-                    bottom = HudElem.CreateServerFontString(HudElem.Fonts.HudBig, 0.5f);
+                    bottom = CreateServerFontString(Fonts.HudBig, 0.5f);
                     bottom.SetPoint("BOTTOMCENTER", "BOTTOMCENTER", 0, -5);
                     bottom.HideWhenInMenu = true;
                     bottom.SetText(GetDvar("sv_hudBottom"));
@@ -300,12 +301,12 @@ namespace ExtensionScript
                 player.SetClientDvar("fx_draw", "1");
 
             //Killstreak Related Code
-            var killstreakHud = HudElem.CreateFontString(player, HudElem.Fonts.HudSmall, 0.8f);
+            var killstreakHud = CreateFontString(player, Fonts.HudSmall, 0.8f);
             killstreakHud?.SetPoint("TOP", "TOP", -9, 2);
             killstreakHud?.SetText("^5Killstreak: ");
             killstreakHud.HideWhenInMenu = true;
 
-            var noKills = HudElem.CreateFontString(player, HudElem.Fonts.HudSmall, 0.8f);
+            var noKills = CreateFontString(player, Fonts.HudSmall, 0.8f);
             noKills?.SetPoint("TOP", "TOP", 39, 2);
             noKills?.SetText("^20");
             noKills.HideWhenInMenu = true;
@@ -314,7 +315,7 @@ namespace ExtensionScript
             NoKillsHudElem[GetEntityNumber(player)] = noKills;
 
             //ID Related Code
-            HudElem elem = HudElem.CreateFontString(player, HudElem.Fonts.HudBig, 0.5f);
+            HudElem elem = CreateFontString(player, Fonts.HudBig, 0.5f);
             elem.SetPoint("BOTTOMCENTER", "BOTTOMCENTER", 0, -5);
             elem.SetText(string.Format("^0| ^5NAME ^0| ^7{0} ^0| ^5ID ^0| ^7{1}", player.Name, player.EntRef));
             elem.HideWhenInMenu = true;
@@ -437,10 +438,18 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!registerstring"))
                 {
-                    if (msg.Length < 4)
-                        Utilities.RawSayAll("Dvar can't be registered. Usage is: name, value, desc.");
+                    if (msg.Length < 3)
+                    {
+                        Utilities.RawSayAll("Dvar can't be registered. Usage is: name, value, desc");
+                        Utilities.PrintToConsole("Dvar can't be registered. Usage is: name, value, desc");
+                    }
                     else
-                        DvarRegisterString(msg[1], msg[2], 0, msg[3]);
+                    {
+                        string dvarValue = "";
+                        for (int i = 2; i < msg.Length; i++)
+                            dvarValue = dvarValue + " " + msg[i];
+                        DvarRegisterString(msg[1], dvarValue, "Insert Sample Text");
+                    }
                 }
                 else if (msg[0].StartsWith("!setafk"))
                 {
