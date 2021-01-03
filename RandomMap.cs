@@ -2,10 +2,10 @@
 
 namespace ExtensionScript
 {
-    class RandomMap
+    public class RandomMap
     {
         private Random rng;
-        public string[] AllMapList = {"mp_alpha", "mp_bootleg", "mp_bravo", "mp_carbon", "mp_dome",
+        private string[] AllMapList = {"mp_alpha", "mp_bootleg", "mp_bravo", "mp_carbon", "mp_dome",
         "mp_exchange", "mp_hardhat", "mp_interchange", "mp_lambeth", "mp_mogadishu", "mp_paris", "mp_plaza2",
         "mp_radar", "mp_seatown", "mp_underground", "mp_village", "mp_italy", "mp_park", "mp_morningwood", "mp_overwatch", "mp_aground_ss",
         "mp_courtyard_ss", "mp_cement", "mp_hillside_ss", "mp_meteora", "mp_qadeem", "mp_restrepo_ss", "mp_terminal_cls", "mp_crosswalk_ss",

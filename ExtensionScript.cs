@@ -12,8 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using static InfinityScript.GSCFunctions;
-using static InfinityScript.ThreadScript;
 using static InfinityScript.HudElem;
+using static InfinityScript.ThreadScript;
 
 namespace ExtensionScript
 {
@@ -433,8 +433,8 @@ namespace ExtensionScript
                 {
                     //Has been tested for dvars of type string such as sv_current_dsr and sv_serverFullMsg
                     string dvar = DvarFindDvar(msg[1]);
-                    Utilities.PrintToConsole(dvar);
-                    Utilities.RawSayAll(dvar);
+                    Utilities.PrintToConsole($"Dvar current value: {dvar}");
+                    Utilities.RawSayAll($"Dvar current value: {dvar}");
                 }
                 else if (msg[0].StartsWith("!registerstring"))
                 {
@@ -445,9 +445,7 @@ namespace ExtensionScript
                     }
                     else
                     {
-                        string dvarValue = "";
-                        for (int i = 2; i < msg.Length; i++)
-                            dvarValue = dvarValue + " " + msg[i];
+                        string dvarValue = string.Join(" ", msg.Skip(2));
                         DvarRegisterString(msg[1], dvarValue, "Insert Sample Text");
                     }
                 }
@@ -886,23 +884,17 @@ namespace ExtensionScript
                     if (msg.Length < 2)
                         return;
 
-                    string yell = "";
-                    for (int i = 1; i < msg.Length; i++)
-                        yell = yell + " " + msg[i];
-
-                    IPrintLnBold(yell);
+                    string text = string.Join(" ", msg.Skip(1));
+                    IPrintLnBold(text);
                 }
                 else if (msg[0].StartsWith("!tell"))
                 {
                     if (msg.Length < 2)
                         return;
 
-                    string tell = "";
-                    for (int i = 1; i < msg.Length; i++)
-                        tell = tell + " " + msg[i];
-
+                    string text = string.Join(" ", msg.Skip(1));
                     foreach (Entity player in Players)
-                        player.TellPlayer(tell);
+                        player.TellPlayer(text);
                 }
                 else if (msg[0].StartsWith("!save"))
                 {
@@ -1007,11 +999,8 @@ namespace ExtensionScript
                     if (msg.Length < 2)
                         return;
 
-                    string exitMessage = "";
-                    for (int i = 1; i < msg.Length; i++)
-                        exitMessage = exitMessage + " " + msg[i];
-
-                    PrintErrorToConsole(exitMessage);
+                    string text = string.Join(" ", msg.Skip(1));
+                    PrintErrorToConsole(text);
                 }
                 else if (msg[0].StartsWith("!juggsuit"))
                 {
