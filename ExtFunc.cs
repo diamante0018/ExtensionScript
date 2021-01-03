@@ -79,7 +79,7 @@ namespace ExtensionScript
         /// <summary>function <c>SetName</c> Sets the nickname of the player. Same conditions of SetClanTag apply.</summary>
         public static unsafe string SetName(this Entity player, string name)
         {
-            if (player == null || !player.IsPlayer || name.Length > 15)
+            if (player == null || !player.IsPlayer)
                 return null;
 
             for (int i = 0; i < name.Length; i++)

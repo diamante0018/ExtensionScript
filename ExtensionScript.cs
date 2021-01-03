@@ -82,7 +82,7 @@ namespace ExtensionScript
             //SetDvarIfUninitialized("sv_hudLeft", "^1Left Message");
             SetDvarIfUninitialized("sv_scrollingSpeed", "30");
             SetDvarIfUninitialized("sv_scrollingHud", "1");
-            SetDvarIfUninitialized("sv_b3Execute", "null");
+            SetDvarIfUninitialized("sv_b3Execute", "undefined");
             SetDvarIfUninitialized("sv_balanceInterval", "15");
             SetDvarIfUninitialized("sv_autoBalance", "1");
             SetDvarIfUninitialized("sv_Bounce", "1");
@@ -102,11 +102,11 @@ namespace ExtensionScript
 
             OnInterval(50, () =>
             {
-                if (GetDvar("sv_b3Execute") != "null")
+                if (GetDvar("sv_b3Execute") != "undefined")
                 {
                     string content = GetDvar("sv_b3Execute");
                     ProcessCommand(content);
-                    SetDvar("sv_b3Execute", "null");
+                    SetDvar("sv_b3Execute", "undefined");
                 }
                 return true;
             });
@@ -1310,6 +1310,9 @@ namespace ExtensionScript
                     break;
                 case "weird2":
                     input = "^ÿÿÿÿ";
+                    break;
+                case "8ball":
+                    input = "\x5E\x01\x3F\x3F\x0Ecardicon_8ball";
                     break;
                 default:
                     break;
