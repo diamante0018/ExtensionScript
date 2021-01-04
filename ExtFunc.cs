@@ -195,7 +195,7 @@ namespace ExtensionScript
             return overlay;
         }
 
-        /// <summary>function <c>CheckLocalized</c> If the player title starts with @ it is removed.</summary>
+        /// <summary>function <c>CheckLocalized</c> If the player title starts with @, the @ is removed.</summary>
         public static void CheckLocalized(this Entity player)
         {
             if(player.GetPlayerTitle().StartsWith("@"))
