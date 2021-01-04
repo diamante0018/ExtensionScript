@@ -89,6 +89,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_NopAddresses", "0");
             SetDvarIfUninitialized("sv_KnifeEnabled", "0");
             SetDvarIfUninitialized("sv_UndoRCE", "1");
+            SetDvarIfUninitialized("sv_LocalizedStr", "1");
             SetDvarIfUninitialized("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
 
             //Loading Server Dvars.
@@ -385,6 +386,9 @@ namespace ExtensionScript
                 player.MyGiveMaxAmmo(false);
                 player.DisableGrenadeTouchDamage();
 
+                if (GetDvarInt("sv_LocalizedStr") == 0)
+                    player.CheckLocalized();                                   
+                
                 if (player.MyGetField("wallhack").As<int>() == 1)
                     player.ThermalVisionFOFOverlayOn();
 
