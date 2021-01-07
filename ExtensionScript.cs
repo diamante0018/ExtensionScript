@@ -386,9 +386,9 @@ namespace ExtensionScript
                 player.MyGiveMaxAmmo(false);
                 player.DisableGrenadeTouchDamage();
 
-                if (GetDvarInt("sv_LocalizedStr") == 0)
-                    player.CheckLocalized();                                   
-                
+                if (GetDvarInt("sv_LocalizedStr") != 1)
+                    player.CheckLocalized();
+
                 if (player.MyGetField("wallhack").As<int>() == 1)
                     player.ThermalVisionFOFOverlayOn();
 
@@ -408,7 +408,7 @@ namespace ExtensionScript
 
                 if (player.MyGetField("Naughty").As<int>() == 1)
                 {
-                    Utilities.RawSayTo(player, "You wanted ^6God ^1Mode ^7now you suffer");
+                    Utilities.RawSayTo(player, "You wanted ^6God ^1Mode^0? ^7Now you suffer");
                     SetDvar("sv_b3Execute", $"!explode {player.EntRef}");
                     player.MySetField("Naughty", 0);
                 }
