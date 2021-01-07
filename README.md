@@ -12,7 +12,7 @@ In the server.cfg set these dvars with the values you wish or they will be set t
 - sv_balanceInterval 15
 - sv_autoBalance 1
 - sv_Bounce 1
-- sv_NopAddresses 0 //Disable if using Wine to run your server
+- sv_NopAddresses 0 //If set to 1 it will disable TeknoMW3S.dll checks. Disable if you are using Wine to run your server
 - sv_KnifeEnabled
 - sv_hideCommands 1 //Hides messages that start with ! or @
 - sv_gmotd ^:Welcome to ^4DIA ^:servers. https://discord.com/invite/
@@ -23,6 +23,7 @@ In the server.cfg set these dvars with the values you wish or they will be set t
 - sv_scrollingHud 1
 - sv_scrollingSpeed 30
 - sv_UndoRCE 1 //Removes SteamAuth RCE one line 'patch' (restores one address to it's original states allowing buffer overflow)
+- sv_LocalizedStr 1 //If set to 0 it will disable localized strings placed in the player card
 
 Native C++ functions:
 - NopTheFuckOut Called if sv_NopAddresses is 1. It uses hooks to disable TeknoMW3S checks for joining players
