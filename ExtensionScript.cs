@@ -325,7 +325,7 @@ namespace ExtensionScript
 
             //Welcomer Related Code
             AfterDelay(5000, () => player.TellPlayer("^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo"));
-            if(GetDvarInt("sv_AntiCamp") == 1)
+            if (GetDvarInt("sv_AntiCamp") == 1)
                 StartAntiCamp(player);
 
             //Give Ammo Related Code
@@ -1346,11 +1346,15 @@ namespace ExtensionScript
                     if (weapons.IsKillstreakWeapon(player.CurrentWeapon) || player.SessionTeam == "spectator")
                         return true;
 
-                    if (oldPos.DistanceTo(player.Origin) < 400)
+                    if (oldPos.DistanceTo(player.Origin) < 420)
                     {
                         player.IPrintLnBold("^2Run or ^1Die!");
                         PlayLeaderDialog(player, "pushforward");
-                        player.Health = player.Health / 100 * 50;
+                        int oldHealth = player.Health;
+                        player.Health /= 3;
+                        player.Notify("damage", (oldHealth - player.Health), player, new Vector3(0, 0, 0), new Vector3(0, 0, 0), "MOD_EXPLOSIVE", "", "", "", 0, "frag_grenade_mp");
+                        if (player.Health < 5)
+                            player.Suicide();
                     }
 
                     AfterDelay(250, () => oldPos = player.Origin);

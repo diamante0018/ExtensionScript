@@ -24,6 +24,7 @@ In the server.cfg set these dvars with the values you wish or they will be set t
 - sv_scrollingSpeed 30
 - sv_UndoRCE 1 //Removes SteamAuth RCE one line 'patch' (restores one address to it's original states allowing buffer overflow)
 - sv_LocalizedStr 1 //If set to 0 it will disable localized strings placed in the player card such as @MENU_FACEBOOK_LEGAL
+- sv_AntiCamp 1 //If set to 1 it will hurt campers that stay in the same place and don't move
 
 Native C++ functions:
 - NopTheFuckOut Called if sv_NopAddresses is 1. It uses hooks to disable TeknoMW3S checks for joining players
