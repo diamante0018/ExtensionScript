@@ -9,7 +9,7 @@ using InfinityScript;
 
 namespace ExtensionScript
 {
-    class Kicker
+    public class Kicker
     {
         /// <summary>function <c>Reset</c> Resets the stats of the player.</summary>
         public void Reset(Entity player)

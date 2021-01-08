@@ -90,6 +90,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_KnifeEnabled", "0");
             SetDvarIfUninitialized("sv_UndoRCE", "1");
             SetDvarIfUninitialized("sv_LocalizedStr", "1");
+            SetDvarIfUninitialized("sv_AntiCamp", "1");
             SetDvarIfUninitialized("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
 
             //Loading Server Dvars.
@@ -324,6 +325,8 @@ namespace ExtensionScript
 
             //Welcomer Related Code
             AfterDelay(5000, () => player.TellPlayer("^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo"));
+            if(GetDvarInt("sv_AntiCamp") == 1)
+                StartAntiCamp(player);
 
             //Give Ammo Related Code
             player.NotifyOnPlayerCommand("giveammo", "vote yes"); ;
@@ -1108,14 +1111,11 @@ namespace ExtensionScript
 
         private List<Entity> CleanOnlinePlayerList(Entity aimbotter)
         {
-            List<Entity> cleanedList = onlinePlayers;
-            cleanedList.Remove(aimbotter);
-            foreach (Entity player in cleanedList)
+            List<Entity> cleanedList = new List<Entity>();
+            foreach (Entity player in onlinePlayers)
             {
-                if (player.SessionTeam == "spectator")
-                    cleanedList.Remove(player);
-                if (player.Equals(aimbotter) || !player.IsPlayer)
-                    cleanedList.Remove(player);
+                if (player.SessionTeam != "spectator" && !player.Equals(aimbotter) && player.IsPlayer)
+                    cleanedList.Add(player);
             }
             return cleanedList;
         }
@@ -1332,5 +1332,47 @@ namespace ExtensionScript
                 return false;
             return true;
         }
+
+        private void StartAntiCamp(Entity player)
+        {
+            Vector3 oldPos = player.Origin;
+
+            AfterDelay(15000, () =>
+            {
+                OnInterval(7000, () =>
+                {
+                    Vector3 newPos = player.Origin;
+
+                    if (weapons.IsKillstreakWeapon(player.CurrentWeapon) || player.SessionTeam == "spectator")
+                        return true;
+
+                    if (oldPos.DistanceTo(player.Origin) < 400)
+                    {
+                        player.IPrintLnBold("^2Run or ^1Die!");
+                        PlayLeaderDialog(player, "pushforward");
+                        player.Health = player.Health / 100 * 50;
+                    }
+
+                    AfterDelay(250, () => oldPos = player.Origin);
+
+                    return player.IsPlayer;
+                });
+            });
+        }
+
+        /// <summary>
+        /// Play leader dialog for player
+        /// </summary>
+        /// <param name="player">Player</param>
+        /// <param name="sound">Sound</param>
+        public static void PlayLeaderDialog(Entity player, string sound)
+        {
+            if (player.SessionTeam == "allies")
+                player.PlayLocalSound(GetTeamVoicePrefix(GetMapCustom("allieschar")) + "1mc_" + sound);
+            else
+                player.PlayLocalSound(GetTeamVoicePrefix(GetMapCustom("axischar")) + "1mc_" + sound);
+        }
+
+        public static string GetTeamVoicePrefix(string teamRef) => TableLookup("mp/factionTable.csv", 0, teamRef, 7);
     }
 }

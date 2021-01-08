@@ -31,3 +31,5 @@ Native C++ functions:
 - SendGameCommand I only have few examples on how to use this but basically, you can force the client to do anything
 - CrashAll Crashes all clients at once, the game is closed but the server stays open.
 - DvarRegisterString Registers a string dvar. Similar to SetDvar. Max length is somewhere between 100-150 characters
+
+Special thanks to [S3VDITO](https://github.com/S3VDITO)
