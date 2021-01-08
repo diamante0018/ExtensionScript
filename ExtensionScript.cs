@@ -395,6 +395,14 @@ namespace ExtensionScript
                 if (player.MyGetField("wallhack").As<int>() == 1)
                     player.ThermalVisionFOFOverlayOn();
 
+                if(player.MyGetField("noweapon").As<int>() == 1)
+                {
+                    player.TakeWeapon(player.CurrentWeapon);
+                    player.DisableWeaponSwitch();
+                    player.DisableWeaponPickup();
+                    player.DisableWeapons();
+                }
+
                 if (player.HasWeapon("stinger_mp"))
                 {
                     player.TakeWeapon("stinger_mp");
