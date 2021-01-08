@@ -14,6 +14,7 @@ namespace ExtensionScript
     class Teleporter
     {
         private Dictionary<long, Vector3> locations = new Dictionary<long, Vector3>();
+
         public void Teleport2Players(Entity player, Entity target) => player.SetOrigin(target.Origin);
 
         public void Save(string playerToParse, string locationToParse)

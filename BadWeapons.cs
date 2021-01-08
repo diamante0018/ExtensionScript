@@ -244,6 +244,7 @@ namespace ExtensionScript
                 Utilities.PrintToConsole(ex.ToString());
             }
         }
+
         public bool IsKillstreakWeapon(string weapon) => weapon.Contains("ac130") || weapon.Contains("remote") || weapon.Contains("minigun");
 
         public unsafe void DisableKnife() => *KnifeRange = (int)ZeroAddress;
