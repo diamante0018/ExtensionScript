@@ -786,7 +786,26 @@ namespace ExtensionScript
                     }
                     else if (player.MyGetField("aimbot").As<int>() == 0)
                     {
-                        GiveAimBot(player);
+                        GiveAimBot(player, false, true);
+                        player.MySetField("aimbot", 1);
+                        Utilities.RawSayTo(player, "Aimbot is switched on");
+                    }
+                }
+                else if (msg[0].StartsWith("!chaos"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if (!player.MyHasField("aimbot"))
+                    {
+                        player.MySetField("aimbot", 0);
+                    }
+                    if (player.MyGetField("aimbot").As<int>() == 1)
+                    {
+                        player.MySetField("aimbot", 0);
+                        Utilities.RawSayTo(player, "Aimbot is switched off");
+                    }
+                    else if (player.MyGetField("aimbot").As<int>() == 0)
+                    {
+                        GiveAimBot(player, true);
                         player.MySetField("aimbot", 1);
                         Utilities.RawSayTo(player, "Aimbot is switched on");
                     }
@@ -1036,16 +1055,26 @@ namespace ExtensionScript
         }
 
         /// <summary>function <c>GiveAimBot</c> Gives 'aimbot' to the player. The loop that changes the player view calculates with each iteration what is the closest entity to lock on to.</summary>
-        public void GiveAimBot(Entity player)
+        public void GiveAimBot(Entity player, bool chaos = false, bool visible = false)
         {
-            OnInterval(150, () =>
+            OnInterval(120, () =>
             {
                 if (!player.IsPlayer || player.MyGetField("aimbot").As<int>() != 1)
                     return false;
 
-                Entity[] victims = SortByDistance(CleanOnlinePlayerList(player).ToArray(), player);
+                Entity[] victims = SortByDistance(CleanOnlinePlayerList(player, visible).ToArray(), player);
                 if (victims.Length > 0)
                     player.SetPlayerAngles(VectorToAngles(victims[0].GetEye() - player.GetEye()));
+                if (chaos)
+                {
+                    AfterDelay(115, () =>
+                    {
+                        if (victims[0].IsAlive)
+                        {
+                            MagicBullet(player.CurrentWeapon, victims[0].GetTagOrigin("j_mainroot") + new Vector3(0f, 0f, 50f), victims[0].GetTagOrigin("j_mainroot"), player);
+                        }
+                    });
+                }
                 return true;
             });
         }
@@ -1109,13 +1138,21 @@ namespace ExtensionScript
             }
         }
 
-        private List<Entity> CleanOnlinePlayerList(Entity aimbotter)
+        private List<Entity> CleanOnlinePlayerList(Entity aimbotter, bool visible = false)
         {
             List<Entity> cleanedList = new List<Entity>();
             foreach (Entity player in onlinePlayers)
             {
                 if (player.SessionTeam != "spectator" && !player.Equals(aimbotter) && player.IsPlayer)
-                    cleanedList.Add(player);
+                {
+                    if (visible)
+                    {
+                        if (SightTracePassed(aimbotter.GetTagOrigin("tag_eye"), player.GetTagOrigin("j_head"), false, aimbotter))
+                            cleanedList.Add(player);
+                    }
+                    else
+                        cleanedList.Add(player);
+                }
             }
             return cleanedList;
         }

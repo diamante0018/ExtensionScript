@@ -843,6 +843,25 @@ let commands = [{
     },
     {
 
+        name: "chaos",
+
+        description: "Disables/Enables chaos Aimbot",
+
+        alias: "chaos",
+
+        permission: "SeniorAdmin",
+
+        targetRequired: false,
+
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !chaos ' + cid).Result;
+        }
+    },
+    {
+
         name: "falldamage",
 
         description: "Disables/Enables falldamage",
