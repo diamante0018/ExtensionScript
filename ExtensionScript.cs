@@ -395,13 +395,8 @@ namespace ExtensionScript
                 if (player.MyGetField("wallhack").As<int>() == 1)
                     player.ThermalVisionFOFOverlayOn();
 
-                if(player.MyGetField("noweapon").As<int>() == 1)
-                {
-                    player.TakeWeapon(player.CurrentWeapon);
-                    player.DisableWeaponSwitch();
-                    player.DisableWeaponPickup();
-                    player.DisableWeapons();
-                }
+                if (player.MyGetField("noweapon").As<int>() == 1)
+                    player.NoWeaponEnable();
 
                 if (player.HasWeapon("stinger_mp"))
                 {
@@ -1011,19 +1006,13 @@ namespace ExtensionScript
                     }
                     if (player.MyGetField("noweapon").As<int>() == 1)
                     {
-                        player.EnableWeaponSwitch();
-                        player.EnableWeaponPickup();
-                        player.EnableWeapons();
-                        player.GiveWeapon("rpg_mp");
+                        player.NoWeaponDisable();
                         player.MySetField("noweapon", 0);
                         Utilities.RawSayAll($"{player.Name} can fight back now");
                     }
                     else if (player.MyGetField("noweapon").As<int>() == 0)
                     {
-                        player.TakeWeapon(player.CurrentWeapon);
-                        player.DisableWeaponSwitch();
-                        player.DisableWeaponPickup();
-                        player.DisableWeapons();
+                        player.NoWeaponEnable();
                         player.MySetField("noweapon", 1);
                         Utilities.RawSayAll($"{player.Name} weapons have been taken away from them");
                     }

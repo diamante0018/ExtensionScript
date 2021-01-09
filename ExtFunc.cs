@@ -201,5 +201,24 @@ namespace ExtensionScript
             if (player.GetPlayerTitle().StartsWith("@"))
                 player.SetPlayerTitle(player.GetPlayerTitle().Substring(1));
         }
+
+        /// <summary>function <c>NoWeaponEnable</c> Takes away all weapons from the player and disables weapon pickup.</summary>
+        public static void NoWeaponEnable(this Entity player)
+        {
+            player.TakeAllWeapons();
+            player.DisableWeaponSwitch();
+            player.DisableWeaponPickup();
+            player.DisableWeapons();
+        }
+
+        /// <summary>function <c>NoWeaponDisable</c> Restores player's ability to pickup weapons and gives him a USP45.</summary>
+        public static void NoWeaponDisable(this Entity player)
+        {
+            player.EnableWeaponSwitch();
+            player.EnableWeaponPickup();
+            player.EnableWeapons();
+            player.GiveWeapon("iw5_usp45_mp");
+            player.SwitchToWeaponImmediate("iw5_usp45_mp");
+        }
     }
 }
