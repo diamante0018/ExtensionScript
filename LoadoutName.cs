@@ -8,12 +8,13 @@
 using InfinityScript;
 using System;
 using System.Linq;
+using static InfinityScript.GSCFunctions;
 
 namespace ExtensionScript
 {
     class LoadoutName
     {
-        private static Random random = new Random();
+        private static Random random = new Random(GetTime());
         private Entity player;
         public LoadoutName(Entity player, bool isRandom = true)
         {

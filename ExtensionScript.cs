@@ -52,7 +52,7 @@ namespace ExtensionScript
         private Kicker proKicker = new Kicker();
         private Teleporter teleport = new Teleporter();
         private BadWeapons weapons = new BadWeapons();
-        private RandomMap map = new RandomMap();
+        private RandomMap map;
         private LoadoutName load;
         private bool fallDamage = true;
         private int sv_balanceInterval;
@@ -563,6 +563,7 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!randommap"))
                 {
+                    map = new RandomMap();
                     Utilities.ExecuteCommand($"map {map.GetRandomMap()}");
                 }
                 else if (msg[0].StartsWith("!ac130"))
