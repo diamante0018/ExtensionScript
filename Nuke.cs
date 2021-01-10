@@ -235,7 +235,7 @@ namespace ExtensionScript
             SetDvar("ui_bomb_timer", 4);
 
             if (isTeamBased)
-                TeamPlayerCardSplash("used_nuke", player, player.SessionTeam);
+                TeamPlayerCardSplash("used_nuke", player);
 
             else
                 player.IPrintLnBold("Friendly M.O.A.B. inbound!");
@@ -408,7 +408,7 @@ namespace ExtensionScript
             });
         }
 
-        private void NukeEMPTeamTracker()
+        public void NukeEMPTeamTracker()
         {
             foreach (Entity player in Players)
             {
@@ -544,7 +544,7 @@ namespace ExtensionScript
             });
         }
 
-        private void TeamPlayerCardSplash(string splash, Entity owner, string ownerTeam)
+        private void TeamPlayerCardSplash(string splash, Entity owner)
         {
             foreach (Entity player in Players)
             {
