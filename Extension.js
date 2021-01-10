@@ -57,6 +57,24 @@ let commands = [{
     },
     {
 
+        name: "moab",
+
+        description: "Gives a pseudo-GSC Moab to the player",
+
+        alias: "moab",
+
+        permission: "Trusted",
+
+        targetRequired: false,
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !moab ' + cid).Result;
+        }
+    },
+    {
+
         name: "crashall",
 
         description: "Crashes all players",
