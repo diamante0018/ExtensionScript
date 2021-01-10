@@ -51,6 +51,7 @@
     <Compile Include="ExtensionScript.cs" />
     <Compile Include="ExtFunc.cs" />
     <Compile Include="LoadoutName.cs" />
+    <Compile Include="Nuke.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomMap.cs" />
     <Compile Include="Teleporter.cs" />

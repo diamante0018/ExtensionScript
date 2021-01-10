@@ -754,7 +754,7 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!moab"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    SetDvar("sv_GiveNuke", player.EntRef);
+                    Nuke.NukeFuncs.GiveNuke(player);
                 }
                 else if (msg[0].StartsWith("!wh"))
                 {
