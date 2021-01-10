@@ -1,6 +1,6 @@
 ﻿// ==================== ExtensionScript ===================
 // Admin Manager via Rcon. It is recommended you
-// use this script with IW4M 
+// Use this script with IW4M 
 // Project: https://github.com/diamante0018/ExtensionScript
 // Author: Diavolo (https://github.com/diamante0018)
 // License: GNU GPL v3.0
@@ -11,10 +11,11 @@ using System.Collections.Generic;
 
 namespace ExtensionScript
 {
-    class BadWeapons
+    public class BadWeapons
     {
         private HashSet<string> weapons;
         private HashSet<string> ks;
+        private HashSet<string> nukeWeapons;
         private int DefaultKnifeAddress;
         private unsafe int* KnifeRange;
         private unsafe int* ZeroAddress;
@@ -23,6 +24,7 @@ namespace ExtensionScript
         {
             weapons = Constructor();
             ks = Constructor2();
+            nukeWeapons = Constructor3();
             SetupKnife();
         }
 
@@ -94,6 +96,51 @@ namespace ExtensionScript
             };
             return weapons;
         }
+
+        private HashSet<string> Constructor3()
+        {
+            HashSet<string> weapons = new HashSet<string>
+            {
+                "cobra_player_minigun_mp",
+                "artillery_mp",
+                "stealth_bomb_mp",
+                "pavelow_minigun_mp",
+                "sentry_minigun_mp",
+                "harrier_20mm_mp",
+                "ac130_25mm_mp",
+                "ac130_40mm_mp",
+                "ac130_105mm_mp",
+                "remotemissile_projectile_mp",
+                "cobra_20mm_mp",
+                "nuke_mp",
+                "apache_minigun_mp",
+                "littlebird_guard_minigun_mp",
+                "uav_strike_marker_mp",
+                "osprey_minigun_mp",
+                "strike_marker_mp",
+                "a10_30mm_mp",
+                "manned_minigun_turret_mp",
+                "manned_gl_turret_mp",
+                "airdrop_trap_explosive_mp",
+                "uav_strike_projectile_mp",
+                "remote_mortar_missile_mp",
+                "manned_littlebird_sniper_mp",
+                "iw5_m60jugg_mp",
+                "iw5_mp412jugg_mp",
+                "iw5_riotshieldjugg_mp",
+                "iw5_usp45jugg_mp",
+                "remote_turret_mp",
+                "osprey_player_minigun_mp",
+                "deployable_vest_marker_mp",
+                "ugv_turret_mp",
+                "ugv_gl_turret_mp" ,
+                "remote_tank_projectile_mp",
+                "uav_remote_mp"
+            };
+            return weapons;
+        }
+
+        public bool IsWeaponNukeScriptRelated(string weapon) => nukeWeapons.Contains(weapon);
 
         private unsafe int FindMem(byte?[] search, int num = 1, int start = 16777216, int end = 63963136)
         {

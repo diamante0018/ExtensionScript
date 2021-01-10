@@ -1,6 +1,6 @@
 ﻿// ==================== ExtensionScript ===================
 // Admin Manager via Rcon. It is recommended you
-// use this script with IW4M 
+// Use this script with IW4M 
 // Project: https://github.com/diamante0018/ExtensionScript
 // Author: Diavolo (https://github.com/diamante0018)
 // License: GNU GPL v3.0
@@ -753,8 +753,8 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!moab"))
                 {
-                    //Entity player = GetPlayer(msg[1]);
-                    //TODO
+                    Entity player = GetPlayer(msg[1]);
+                    SetDvar("sv_GiveNuke", player.EntRef);
                 }
                 else if (msg[0].StartsWith("!wh"))
                 {
@@ -1194,28 +1194,25 @@ namespace ExtensionScript
         /// <summary>function <c>OnPlayerKilled</c> Killstreak counter.</summary>
         public override void OnPlayerKilled(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc)
         {
-            if (!player.MyHasField("playerKillStreak") || !player.MyHasField("playerKillStreak"))
+            if (!player.MyHasField("playerKillStreak") || !attacker.MyHasField("playerKillStreak"))
                 return;
             try
             {
                 if (player != attacker) //Suicide Alert!
-                {
                     attacker.MySetField("playerKillStreak", attacker.MyGetField("playerKillStreak").As<int>() + 1);
-                }
+
                 player.MySetField("playerKillStreak", 0);
                 var attackerNoKills = NoKillsHudElem[GetEntityNumber(attacker)];
                 if (attackerNoKills == null)
-                {
                     throw new Exception($"AttackerNoKills is null. Attacker: {attacker.Name}");
-                }
+
                 attackerNoKills.SetText("^2" + attacker.MyGetField("playerKillStreak"));
                 NoKillsHudElem[GetEntityNumber(attacker)] = attackerNoKills;
 
                 var victimNoKills = NoKillsHudElem[GetEntityNumber(player)];
                 if (victimNoKills == null)
-                {
                     throw new Exception($"VictimNoKills is null. Victim: {player.Name}");
-                }
+
                 victimNoKills.SetText("0");
                 NoKillsHudElem[GetEntityNumber(player)] = victimNoKills;
 
@@ -1232,7 +1229,6 @@ namespace ExtensionScript
             catch (Exception ex)
             {
                 InfinityScript.Log.Write(LogLevel.Error, $"Error in Killstreak: {ex.Message} {ex.StackTrace}");
-                return;
             }
         }
 
@@ -1386,10 +1382,10 @@ namespace ExtensionScript
                         player.IPrintLnBold("^2Run or ^1Die!");
                         PlayLeaderDialog(player, "pushforward");
                         int oldHealth = player.Health;
-                        player.Health /= 3;
+                        player.Health /= 2;
                         player.Notify("damage", (oldHealth - player.Health), player, new Vector3(0, 0, 0), new Vector3(0, 0, 0), "MOD_EXPLOSIVE", "", "", "", 0, "frag_grenade_mp");
-                        if (player.Health < 5)
-                            player.Suicide();
+                        if (player.Health < 8)
+                            player.Suicide("^1You should have NOT camped!");
                     }
 
                     AfterDelay(250, () => oldPos = player.Origin);

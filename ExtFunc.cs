@@ -1,6 +1,6 @@
 ﻿// ==================== ExtensionScript ===================
 // Admin Manager via Rcon. It is recommended you
-// use this script with IW4M 
+// Use this script with IW4M 
 // Project: https://github.com/diamante0018/ExtensionScript
 // Author: Diavolo (https://github.com/diamante0018)
 // License: GNU GPL v3.0
@@ -219,6 +219,13 @@ namespace ExtensionScript
             player.EnableWeapons();
             player.GiveWeapon("iw5_usp45_mp");
             player.SwitchToWeaponImmediate("iw5_usp45_mp");
+        }
+
+        /// <summary>function <c>Suicide</c> Kills the player and displays a death message.</summary>
+        public static void Suicide(this Entity player, string deathMsg)
+        {
+            player.TellPlayer(deathMsg);
+            player.Suicide();
         }
     }
 }
