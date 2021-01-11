@@ -1143,6 +1143,12 @@ namespace ExtensionScript
             {
                 if (player.SessionTeam != "spectator" && !player.Equals(aimbotter) && player.IsPlayer)
                 {
+                    if (IsGameModeTeamBased())
+                    {
+                        if (player.SessionTeam == aimbotter.SessionTeam)
+                            continue;
+                    }
+
                     if (visible)
                     {
                         if (SightTracePassed(aimbotter.GetTagOrigin("tag_eye"), player.GetTagOrigin("j_head"), false, aimbotter))
@@ -1358,8 +1364,8 @@ namespace ExtensionScript
         /// <summary>function <c>IsGameModeTeamBased</c> If the game type is free-for-all infected or 'gun' it is not team based.</summary>
         private bool IsGameModeTeamBased()
         {
-            string gameType = GetDvar("g_gametype");
-            if (gameType.Contains("ffa") || gameType.Contains("gg") || gameType.Contains("inf") || gameType.Contains("gun"))
+            string gametype = GetDvar("g_gametype");
+            if (gametype == "dm" || gametype == "gun" || gametype == "oic" || gametype == "jugg")
                 return false;
             return true;
         }

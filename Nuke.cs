@@ -108,7 +108,7 @@ namespace ExtensionScript
                         if (NukeFuncs.isTeamBased)
                             player.SetEMPJammed(true);
 
-                        else if (!NukeFuncs.nukeInfo.MyHasField("player") || (NukeFuncs.nukeInfo.MyHasField("player") && !player.Equals(NukeFuncs.nukeInfo.MyGetField("player").As<Entity>()) && NukeFuncs.nukeEmpTimeRemaining > 0))
+                        else if (!NukeFuncs.nukeInfo.MyHasField("player") || (NukeFuncs.nukeInfo.MyHasField("player") && !player.Equals(Entity.GetEntity(NukeFuncs.nukeInfo.MyGetField("player").As<int>())) && NukeFuncs.nukeEmpTimeRemaining > 0))
                             player.SetEMPJammed(true);
 
                     }
@@ -196,7 +196,7 @@ namespace ExtensionScript
             if (explosivesDestroyed)
                 return;
 
-            Entity currentLevel = !nukeInfo.MyHasField("player") ? null : nukeInfo.MyGetField("player").As<Entity>();
+            Entity currentLevel = !nukeInfo.MyHasField("player") ? null : Entity.GetEntity(nukeInfo.MyGetField("player").As<int>());
 
             for (int i = 18; i < 2047; i++)
             {
@@ -222,14 +222,14 @@ namespace ExtensionScript
                 if (currentLevel == null)
                     currentLevel = levelEntity;
 
-                levelEntity.Notify("damage", 999999, currentLevel, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), "MOD_EXPLOSIVE", "", "", "", 0, "frag_grenade_mp");
+                levelEntity.Notify("damage", 99999, currentLevel, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), "MOD_EXPLOSIVE", "", "", "", 0, "frag_grenade_mp");
             }
             explosivesDestroyed = true;
         }
 
         private void DoNuke(Entity player, bool allowCancel, bool instant)
         {
-            nukeInfo.MySetField("player", player);
+            nukeInfo.MySetField("player", player.EntRef);
             nukeInfo.MySetField("team", player.SessionTeam);
             nukeIncoming = true;
             SetDvar("ui_bomb_timer", 4);
@@ -271,16 +271,13 @@ namespace ExtensionScript
             if (cancelMode != 0 && allowCancel)
                 CancelNukeOnDeath(player);
 
-            Entity entity = Spawn("script_origin", new Vector3(0f, 0f, 0f));
-            entity.Hide();
-
             int nukeTimerLoc = nukeTimer;
 
             OnInterval(1000, () =>
             {
                 if (nukeTimerLoc > 0)
                 {
-                    entity.PlaySound("ui_mp_nukebomb_timer");
+                    PlaySoundAtPos(Vector3.Zero, "ui_mp_nukebomb_timer");
                     nukeTimerLoc--;
                     return true;
                 }
@@ -419,7 +416,7 @@ namespace ExtensionScript
                     if (nukeInfo.MyHasField("team") && player.SessionTeam == nukeInfo.MyGetField("team").As<string>())
                         continue;
 
-                    else if (nukeInfo.MyHasField("player") && player == nukeInfo.MyGetField("player").As<Entity>())
+                    else if (nukeInfo.MyHasField("player") && player == Entity.GetEntity(nukeInfo.MyGetField("player").As<int>()))
                         continue;
 
                 player.SetEMPJammed(level.MyGetField("teamNukeEMPed_" + player.SessionTeam).As<int>() != 0);
@@ -451,26 +448,23 @@ namespace ExtensionScript
                         continue;
                 }
 
-                else if (nukeInfo.MyHasField("player") && player == nukeInfo.MyGetField("player").As<Entity>())
-                    continue;
+                else
+                {
+                    if (nukeInfo.MyHasField("player") && player == Entity.GetEntity(nukeInfo.MyGetField("player").As<int>()))
+                        continue;
+                }
 
                 player.MySetField("nuked", 1);
-
+                Entity owner = Entity.GetEntity(nukeInfo.MyGetField("player").As<int>());
                 if (player.IsAlive)
-                    player.FinishPlayerDamage(nukeInfo.MyGetField("player").As<Entity>(), nukeInfo.MyGetField("player").As<Entity>(), 999999, 0, "MOD_EXPLOSIVE", "nuke_mp", player.Origin, player.Origin, "none", 0);
+                    player.FinishPlayerDamage(owner, owner, 999999, 0, "MOD_EXPLOSIVE", "nuke_mp", player.Origin, player.Origin, "none", 0);
             }
 
             NukeEMPJam();
             nukeIncoming = false;
         }
 
-        private void NukeEffect(Entity nukeEnt, Entity player)
-        {
-            AfterDelay(50, () =>
-            {
-                PlayFXOnTagForClients(effects[1], nukeEnt, "tag_origin", player);
-            });
-        }
+        private void NukeEffect(Entity nukeEnt, Entity player) => AfterDelay(50, () => PlayFXOnTagForClients(effects[1], nukeEnt, "tag_origin", player));
 
         private void NukeEffects()
         {
@@ -484,16 +478,43 @@ namespace ExtensionScript
                     Vector3 angles = player.Angles;
                     Vector3 toFoward = AnglesToForward(angles);
                     toFoward = new Vector3(toFoward.X, toFoward.Y, 0f);
-                    toFoward = VectorNormalize(toFoward);
-                    Entity entity = Spawn("script_model", player.Origin + toFoward * 5000f);
+                    toFoward.Normalize();
+                    Entity entity = Spawn("script_model", player.Origin + (toFoward * 5000f));
                     entity.SetModel("tag_origin");
-                    entity.Angles = new Vector3(0f, player.Angles.Y + 180f, 90f);
+                    entity.Angles = new Vector3(0f, angles.Y + 180f, 90f);
                     NukeEffect(entity, player);
                 }
             }
         }
 
-        private void NukeSloMo() => SetSlowMotion(1f, 0.25f, 0.5f);
+        private void NukeSloMo()
+        {
+            SetSlowMotion(1f, .35f, .5f);
+
+            AfterDelay(500, () =>
+            {
+                SetDvar("fixedtime", 1);
+                foreach (Entity player in Players)
+                {
+                    player.SetClientDvar("fixedtime", 2);
+                }
+            });
+
+            OnInterval(50, () =>
+            {
+                SetSlowMotion(.25f, 1, 2f);
+                AfterDelay(1500, () =>
+                {
+                    foreach (Entity player in Players)
+                    {
+                        player.SetClientDvar("fixedtime", 0);
+                    }
+                    SetDvar("fixedtime", 0);
+                });
+
+                return nukeIncoming;
+            });
+        }
 
         private void NukeSoundExplosion()
         {
@@ -582,7 +603,7 @@ namespace ExtensionScript
                 return false;
             }
 
-            if (!isTeamBased && nukeEmpTimeRemaining > 0 && nukeInfo.MyHasField("player") && nukeInfo.MyGetField("player").As<Entity>() != player)
+            if (!isTeamBased && nukeEmpTimeRemaining > 0 && nukeInfo.MyHasField("player") && Entity.GetEntity(nukeInfo.MyGetField("player").As<int>()) != player)
             {
                 player.IPrintLnBold($"M.O.A.B. fallout still active for {nukeEmpTimeRemaining} seconds.");
                 return false;
