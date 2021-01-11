@@ -1143,12 +1143,9 @@ namespace ExtensionScript
             {
                 if (player.SessionTeam != "spectator" && !player.Equals(aimbotter) && player.IsPlayer)
                 {
-                    if (IsGameModeTeamBased())
-                    {
-                        if (player.SessionTeam == aimbotter.SessionTeam)
-                            continue;
-                    }
-
+                    if (IsGameModeTeamBased() && player.SessionTeam == aimbotter.SessionTeam)
+                        continue;
+                   
                     if (visible)
                     {
                         if (SightTracePassed(aimbotter.GetTagOrigin("tag_eye"), player.GetTagOrigin("j_head"), false, aimbotter))
