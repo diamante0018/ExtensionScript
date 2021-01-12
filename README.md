@@ -25,6 +25,7 @@ In the server.cfg set these dvars with the values you wish or they will be set t
 - sv_UndoRCE 0 //If set to 1 it removes SteamAuth RCE one line 'patch' (restores one address to it's original states allowing buffer overflow)
 - sv_LocalizedStr 1 //If set to 0 it will disable localized strings placed in the player card such as @MENU_FACEBOOK_LEGAL
 - sv_AntiCamp 1 //If set to 1 it will hurt campers that stay in the same place and don't move
+- sv_LastStand 0 //If set to 0 players on last stand will be killed
 
 Native C++ functions:
 - NopTheFuckOut Called if sv_NopAddresses is 1. It uses hooks to disable TeknoMW3S checks for joining players

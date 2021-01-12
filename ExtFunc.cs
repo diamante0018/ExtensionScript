@@ -16,8 +16,9 @@ namespace ExtensionScript
     public static class ExtFunc
     {
         private static Dictionary<string, Dictionary<string, Parameter>> fields = new Dictionary<string, Dictionary<string, Parameter>>();
+        private static readonly byte[] utility = { 0x00, 0x01 };
 
-        /// <summary>function <c>SetClanTag</c> Sets the clantag of the player. A clantag must be already present (active) for it to be changed. It resets after UAV is called, team is changed or map rotates.</summary>
+        /// <summary>function <c>SetClanTag</c> Sets the clantag of the player. A clantag must already be present for this function to work (active). It resets to its original state after some unknown in-game actions.</summary>
         public static unsafe void SetClanTag(this Entity player, string tag)
         {
             if (player == null || !player.IsPlayer)
@@ -31,6 +32,7 @@ namespace ExtensionScript
             *(byte*)(address + tag.Length) = 0;
         }
 
+        /// <summary>function <c>SetPlayerTitle</c> Sets the player title of the player. A title must already be present for this function to work (active). It resets to its original state after some unknown in-game actions.</summary>
         public static unsafe void SetPlayerTitle(this Entity player, string title)
         {
             if (player == null || !player.IsPlayer || title.Length > 25)
@@ -44,7 +46,7 @@ namespace ExtensionScript
             *(byte*)(address + title.Length) = 0;
         }
 
-        /// <summary>function <c>GetPlayerTitle</c> Gets the player title from the player card.</summary>
+        /// <summary>function <c>GetPlayerTitle</c> Gets the player title from the player card if present.</summary>
         public static unsafe string GetPlayerTitle(this Entity player)
         {
             if (player == null || !player.IsPlayer)
@@ -60,7 +62,7 @@ namespace ExtensionScript
             return result.ToString();
         }
 
-        /// <summary>function <c>GetClanTag</c> Gets the clantag of the player.</summary>
+        /// <summary>function <c>GetClanTag</c> Gets the clantag of the player if present.</summary>
         public static unsafe string GetClanTag(this Entity player)
         {
             if (player == null || !player.IsPlayer)
@@ -76,7 +78,7 @@ namespace ExtensionScript
             return result.ToString();
         }
 
-        /// <summary>function <c>SetName</c> Sets the nickname of the player. Same conditions of SetClanTag apply.</summary>
+        /// <summary>function <c>SetName</c> Sets the nickname of the player. Same conditions of SetClanTag/SetPlayerTitle apply.</summary>
         public static unsafe string SetName(this Entity player, string name)
         {
             if (player == null || !player.IsPlayer)
@@ -94,14 +96,13 @@ namespace ExtensionScript
         /// <summary>function <c>NoClip</c> Makes the player noclip.</summary>
         public static unsafe void NoClip(this Entity player)
         {
-            byte set = 0x01;
-            if (player.HasNoClip())
-                set = 0x00;
+            byte set = player.HasNoClip() ? utility[0] : utility[1];
 
             int address = 0x38A4 * player.EntRef + 0x01AC56C0;
             *(byte*)address = set;
         }
 
+        /// <summary>function <c>HasNoClip</c> Check if the player is already no-clipping.</summary>
         public static unsafe bool HasNoClip(this Entity player) => *(byte*)(0x38A4 * player.EntRef + 0x01AC56C0) == 1;
 
         public static void MyGiveMaxAmmo(this Entity player, bool feedback = true)
@@ -125,12 +126,16 @@ namespace ExtensionScript
             return false;
         }
 
-        /// <summary>function <c>ChangeTeam</c> Changes the team of the player.</summary>
+        /// <summary>
+        /// Changes the team of the player
+        /// </summary>
+        /// <param name="team">Team</param>
         public static void ChangeTeam(this Entity player, string team)
         {
             player.SessionTeam = team;
             player.Notify("menuresponse", "team_marinesopfor", team);
         }
+
         public static void ChangeTeam(this Entity player)
         {
             switch (player.SessionTeam)

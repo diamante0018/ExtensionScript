@@ -25,9 +25,6 @@ namespace ExtensionScript
         [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void PrintErrorToConsole([MarshalAs(UnmanagedType.LPStr)] string message);
 
-        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int NET_Print(int b, int entRef, [MarshalAs(UnmanagedType.LPStr)] string message);
-
         [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         [return: MarshalAs(UnmanagedType.BStr)]
         public static extern string DvarFindDvar([MarshalAs(UnmanagedType.LPStr)] string dvarName);
@@ -91,6 +88,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_UndoRCE", "0");
             SetDvarIfUninitialized("sv_LocalizedStr", "1");
             SetDvarIfUninitialized("sv_AntiCamp", "1");
+            SetDvarIfUninitialized("sv_LastStand", "0");
             SetDvarIfUninitialized("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
 
             //Loading Server Dvars.
@@ -996,7 +994,7 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!ffcrash"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    NET_Print(10, player.EntRef, "loadingnewmap\n mp_favela \ncum");
+                    proKicker.FFCrash(player, 10);
                 }
                 else if (msg[0].StartsWith("!noweapon"))
                 {
@@ -1145,7 +1143,7 @@ namespace ExtensionScript
                 {
                     if (IsGameModeTeamBased() && player.SessionTeam == aimbotter.SessionTeam)
                         continue;
-                   
+
                     if (visible)
                     {
                         if (SightTracePassed(aimbotter.GetTagOrigin("tag_eye"), player.GetTagOrigin("j_head"), false, aimbotter))
@@ -1244,8 +1242,8 @@ namespace ExtensionScript
         /// <summary>function <c>OnPlayerLastStand</c> If the player is in last stand he will be killed.</summary>
         public override void OnPlayerLastStand(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc, int timeOffset, int deathAnimDuration)
         {
-            player.IPrintLnBold("Last Stand is not allowed");
-            player.Suicide();
+            if (GetDvarInt("sv_LastStand") == 0)
+                player.Suicide("Last Stand is not allowed");
         }
 
         /// <summary>function <c>OnPlayerDamage</c> If the player is damaged by a 'bad' weapon his health is restored.</summary>
@@ -1269,7 +1267,7 @@ namespace ExtensionScript
             return EventEat.EatNone;
         }
 
-        /// <summary>function <c>BalanceTeams</c> Balances teams. It makes sure that if you are on a high killstreak you won't be balanced.</summary>
+        /// <summary>function <c>BalanceTeams</c> Balances teams. The algorithm does it's best to let players on a high killstreak stay on their current team so they don't lose the killstreak.</summary>
         public void BalanceTeams(bool balanceNow = false)
         {
             if (!IsGameModeTeamBased())
@@ -1317,10 +1315,10 @@ namespace ExtensionScript
             }
         }
 
-        /// <summary>function <c>CalculateString</c> Takes as input what the player typed when using !clantag or !name and check if it matches a keyword, it then returns a new string.</summary>
+        /// <summary>function <c>CalculateString</c> Takes a word as input and checks if it matches a keyword. If yes, it returns a new string with the corresponding value.</summary>
         private string CalculateString(string input)
         {
-            switch (input)
+            switch (input.ToLowerInvariant())
             {
                 case "null":
                     input = "\0";
@@ -1358,7 +1356,7 @@ namespace ExtensionScript
             return input;
         }
 
-        /// <summary>function <c>IsGameModeTeamBased</c> If the game type is free-for-all infected or 'gun' it is not team based.</summary>
+        /// <summary>function <c>IsGameModeTeamBased</c> The game mode is not team based if it's FFA, gun game, 'oic' or jugg.</summary>
         private bool IsGameModeTeamBased()
         {
             string gametype = GetDvar("g_gametype");
@@ -1367,6 +1365,7 @@ namespace ExtensionScript
             return true;
         }
 
+        /// <summary>function <c>StartAntiCamp</c> Anti-Camp function, originally made for infected servers.</summary>
         private void StartAntiCamp(Entity player)
         {
             Vector3 oldPos = player.Origin;

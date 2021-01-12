@@ -142,6 +142,7 @@ namespace ExtensionScript
 
         public bool IsWeaponNukeScriptRelated(string weapon) => nukeWeapons.Contains(weapon);
 
+        /// <summary>function <c>FindMem</c> From DG Admin I have no idea what it does.</summary>
         private unsafe int FindMem(byte?[] search, int num = 1, int start = 16777216, int end = 63963136)
         {
             try
@@ -187,6 +188,7 @@ namespace ExtensionScript
             return 0;
         }
 
+        /// <summary>function <c>SetupKnife</c> From DG Admin I have no idea what it does.</summary>
         public unsafe void SetupKnife()
         {
             try
