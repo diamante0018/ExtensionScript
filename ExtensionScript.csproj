@@ -54,7 +54,9 @@
     <Compile Include="Nuke.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomMap.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="Teleporter.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

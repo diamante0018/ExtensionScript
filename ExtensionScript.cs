@@ -49,6 +49,7 @@ namespace ExtensionScript
         private Kicker proKicker = new Kicker();
         private Teleporter teleport = new Teleporter();
         private BadWeapons weapons = new BadWeapons();
+        private Server sv = new Server();
         private RandomMap map;
         private LoadoutName load;
         private bool fallDamage = true;
@@ -90,6 +91,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_AntiCamp", "1");
             SetDvarIfUninitialized("sv_LastStand", "0");
             SetDvarIfUninitialized("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
+            sv.ServerTitle("mp_favela", "^6CumInAss");
 
             //Loading Server Dvars.
             ServerDvars();
@@ -386,6 +388,7 @@ namespace ExtensionScript
                 player.SetClientDvar("cg_objectiveText", GetDvar("sv_objText"));
                 player.MyGiveMaxAmmo(false);
                 player.DisableGrenadeTouchDamage();
+                player.SetPerk("specialty_lightweight", true, true);
 
                 if (GetDvarInt("sv_LocalizedStr") != 1)
                     player.CheckLocalized();

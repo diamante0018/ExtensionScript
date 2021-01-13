@@ -21,7 +21,7 @@ namespace ExtensionScript
         private unsafe int* KnifeRange;
         private unsafe int* ZeroAddress;
         private readonly string[] specialGuns = { "iw5_mk14_mp_xmags_rof_camo11", "iw5_barrett_mp", "iw5_barrett_mp_xmags_rof_camo11", "uav_strike_marker_mp" , "airdrop_escort_marker_mp",
-        "defaultweapon_mp", "iw5_usp45jugg_mp_akimbo", "iw5_m60jugg_mp", "iw5_mp412jugg_mp" , "iw5_m60jugg_mp_camo08" };
+        "defaultweapon_mp", "iw5_usp45jugg_mp_akimbo", "iw5_m60jugg_mp", "iw5_mp412jugg_mp" , "iw5_m60jugg_mp_camo08", "iw5_m60jugg_mp_thermal_silencer_camo07" };
 
         public BadWeapons()
         {

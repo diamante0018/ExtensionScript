@@ -108,9 +108,8 @@ namespace ExtensionScript
                         if (NukeFuncs.isTeamBased)
                             player.SetEMPJammed(true);
 
-                        else if (!NukeFuncs.nukeInfo.MyHasField("player") || (NukeFuncs.nukeInfo.MyHasField("player") && !player.Equals(Entity.GetEntity(NukeFuncs.nukeInfo.MyGetField("player").As<int>())) && NukeFuncs.nukeEmpTimeRemaining > 0))
+                        else if (NukeFuncs.nukeInfo.MyHasField("player") && !player.Equals(Entity.GetEntity(NukeFuncs.nukeInfo.MyGetField("player").As<int>())) && NukeFuncs.nukeEmpTimeRemaining > 0)
                             player.SetEMPJammed(true);
-
                     }
 
                     if (player.MyGetField("hasNuke").As<int>() > 0)
@@ -487,35 +486,8 @@ namespace ExtensionScript
             }
         }
 
-        private void NukeSloMo()
-        {
-            SetSlowMotion(1f, .35f, .5f);
-
-            AfterDelay(500, () =>
-            {
-                SetDvar("fixedtime", 1);
-                foreach (Entity player in Players)
-                {
-                    player.SetClientDvar("fixedtime", 2);
-                }
-            });
-
-            OnInterval(50, () =>
-            {
-                SetSlowMotion(.25f, 1, 2f);
-                AfterDelay(1500, () =>
-                {
-                    foreach (Entity player in Players)
-                    {
-                        player.SetClientDvar("fixedtime", 0);
-                    }
-                    SetDvar("fixedtime", 0);
-                });
-
-                return nukeIncoming;
-            });
-        }
-
+        private void NukeSloMo() => SetSlowMotion(1f, 0.25f, 0.5f);
+        
         private void NukeSoundExplosion()
         {
             foreach (Entity player in Players)

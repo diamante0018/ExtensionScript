@@ -31,8 +31,9 @@ Native C++ functions:
 - NopTheFuckOut Called if sv_NopAddresses is 1. It uses hooks to disable TeknoMW3S checks for joining players
 - PrintErrorToConsole Shuts down the server (until it's manually restarted) and displays a reason to all the users
 - DvarFindDvar Tries to look for a string dvar if not found it will return <undefined>
-- SendGameCommand I only have few examples on how to use this but basically, you can force the client to do anything
+- SendGameCommand I only have a few examples on how to use this, but basically, you can force the client to do anything
 - CrashAll Crashes all clients at once, the game is closed but the server stays open.
 - DvarRegisterString Registers a string dvar. Similar to SetDvar. Max length is somewhere between 100-150 characters
+- NET_Print Arguments are duplicate packets, entity reference and the message itself. I suspect duplicate packets are necessary because we are using the UDP protocol.
 
 Special thanks to [S3VDITO](https://github.com/S3VDITO)
