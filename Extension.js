@@ -208,7 +208,25 @@ let commands = [{
             var server = gameEvent.Owner;
             var cid = gameEvent.Origin.ClientNumber;
             var message = gameEvent.Data;
-            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !random ' + cid + ' ' + message).Result;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !randomnum ' + cid + ' ' + message).Result;
+        }
+    },
+    {
+
+        name: "randomgun",
+
+        description: "Gives the player a random gun",
+
+        alias: "randomgun",
+
+        permission: "Administrator",
+
+        targetRequired: false,
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !randomgun ' + cid).Result;
         }
     },
     {

@@ -564,6 +564,13 @@ namespace ExtensionScript
                     map = new RandomMap();
                     Utilities.ExecuteCommand($"map {map.GetRandomMap()}");
                 }
+                else if (msg[0].StartsWith("!randomgun"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    string gun = weapons.GetRandomGun();
+                    player.GiveWeapon(gun);
+                    player.SwitchToWeaponImmediate(gun);
+                }
                 else if (msg[0].StartsWith("!ac130"))
                 {
                     if (msg[1].StartsWith("*all*"))
@@ -637,7 +644,7 @@ namespace ExtensionScript
                         return;
                     Utilities.RawSayTo(player, string.Format("Sin: {0} Cos: {1} Tan: {2}", Sin(angle), Cos(angle), Tan(angle)));
                 }
-                else if (msg[0].StartsWith("!random"))
+                else if (msg[0].StartsWith("!randomnum"))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!int.TryParse(msg[2], out int max))

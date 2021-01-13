@@ -16,9 +16,12 @@ namespace ExtensionScript
         private HashSet<string> weapons;
         private HashSet<string> ks;
         private HashSet<string> nukeWeapons;
+        private Random rng = new Random();
         private int DefaultKnifeAddress;
         private unsafe int* KnifeRange;
         private unsafe int* ZeroAddress;
+        private readonly string[] specialGuns = { "iw5_mk14_mp_xmags_rof_camo11", "iw5_barrett_mp", "iw5_barrett_mp_xmags_rof_camo11", "uav_strike_marker_mp" , "airdrop_escort_marker_mp",
+        "defaultweapon_mp", "iw5_usp45jugg_mp_akimbo", "iw5_m60jugg_mp", "iw5_mp412jugg_mp" };
 
         public BadWeapons()
         {
@@ -297,5 +300,7 @@ namespace ExtensionScript
         public bool IsKillstreakWeapon(string weapon) => weapon.Contains("ac130") || weapon.Contains("remote") || weapon.Contains("minigun");
 
         public unsafe void DisableKnife() => *KnifeRange = (int)ZeroAddress;
+
+        public string GetRandomGun() => specialGuns[rng.Next(specialGuns.Length)];
     }
 }
