@@ -487,7 +487,7 @@ namespace ExtensionScript
         }
 
         private void NukeSloMo() => SetSlowMotion(1f, 0.25f, 0.5f);
-        
+
         private void NukeSoundExplosion()
         {
             foreach (Entity player in Players)

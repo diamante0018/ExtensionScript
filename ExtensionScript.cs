@@ -323,6 +323,9 @@ namespace ExtensionScript
             elem.HideWhenInMenu = true;
             elem.GlowAlpha = 0f;
 
+            //Sentry Related Code
+            AfterDelay(5000, () => RemoveSentry());
+
             //Welcomer Related Code
             AfterDelay(5000, () => player.TellPlayer("^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo"));
             if (GetDvarInt("sv_AntiCamp") == 1)
@@ -1421,5 +1424,16 @@ namespace ExtensionScript
         }
 
         public static string GetTeamVoicePrefix(string teamRef) => TableLookup("mp/factionTable.csv", 0, teamRef, 7);
+
+        public void RemoveSentry()
+        {
+            for (int i = 18; i < 2048; i++)
+            {
+                Entity entity = GetEntByNum(i);
+                if (entity != null)
+                    if (entity.Classname.Equals("misc_turret"))
+                        entity.Delete();
+            }
+        }
     }
 }
