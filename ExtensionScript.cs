@@ -91,7 +91,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_AntiCamp", "1");
             SetDvarIfUninitialized("sv_LastStand", "0");
             SetDvarIfUninitialized("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
-            sv.ServerTitle("mp_favela", "^6CumInAss");
+            sv.ServerTitle("mp_favela", "^6Boring^2Mode");
 
             //Loading Server Dvars.
             ServerDvars();
@@ -1361,7 +1361,7 @@ namespace ExtensionScript
                     input = "^ÿÿÿÿ";
                     break;
                 case "8ball":
-                    input = "\x5E\x01\x3F\x3F\x0Ecardicon_8ball";
+                    input = "\x5E\x01\x3F\x3F\x0E" + "cardicon_8ball";
                     break;
                 default:
                     break;
