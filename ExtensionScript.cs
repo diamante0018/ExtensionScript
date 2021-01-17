@@ -59,6 +59,7 @@ namespace ExtensionScript
         private bool sv_NopAddresses;
         private bool sv_KnifeEnabled;
         private bool sv_UndoRCE;
+        private bool sv_RemoveBakaaraSentry;
         private List<Entity> onlinePlayers = new List<Entity>();
 
         public ExtensionScript()
@@ -90,8 +91,9 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_LocalizedStr", "1");
             SetDvarIfUninitialized("sv_AntiCamp", "1");
             SetDvarIfUninitialized("sv_LastStand", "0");
-            SetDvarIfUninitialized("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
-            sv.ServerTitle("mp_favela", "^6Boring^2Mode");
+            SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
+            SetDvarIfUninitialized("sv_RemoveBakaaraSentry", "0");
+            sv.ServerTitle(CalculateString("cod2"), "^6Boring^2Mode");
 
             //Loading Server Dvars.
             ServerDvars();
@@ -117,6 +119,7 @@ namespace ExtensionScript
             sv_NopAddresses = GetDvarInt("sv_NopAddresses") == 1;
             sv_KnifeEnabled = GetDvarInt("sv_KnifeEnabled") == 1;
             sv_UndoRCE = GetDvarInt("sv_UndoRCE") == 1;
+            sv_RemoveBakaaraSentry = GetDvarInt("sv_RemoveBakaaraSentry") == 1;
 
             unsafe
             {
@@ -324,7 +327,8 @@ namespace ExtensionScript
             elem.GlowAlpha = 0f;
 
             //Sentry Related Code
-            AfterDelay(5000, () => RemoveSentry());
+            if(sv_RemoveBakaaraSentry)
+                AfterDelay(5000, () => RemoveSentry());
 
             //Welcomer Related Code
             AfterDelay(5000, () => player.TellPlayer("^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo"));
@@ -586,14 +590,7 @@ namespace ExtensionScript
                     }
 
                     Entity player = GetPlayer(msg[1]);
-                    AfterDelay(500, () =>
-                    {
-                        player.TakeAllWeapons();
-                        player.GiveWeapon("ac130_105mm_mp");
-                        player.GiveWeapon("ac130_40mm_mp");
-                        player.GiveWeapon("ac130_25mm_mp");
-                        player.SwitchToWeaponImmediate("ac130_25mm_mp");
-                    });
+                    player.GiveAC130();
                 }
                 else if (msg[0].StartsWith("!blockchat"))
                 {
@@ -765,7 +762,6 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!moab"))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    Nuke.NukeFuncs.GiveNuke(player);
                 }
                 else if (msg[0].StartsWith("!wh"))
                 {
@@ -1091,22 +1087,18 @@ namespace ExtensionScript
         /// <summary>function <c>AC130All</c> Gives to all players a toy AC130.</summary>
         public void AC130All()
         {
-            foreach (Entity player in Players)
+            foreach (Entity player in onlinePlayers)
             {
                 if (player.SessionTeam == "spectator")
                     continue;
-                player.TakeAllWeapons();
-                player.GiveWeapon("ac130_105mm_mp");
-                player.GiveWeapon("ac130_40mm_mp");
-                player.GiveWeapon("ac130_25mm_mp");
-                player.SwitchToWeaponImmediate("ac130_25mm_mp");
+                player.GiveAC130();
             }
         }
 
         /// <summary>function <c>ExplodeAll</c> Explodes all players in the lobby.</summary>
         public void ExplodeAll()
         {
-            foreach (Entity player in Players)
+            foreach (Entity player in onlinePlayers)
             {
                 if (player.SessionTeam == "spectator")
                     continue;
@@ -1131,7 +1123,7 @@ namespace ExtensionScript
         /// <summary>function <c>JuggSuitAll</c> Gives to all players a Jugg Suit.</summary>
         public void JuggSuitAll()
         {
-            foreach (Entity player in Players)
+            foreach (Entity player in onlinePlayers)
             {
                 if (player.SessionTeam == "spectator")
                     continue;
@@ -1362,6 +1354,12 @@ namespace ExtensionScript
                     break;
                 case "8ball":
                     input = "\x5E\x01\x3F\x3F\x0E" + "cardicon_8ball";
+                    break;
+                case "face":
+                    input = "\x5E\x01\x3F\x3F\x0F" + "facebook";
+                    break;
+                case "cod2":
+                    input = "\x5E\x33\x5E\x01\x7F\x2F\x09\x6C\x6F\x67\x6F\x5F\x63\x6F\x64\x32\x5E\x01\x32\x2F\x07\x75\x69\x5F\x68\x6F\x73\x74\x5E\x01\x40";
                     break;
                 default:
                     break;

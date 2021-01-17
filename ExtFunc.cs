@@ -232,5 +232,15 @@ namespace ExtensionScript
             player.TellPlayer(deathMsg);
             player.Suicide();
         }
+
+        /// <summary>function <c>GiveAC130</c> Gives AC130 to the player.</summary>
+        public static void GiveAC130(this Entity player)
+        {
+            player.TakeAllWeapons();
+            player.GiveWeapon("ac130_105mm_mp");
+            player.GiveWeapon("ac130_40mm_mp");
+            player.GiveWeapon("ac130_25mm_mp");
+            player.SwitchToWeaponImmediate("ac130_25mm_mp");
+        }
     }
 }
