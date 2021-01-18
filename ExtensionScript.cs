@@ -38,6 +38,9 @@ namespace ExtensionScript
         [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void DvarRegisterString([MarshalAs(UnmanagedType.LPStr)] string dvarName, [MarshalAs(UnmanagedType.LPStr)] string value, [MarshalAs(UnmanagedType.LPStr)] string description);
 
+        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern float Q_rsqrt(float number);
+
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
         private HudElem top;
@@ -327,7 +330,7 @@ namespace ExtensionScript
             elem.GlowAlpha = 0f;
 
             //Sentry Related Code
-            if(sv_RemoveBakaaraSentry)
+            if (sv_RemoveBakaaraSentry)
                 AfterDelay(5000, () => RemoveSentry());
 
             //Welcomer Related Code
@@ -646,6 +649,13 @@ namespace ExtensionScript
                     if (!float.TryParse(msg[2], out float angle))
                         return;
                     Utilities.RawSayTo(player, string.Format("Sin: {0} Cos: {1} Tan: {2}", Sin(angle), Cos(angle), Tan(angle)));
+                }
+                else if (msg[0].StartsWith("!rsqrt"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if (!float.TryParse(msg[2], out float number))
+                        return;
+                    Utilities.RawSayTo(player, string.Format("Reverse Square Root: {0} Normal Square Root: {1}", Q_rsqrt(number), Sqrt(number)));
                 }
                 else if (msg[0].StartsWith("!randomnum"))
                 {

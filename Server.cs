@@ -250,7 +250,7 @@ namespace ExtensionScript
                 structure = construct(structure);
                 if ((structure.Length >= 128) && (MapName.Length > 20))
                 {
-                    //maybe it will help...
+                    //Maybe it will help...
                     MapName = MapName.Substring(0, 20);
                     structure = construct(structure);
                 }

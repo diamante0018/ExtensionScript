@@ -213,6 +213,30 @@ let commands = [{
     },
     {
 
+        name: "rsqrt",
+
+        description: "Fast reverse square root using native C++ functions",
+
+        alias: "rsqrt",
+
+        permission: "User",
+
+        targetRequired: false,
+
+        arguments: [{
+            name: "Number",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !rsqrt ' + cid + ' ' + message).Result;
+        }
+    },
+    {
+
         name: "randomgun",
 
         description: "Gives the player a random gun",

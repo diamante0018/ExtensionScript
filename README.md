@@ -35,5 +35,6 @@ Native C++ functions:
 - CrashAll Crashes all clients at once, the game is closed but the server stays open.
 - DvarRegisterString Registers a string dvar. Similar to SetDvar. Max length is somewhere between 100-150 characters
 - NET_Print Arguments are duplicate packets, entity reference and the message itself. I suspect duplicate packets are necessary because we are using the UDP protocol.
+- Q_rsqrt This function calculates the reverse square root of a given float number
 
 Special thanks to [S3VDITO](https://github.com/S3VDITO)
