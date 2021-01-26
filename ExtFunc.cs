@@ -242,5 +242,18 @@ namespace ExtensionScript
             player.GiveWeapon("ac130_25mm_mp");
             player.SwitchToWeaponImmediate("ac130_25mm_mp");
         }
+
+        /// <summary>function <c>ThirdPerson</c> Enables third person.</summary>
+        public static void ThirdPerson(this Entity player)
+        {
+            player.SetClientDvar("cg_thirdperson", true);
+            player.SetClientDvar("cg_thirdPersonRange", 170f);
+        }
+
+        /// <summary>function <c>FirstPerson</c> Enables first person.</summary>
+        public static void FirstPerson(this Entity player)
+        {
+            player.SetClientDvar("cg_thirdperson", false);
+        }
     }
 }

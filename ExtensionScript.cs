@@ -168,7 +168,7 @@ namespace ExtensionScript
 
             if (sv_NopAddresses)
                 Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X")));
-            //Notified += OnNotified;
+            //Notified += ISTest_Notified;
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");
             sv_autoBalance = GetDvarInt("sv_autoBalance") == 1;
             AfterDelay(1500, () => BalanceTeams(true));
@@ -422,6 +422,11 @@ namespace ExtensionScript
 
                 else if (player.HasWeapon("concussion_grenade_mp"))
                     player.SetWeaponAmmoStock("concussion_grenade_mp", 1);
+
+                if (player.MyGetField("third").As<int>() == 1)
+                {
+                    player.ThirdPerson();
+                }
 
                 if (player.MyGetField("Naughty").As<int>() == 1)
                 {
@@ -769,6 +774,20 @@ namespace ExtensionScript
                         Utilities.JumpHeight = height;
                     Utilities.RawSayAll($"Jumpe height is {height}");
                 }
+                else if (msg[0].StartsWith("!disabletrail"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    player.MySetField("trail", -1);
+                }
+                else if (msg[0].StartsWith("!enabletrail"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if (int.TryParse(msg[2], out int num))
+                    {
+                        player.MySetField("trail", num);
+                        GiveTrail(player);
+                    }
+                }
                 else if (msg[0].StartsWith("!moab"))
                 {
                     Entity player = GetPlayer(msg[1]);
@@ -1061,6 +1080,24 @@ namespace ExtensionScript
                     player.Health += 2500;
                     player.EnableWeaponPickup();
                     player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
+                }
+                else if (msg[0].StartsWith("!thirdperson"))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if (!player.MyHasField("third"))
+                    {
+                        player.MySetField("third", 0);
+                    }
+                    if (player.MyGetField("third").As<int>() == 1)
+                    {
+                        player.FirstPerson();
+                        player.MySetField("third", 0);
+                    }
+                    else if (player.MyGetField("third").As<int>() == 0)
+                    {
+                        player.ThirdPerson();
+                        player.MySetField("third", 1);
+                    }
                 }
             }
             catch (Exception e)
@@ -1386,6 +1423,37 @@ namespace ExtensionScript
             return true;
         }
 
+        // <summary>function <c>GiveTrail</c> Gives a trail to the player.</summary>
+        private void GiveTrail(Entity player)
+        {
+            OnInterval(100, () =>
+            {
+                if (player.MyHasField("trail"))
+                {
+                    switch (player.MyGetField("trail").As<int>())
+                    {
+                        case 0:
+                            player.PlayFX(Effects.fx1, player.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
+                            break;
+                        case 1:
+                            player.PlayFX(Effects.fx2, player.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
+                            break;
+                        case 2:
+                            player.PlayFX(Effects.fx3, player.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
+                            break;
+                        case 3:
+                            player.PlayFX(Effects.fx4, player.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
+                            break;
+                        case 4:
+                            player.PlayFX(Effects.fx5, player.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
+                            break;
+                    }
+                }
+
+                return player.MyGetField("trail").As<int>() != -1;
+            });
+        }
+
         /// <summary>function <c>StartAntiCamp</c> Anti-Camp function, originally made for infected servers.</summary>
         private void StartAntiCamp(Entity player)
         {
@@ -1423,7 +1491,7 @@ namespace ExtensionScript
         /// </summary>
         /// <param name="player">Player</param>
         /// <param name="sound">Sound</param>
-        public static void PlayLeaderDialog(Entity player, string sound)
+        public void PlayLeaderDialog(Entity player, string sound)
         {
             if (player.SessionTeam == "allies")
                 player.PlayLocalSound(GetTeamVoicePrefix(GetMapCustom("allieschar")) + "1mc_" + sound);
@@ -1431,7 +1499,7 @@ namespace ExtensionScript
                 player.PlayLocalSound(GetTeamVoicePrefix(GetMapCustom("axischar")) + "1mc_" + sound);
         }
 
-        public static string GetTeamVoicePrefix(string teamRef) => TableLookup("mp/factionTable.csv", 0, teamRef, 7);
+        public string GetTeamVoicePrefix(string teamRef) => TableLookup("mp/factionTable.csv", 0, teamRef, 7);
 
         public void RemoveSentry()
         {

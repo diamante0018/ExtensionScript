@@ -34,6 +34,54 @@ let commands = [{
     },
     {
 
+        name: "thirdperson",
+
+        description: "Enables third person",
+
+        alias: "thirdperson",
+
+        permission: "Trusted",
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !thirdperson ' + cid).Result;
+        }
+    },
+    {
+
+        name: "disabletrail",
+
+        description: "Disables special effects trail",
+
+        alias: "disabletrail",
+
+        permission: "Trusted",
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !disabletrail ' + cid).Result;
+        }
+    },
+    {
+
+        name: "enabletrail",
+
+        description: "Enables special effects trail",
+
+        alias: "enabletrail",
+
+        permission: "Trusted",
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !enabletrail ' + cid).Result;
+        }
+    },
+    {
+
         name: "kickall",
 
         description: "Kicks all players with a custom error message and shuts down the server",
