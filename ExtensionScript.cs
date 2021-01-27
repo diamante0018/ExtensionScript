@@ -80,8 +80,8 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_hudEnable", "1");
             //SetDvarIfUninitialized("sv_hudTop", "^1TOP Message");
             SetDvarIfUninitialized("sv_hudBottom", "^1Press ^7'Vote Yes' ^1for max ammo! ^7Discord: ^5https://discord.com/invite/");
-            //SetDvarIfUninitialized("sv_hudRight", "^1Right Message");
-            //SetDvarIfUninitialized("sv_hudLeft", "^1Left Message");
+            SetDvarIfUninitialized("sv_MyMapName", "WeirdMap");
+            SetDvarIfUninitialized("sv_MyGameMode", "WeirdGameMode");
             SetDvarIfUninitialized("sv_scrollingSpeed", "30");
             SetDvarIfUninitialized("sv_scrollingHud", "1");
             SetDvarIfUninitialized("sv_b3Execute", "undefined");
@@ -96,7 +96,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_LastStand", "0");
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
             SetDvarIfUninitialized("sv_RemoveBakaaraSentry", "0");
-            sv.ServerTitle(CalculateString("cod2"), "^6Boring^2Mode");
+            sv.ServerTitle(GetDvar("sv_MyMapName"), GetDvar("sv_MyGameMode"));
 
             //Loading Server Dvars.
             ServerDvars();
@@ -441,7 +441,7 @@ namespace ExtensionScript
         {
             try
             {
-                string[] msg = message.Split(' ');
+                string[] msg = message.Split(new char[] { '\x20', '\t', '\r', '\n', '\f', '\b', '\v' }, StringSplitOptions.RemoveEmptyEntries);
                 msg[0] = msg[0].ToLowerInvariant();
 
                 if (msg[0].StartsWith("!afk"))
