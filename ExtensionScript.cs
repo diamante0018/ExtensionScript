@@ -9,6 +9,7 @@ using InfinityScript;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using static InfinityScript.GSCFunctions;
@@ -442,9 +443,9 @@ namespace ExtensionScript
             try
             {
                 string[] msg = message.Split(new char[] { '\x20', '\t', '\r', '\n', '\f', '\b', '\v' }, StringSplitOptions.RemoveEmptyEntries);
-                msg[0] = msg[0].ToLowerInvariant();
+                msg[0] = msg[0].ToLower(new CultureInfo("en-GB", false));
 
-                if (msg[0].StartsWith("!afk"))
+                if (msg[0].StartsWith("!afk", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (player.MyGetField("fly").As<int>() != 1)
@@ -455,14 +456,14 @@ namespace ExtensionScript
                         player.MySetField("Naughty", 1);
                     }
                 }
-                else if (msg[0].StartsWith("!finddvar"))
+                else if (msg[0].StartsWith("!finddvar", StringComparison.InvariantCulture))
                 {
                     //Has been tested for dvars of type string such as sv_current_dsr and sv_serverFullMsg
                     string dvar = DvarFindDvar(msg[1]);
                     Utilities.PrintToConsole($"Dvar current value: {dvar}");
                     Utilities.RawSayAll($"Dvar current value: {dvar}");
                 }
-                else if (msg[0].StartsWith("!registerstring"))
+                else if (msg[0].StartsWith("!registerstring", StringComparison.InvariantCulture))
                 {
                     if (msg.Length < 3)
                     {
@@ -475,7 +476,7 @@ namespace ExtensionScript
                         DvarRegisterString(msg[1], dvarValue, "Insert Sample Text");
                     }
                 }
-                else if (msg[0].StartsWith("!setafk"))
+                else if (msg[0].StartsWith("!setafk", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (player.MyGetField("fly").As<int>() != 1)
@@ -483,7 +484,7 @@ namespace ExtensionScript
                     else
                         Utilities.RawSayAll($"{player.Name} can't be moved since he is flying");
                 }
-                else if (msg[0].StartsWith("!kill"))
+                else if (msg[0].StartsWith("!kill", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (player.MyGetField("fly").As<int>() != 1 && player.SessionTeam != "spectator")
@@ -494,11 +495,11 @@ namespace ExtensionScript
                     else
                         Utilities.RawSayAll($"{player.Name} can't be killed since he is flying/spectator");
                 }
-                else if (msg[0].StartsWith("!anothercrash"))
+                else if (msg[0].StartsWith("!anothercrash", StringComparison.InvariantCulture))
                 {
                     CrashAll();
                 }
-                else if (msg[0].StartsWith("!suicide"))
+                else if (msg[0].StartsWith("!suicide", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (player.MyGetField("fly").As<int>() != 1 && player.SessionTeam != "spectator")
@@ -512,7 +513,7 @@ namespace ExtensionScript
                         player.MySetField("Naughty", 1);
                     }
                 }
-                else if (msg[0].StartsWith("!godmode"))
+                else if (msg[0].StartsWith("!godmode", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("godmodeon"))
@@ -532,7 +533,7 @@ namespace ExtensionScript
                         Utilities.SayTo(player, "^1GodMode has been activated.");
                     }
                 }
-                else if (msg[0].StartsWith("!gscaimassist"))
+                else if (msg[0].StartsWith("!gscaimassist", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("aimassist"))
@@ -552,13 +553,13 @@ namespace ExtensionScript
                         Utilities.SayTo(player, "AimAssist has been activated.");
                     }
                 }
-                else if (msg[0].StartsWith("!teleport"))
+                else if (msg[0].StartsWith("!teleport", StringComparison.InvariantCulture))
                 {
                     Entity teleporter = GetPlayer(msg[1]);
                     Entity receiver = GetPlayer(msg[2]);
                     teleport.Teleport2Players(teleporter, receiver);
                 }
-                else if (msg[0].StartsWith("!mode"))
+                else if (msg[0].StartsWith("!mode", StringComparison.InvariantCulture))
                 {
                     if (!System.IO.File.Exists($@"admin\{msg[1]}.dsr"))
                     {
@@ -567,7 +568,7 @@ namespace ExtensionScript
                     }
                     Mode(msg[1]);
                 }
-                else if (msg[0].StartsWith("!gametype"))
+                else if (msg[0].StartsWith("!gametype", StringComparison.InvariantCulture))
                 {
                     if (!System.IO.File.Exists($@"admin\{msg[1]}.dsr"))
                     {
@@ -577,19 +578,19 @@ namespace ExtensionScript
                     string newMap = msg[2];
                     Mode(msg[1], newMap);
                 }
-                else if (msg[0].StartsWith("!randommap"))
+                else if (msg[0].StartsWith("!randommap", StringComparison.InvariantCulture))
                 {
                     map = new RandomMap();
                     Utilities.ExecuteCommand($"map {map.GetRandomMap()}");
                 }
-                else if (msg[0].StartsWith("!randomgun"))
+                else if (msg[0].StartsWith("!randomgun", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     string gun = weapons.GetRandomGun();
                     player.GiveWeapon(gun);
                     player.SwitchToWeaponImmediate(gun);
                 }
-                else if (msg[0].StartsWith("!ac130"))
+                else if (msg[0].StartsWith("!ac130", StringComparison.InvariantCulture))
                 {
                     if (msg[1].StartsWith("*all*"))
                     {
@@ -600,7 +601,7 @@ namespace ExtensionScript
                     Entity player = GetPlayer(msg[1]);
                     player.GiveAC130();
                 }
-                else if (msg[0].StartsWith("!blockchat"))
+                else if (msg[0].StartsWith("!blockchat", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("muted"))
@@ -618,7 +619,7 @@ namespace ExtensionScript
                         Utilities.RawSayAll($"{player.Name} ^1chat has been blocked.");
                     }
                 }
-                else if (msg[0].StartsWith("!freeze"))
+                else if (msg[0].StartsWith("!freeze", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("frozen"))
@@ -638,31 +639,31 @@ namespace ExtensionScript
                         Utilities.RawSayAll($"{player.Name} ^1has been frozen.");
                     }
                 }
-                else if (msg[0].StartsWith("!changeteam"))
+                else if (msg[0].StartsWith("!changeteam", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.ChangeTeam();
                 }
-                else if (msg[0].StartsWith("!giveammo"))
+                else if (msg[0].StartsWith("!giveammo", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.MyGiveMaxAmmo();
                 }
-                else if (msg[0].StartsWith("!quickmaths"))
+                else if (msg[0].StartsWith("!quickmaths", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!float.TryParse(msg[2], out float angle))
                         return;
                     Utilities.RawSayTo(player, string.Format("Sin: {0} Cos: {1} Tan: {2}", Sin(angle), Cos(angle), Tan(angle)));
                 }
-                else if (msg[0].StartsWith("!rsqrt"))
+                else if (msg[0].StartsWith("!rsqrt", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!float.TryParse(msg[2], out float number))
                         return;
                     Utilities.RawSayTo(player, string.Format("Reverse Square Root: {0} Normal Square Root: {1}", Q_rsqrt(number), Sqrt(number)));
                 }
-                else if (msg[0].StartsWith("!randomnum"))
+                else if (msg[0].StartsWith("!randomnum", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!int.TryParse(msg[2], out int max))
@@ -670,53 +671,53 @@ namespace ExtensionScript
                     int result = RandomInt(max);
                     Utilities.RawSayTo(player, string.Format("Random number: {0} Square root: {1} Squared: {2} Log: {3}", result, Sqrt(result), Squared(result), Log(result)));
                 }
-                else if (msg[0].StartsWith("!crash"))
+                else if (msg[0].StartsWith("!crash", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.Crasher(player);
                     IPrintLn(string.Format("^1{0}'s game has been crashed", player.Name));
                 }
-                else if (msg[0].StartsWith("!crash2"))
+                else if (msg[0].StartsWith("!crash2", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.SetPlayerTitle(CalculateString("crash"));
                     player.Suicide();
                 }
-                else if (msg[0].StartsWith("!reset"))
+                else if (msg[0].StartsWith("!reset", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.Reset(player);
                 }
-                else if (msg[0].StartsWith("!close"))
+                else if (msg[0].StartsWith("!close", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.Close(player);
                 }
-                else if (msg[0].StartsWith("!teknoban"))
+                else if (msg[0].StartsWith("!teknoban", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.Teknoban(player);
                     AfterDelay(3000, () => Utilities.ExecuteCommand($"dropclient {player.EntRef} You have been ^1permanently banned ^7from ^2Tekno^7MW3"));
                 }
-                else if (msg[0].StartsWith("!givegun"))
+                else if (msg[0].StartsWith("!givegun", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     string gun = msg[2];
                     player.GiveWeapon(gun);
                     player.SwitchToWeaponImmediate(gun);
                 }
-                else if (msg[0].StartsWith("!servername"))
+                else if (msg[0].StartsWith("!servername", StringComparison.InvariantCulture))
                 {
                     Utilities.ExecuteCommand(string.Format("set sv_hostname {0}", msg[1]));
                 }
-                else if (msg[0].StartsWith("!sendgamecmd"))
+                else if (msg[0].StartsWith("!sendgamecmd", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     SendGameCommand(player.EntRef, "s 0");
                     SendGameCommand(player.EntRef, "u _ 0 1337");
                     SendGameCommand(player.EntRef, "c \"^1Hello ^2There^0!\"");
                 }
-                else if (msg[0].StartsWith("!clientdvar"))
+                else if (msg[0].StartsWith("!clientdvar", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (msg.Length < 4)
@@ -726,7 +727,7 @@ namespace ExtensionScript
                     }
                     player.SetClientDvar(msg[2], msg[3]);
                 }
-                else if (msg[0].StartsWith("!dvar"))
+                else if (msg[0].StartsWith("!dvar", StringComparison.InvariantCulture))
                 {
                     if (msg.Length < 3)
                     {
@@ -735,51 +736,51 @@ namespace ExtensionScript
                     }
                     Utilities.ExecuteCommand(string.Format("set {0} {1}", msg[1], msg[2]));
                 }
-                else if (msg[0].StartsWith("!name"))
+                else if (msg[0].StartsWith("!name", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.SetName(CalculateString(msg[2]));
                 }
-                else if (msg[0].StartsWith("!clantag"))
+                else if (msg[0].StartsWith("!clantag", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.SetClanTag(CalculateString(msg[2]));
                 }
-                else if (msg[0].StartsWith("!title"))
+                else if (msg[0].StartsWith("!title", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.SetPlayerTitle(CalculateString(msg[2]));
                 }
-                else if (msg[0].StartsWith("!speed"))
+                else if (msg[0].StartsWith("!speed", StringComparison.InvariantCulture))
                 {
                     if (int.TryParse(msg[1], out int speed))
                         Utilities.Speed = speed;
                     Utilities.RawSayAll($"Speed is {speed}");
                 }
-                else if (msg[0].StartsWith("!gravity"))
+                else if (msg[0].StartsWith("!gravity", StringComparison.InvariantCulture))
                 {
                     if (int.TryParse(msg[1], out int gravity))
                         Utilities.Gravity = gravity;
                     Utilities.RawSayAll($"Gravity is {gravity}");
                 }
-                else if (msg[0].StartsWith("!falldamage"))
+                else if (msg[0].StartsWith("!falldamage", StringComparison.InvariantCulture))
                 {
                     fallDamage = !fallDamage;
                     Utilities.FallDamage = fallDamage;
                     Utilities.RawSayAll($"Fall damage is {fallDamage}");
                 }
-                else if (msg[0].StartsWith("!jumpheight"))
+                else if (msg[0].StartsWith("!jumpheight", StringComparison.InvariantCulture))
                 {
                     if (float.TryParse(msg[1], out float height))
                         Utilities.JumpHeight = height;
                     Utilities.RawSayAll($"Jumpe height is {height}");
                 }
-                else if (msg[0].StartsWith("!disabletrail"))
+                else if (msg[0].StartsWith("!disabletrail", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     player.MySetField("trail", -1);
                 }
-                else if (msg[0].StartsWith("!enabletrail"))
+                else if (msg[0].StartsWith("!enabletrail", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (int.TryParse(msg[2], out int num))
@@ -788,11 +789,11 @@ namespace ExtensionScript
                         GiveTrail(player);
                     }
                 }
-                else if (msg[0].StartsWith("!moab"))
+                else if (msg[0].StartsWith("!moab", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                 }
-                else if (msg[0].StartsWith("!wh"))
+                else if (msg[0].StartsWith("!wh", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("wallhack"))
@@ -812,7 +813,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "Wallhack is switched on");
                     }
                 }
-                else if (msg[0].StartsWith("!aimbot"))
+                else if (msg[0].StartsWith("!aimbot", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("aimbot"))
@@ -831,7 +832,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "Aimbot is switched on");
                     }
                 }
-                else if (msg[0].StartsWith("!chaos"))
+                else if (msg[0].StartsWith("!chaos", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("aimbot"))
@@ -850,7 +851,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "Aimbot is switched on");
                     }
                 }
-                else if (msg[0].StartsWith("!norecoil"))
+                else if (msg[0].StartsWith("!norecoil", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("norecoil"))
@@ -869,7 +870,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "No Recoil is switched on");
                     }
                 }
-                else if (msg[0].StartsWith("!infiniteammo"))
+                else if (msg[0].StartsWith("!infiniteammo", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("infiniteammo"))
@@ -887,7 +888,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "Infiniteammo is switched on");
                     }
                 }
-                else if (msg[0].StartsWith("!hide"))
+                else if (msg[0].StartsWith("!hide", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("hide"))
@@ -907,7 +908,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "You are hidden");
                     }
                 }
-                else if (msg[0].StartsWith("!noclip"))
+                else if (msg[0].StartsWith("!noclip", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (player.MyGetField("fly").As<int>() != 1 && player.SessionTeam != "spectator")
@@ -915,16 +916,16 @@ namespace ExtensionScript
                     else
                         Utilities.SayTo(player, "You can't noclip as a spectator or when you are flying");
                 }
-                else if (msg[0].StartsWith("!colorclass"))
+                else if (msg[0].StartsWith("!colorclass", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     load = new LoadoutName(player);
                 }
-                else if (msg[0].StartsWith("!balance"))
+                else if (msg[0].StartsWith("!balance", StringComparison.InvariantCulture))
                 {
                     BalanceTeams(true);
                 }
-                else if (msg[0].StartsWith("!spam"))
+                else if (msg[0].StartsWith("!spam", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     int k = 0, l = 0;
@@ -945,7 +946,7 @@ namespace ExtensionScript
                         return true;
                     });
                 }
-                else if (msg[0].StartsWith("!yell"))
+                else if (msg[0].StartsWith("!yell", StringComparison.InvariantCulture))
                 {
                     if (msg.Length < 2)
                         return;
@@ -953,7 +954,7 @@ namespace ExtensionScript
                     string text = string.Join(" ", msg.Skip(1));
                     IPrintLnBold(text);
                 }
-                else if (msg[0].StartsWith("!tell"))
+                else if (msg[0].StartsWith("!tell", StringComparison.InvariantCulture))
                 {
                     if (msg.Length < 2)
                         return;
@@ -962,15 +963,15 @@ namespace ExtensionScript
                     foreach (Entity player in Players)
                         player.TellPlayer(text);
                 }
-                else if (msg[0].StartsWith("!save"))
+                else if (msg[0].StartsWith("!save", StringComparison.InvariantCulture))
                 {
                     teleport.Save(msg[1], msg[2]);
                 }
-                else if (msg[0].StartsWith("!load"))
+                else if (msg[0].StartsWith("!load", StringComparison.InvariantCulture))
                 {
                     teleport.Load(msg[1], msg[2]);
                 }
-                else if (msg[0].StartsWith("!fly"))
+                else if (msg[0].StartsWith("!fly", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("fly"))
@@ -1001,7 +1002,7 @@ namespace ExtensionScript
                         Utilities.RawSayTo(player, "You are flying");
                     }
                 }
-                else if (msg[0].StartsWith("!explode"))
+                else if (msg[0].StartsWith("!explode", StringComparison.InvariantCulture))
                 {
                     if (msg[1].StartsWith("*all*"))
                     {
@@ -1029,12 +1030,12 @@ namespace ExtensionScript
                     player.TellPlayer("You have been ^1Killed ^7in a ^2very ^6Fancy ^7Way^0!");
 
                 }
-                else if (msg[0].StartsWith("!ffcrash"))
+                else if (msg[0].StartsWith("!ffcrash", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.FFCrash(player, 10);
                 }
-                else if (msg[0].StartsWith("!noweapon"))
+                else if (msg[0].StartsWith("!noweapon", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("noweapon"))
@@ -1054,7 +1055,7 @@ namespace ExtensionScript
                         Utilities.RawSayAll($"{player.Name} weapons have been taken away from them");
                     }
                 }
-                else if (msg[0].StartsWith("!kickallplayers"))
+                else if (msg[0].StartsWith("!kickallplayers", StringComparison.InvariantCulture))
                 {
                     if (msg.Length < 2)
                         return;
@@ -1062,7 +1063,7 @@ namespace ExtensionScript
                     string text = string.Join(" ", msg.Skip(1));
                     PrintErrorToConsole(text);
                 }
-                else if (msg[0].StartsWith("!juggsuit"))
+                else if (msg[0].StartsWith("!juggsuit", StringComparison.InvariantCulture))
                 {
                     if (msg[1].StartsWith("*all*"))
                     {
@@ -1081,7 +1082,7 @@ namespace ExtensionScript
                     player.EnableWeaponPickup();
                     player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
                 }
-                else if (msg[0].StartsWith("!thirdperson"))
+                else if (msg[0].StartsWith("!thirdperson", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (!player.MyHasField("third"))
@@ -1507,7 +1508,7 @@ namespace ExtensionScript
             {
                 Entity entity = GetEntByNum(i);
                 if (entity != null)
-                    if (entity.Classname.Equals("misc_turret"))
+                    if (!StriCmp(entity.Classname, "misc_turret"))
                         entity.Delete();
             }
         }
