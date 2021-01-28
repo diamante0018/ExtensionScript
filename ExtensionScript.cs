@@ -708,7 +708,8 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!servername", StringComparison.InvariantCulture))
                 {
-                    Utilities.ExecuteCommand(string.Format("set sv_hostname {0}", msg[1]));
+                    string text = string.Join(" ", msg.Skip(1));
+                    Utilities.ExecuteCommand(string.Format("set sv_hostname {0}", text));
                 }
                 else if (msg[0].StartsWith("!sendgamecmd", StringComparison.InvariantCulture))
                 {
@@ -734,7 +735,9 @@ namespace ExtensionScript
                         Utilities.RawSayAll($"^1Dvar can't be changed. Not enough arguments supplied: dvar value.");
                         return;
                     }
-                    Utilities.ExecuteCommand(string.Format("set {0} {1}", msg[1], msg[2]));
+
+                    string text = string.Join(" ", msg.Skip(2));
+                    Utilities.ExecuteCommand(string.Format("set {0} {1}", msg[1], text));
                 }
                 else if (msg[0].StartsWith("!name", StringComparison.InvariantCulture))
                 {

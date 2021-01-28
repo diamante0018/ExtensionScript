@@ -74,10 +74,16 @@ let commands = [{
 
         permission: "Trusted",
 
+        arguments: [{
+            name: "Trail Number",
+            required: true
+        }],
+
         execute: (gameEvent) => {
             var server = gameEvent.Owner;
             var cid = gameEvent.Origin.ClientNumber;
-            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !enabletrail ' + cid).Result;
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !enabletrail ' + cid + ' ' + message).Result;
         }
     },
     {
