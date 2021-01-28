@@ -20,6 +20,9 @@ namespace ExtensionScript
 {
     public partial class Server
     {
+        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void DvarModifyMaxClients(int maxClients);
+
         public class AobScan
         {
             [DllImport("kernel32.dll")]
@@ -315,5 +318,8 @@ namespace ExtensionScript
 
             return false;
         }
+
+        /// <summary>function <c>MaxClients</c> Changes the value of sv_maxclients using C++.</summary>
+        public void MaxClients(int max) => DvarModifyMaxClients(max);
     }
 }

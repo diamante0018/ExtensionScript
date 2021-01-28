@@ -36,5 +36,6 @@ Native C++ functions:
 - DvarRegisterString Registers a string dvar. Similar to SetDvar. Max length is somewhere between 100-150 characters
 - NET_Print Arguments are duplicate packets, entity reference and the message itself. I suspect duplicate packets are necessary because we are using the UDP protocol.
 - Q_rsqrt This function calculates the reverse square root of a given float number
+- DvarModifyMaxClients Modifies the dvar sv_maxclients to whatever value is specified within 0-512
 
 Special thanks to [S3VDITO](https://github.com/S3VDITO)

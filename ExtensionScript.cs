@@ -98,6 +98,7 @@ namespace ExtensionScript
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
             SetDvarIfUninitialized("sv_RemoveBakaaraSentry", "0");
             sv.ServerTitle(GetDvar("sv_MyMapName"), GetDvar("sv_MyGameMode"));
+            sv.MaxClients(69);
 
             //Loading Server Dvars.
             ServerDvars();
