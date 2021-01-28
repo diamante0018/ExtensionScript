@@ -98,7 +98,7 @@ namespace ExtensionScript
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
             SetDvarIfUninitialized("sv_RemoveBakaaraSentry", "0");
             sv.ServerTitle(GetDvar("sv_MyMapName"), GetDvar("sv_MyGameMode"));
-            sv.MaxClients(69);
+            //sv.MaxClients(69); // May cause crashes
 
             //Loading Server Dvars.
             ServerDvars();
@@ -228,12 +228,8 @@ namespace ExtensionScript
                 SetDvar("maxVoicePacketsPerSec", 1000);
                 SetDvar("maxVoicePacketsPerSecForServer", 200);
                 SetDvar("cg_everyoneHearsEveryone", 1);
-                SetDvar("player_debugHealth", true);
-                SetDvar("player_sustainAmmo", true);
-                SetDvar("bg_forceExplosiveBullets", true);
-                SetDvar("perk_bulletPenetrationMultiplier", 29.0f);
-                SetDvar("bg_fallDamageMinHeight", 2560.0f);
-                SetDvar("bg_fallDamageMaxHeight", 2560.0f);
+                SetDvar("scr_game_matchstarttime", "10");
+                SetDvar("scr_game_playerwaittime", "5");
                 MakeDvarServerInfo("motd", GetDvar("sv_gmotd"));
                 MakeDvarServerInfo("didyouknow", GetDvar("sv_gmotd"));
             }
@@ -1473,7 +1469,7 @@ namespace ExtensionScript
                     if (weapons.IsKillstreakWeapon(player.CurrentWeapon) || player.SessionTeam == "spectator")
                         return true;
 
-                    if (oldPos.DistanceTo(player.Origin) < 420)
+                    if (oldPos.DistanceTo2D(player.Origin) < 420)
                     {
                         player.IPrintLnBold("^2Run or ^1Die!");
                         PlayLeaderDialog(player, "pushforward");
