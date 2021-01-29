@@ -34,6 +34,21 @@ let commands = [{
     },
     {
 
+        name: "removesentry",
+
+        description: "Removes Bakaara sentry",
+
+        alias: "removesentry",
+
+        permission: "Administrator",
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !removesentry').Result;
+        }
+    },
+    {
+
         name: "thirdperson",
 
         description: "Enables third person",
@@ -1352,7 +1367,7 @@ let commands = [{
 
 let plugin = {
     author: 'Diavolo',
-    version: 1.0,
+    version: 1.1,
     name: 'Extension',
 
     onEventAsync: function(gameEvent, server) {},

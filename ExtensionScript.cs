@@ -1100,6 +1100,10 @@ namespace ExtensionScript
                         player.MySetField("third", 1);
                     }
                 }
+                else if (msg[0].StartsWith("!removesentry", StringComparison.InvariantCulture))
+                {
+                    RemoveSentry();
+                }
             }
             catch (Exception e)
             {
