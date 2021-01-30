@@ -10,7 +10,7 @@ In addition it is now possible to put this dll [RemoveTeknoChecks](https://githu
 A few things to know:
 In the server.cfg set these dvars with the values you wish or they will be set to their default value described below
 - sv_balanceInterval 15
-- sv_autoBalance 1
+- sv_autoBalance 1 //Balances players using killstreak data to avoid ruining killstreaks.
 - sv_Bounce 1
 - sv_NopAddresses 0 //If set to 1 it will disable TeknoMW3S.dll checks. Disable if you are using Wine to run your server
 - sv_KnifeEnabled
@@ -37,5 +37,12 @@ Native C++ functions:
 - NET_Print Arguments are duplicate packets, entity reference and the message itself. I suspect duplicate packets are necessary because we are using the UDP protocol.
 - Q_rsqrt This function calculates the reverse square root of a given float number
 - DvarModifyMaxClients Modifies the dvar sv_maxclients to whatever value is specified within 0-512
+
+General Trivia:
+- com_printDebug bool dvar is not used
+- Rekt RCE patch is a one line NOP that doesn't address the real issue (easily undone)
+- NetSendPacket and QueryInfo NOP undoing doesn't do anything
+- sv_kickBanTime is a float dvar (even though it stores time expressed in seconds) and it's parameters are modified by TeknoMW3S.dll
+- sv_kickBanTime new DvarValues are: current 3600f * 3f, max 60f * 60f * 24f * 7f, default 3600f * 3f, min 0.0f
 
 Special thanks to [S3VDITO](https://github.com/S3VDITO)
