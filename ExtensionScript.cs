@@ -70,33 +70,32 @@ namespace ExtensionScript
         {
             IPrintLn("^1I am Diavolo and I lost my Mind. ^7DIA Script for 1.5 IS");
             InfinityScript.Log.Write(LogLevel.Info, "^1I am Diavolo and I lost my Mind.");
-            SetDvarIfUninitialized("sv_hideCommands", "1");
+            SetDvarIfUninitialized("sv_hideCommands", 1);
             SetDvarIfUninitialized("sv_gmotd", "^:Welcome to ^4DIA ^:servers. https://discord.com/invite/");
-            SetDvarIfUninitialized("sv_forceSmoke", "1");
+            SetDvarIfUninitialized("sv_forceSmoke", 1);
             SetDvarIfUninitialized("sv_objText", "^7Join our Discord Server now! ^1https://discord.com/invite/");
-            SetDvarIfUninitialized("sv_clientDvars", "1");
-            SetDvarIfUninitialized("sv_rate", "210000");
-            SetDvarIfUninitialized("sv_serverDvars", "1");
-            SetDvarIfUninitialized("sv_killStreakCounter", "1");
-            SetDvarIfUninitialized("sv_hudEnable", "1");
-            //SetDvarIfUninitialized("sv_hudTop", "^1TOP Message");
+            SetDvarIfUninitialized("sv_clientDvars", 1);
+            SetDvarIfUninitialized("sv_rate", 210000);
+            SetDvarIfUninitialized("sv_serverDvars", 1);
+            SetDvarIfUninitialized("sv_killStreakCounter", 1);
+            SetDvarIfUninitialized("sv_hudEnable", 1);
             SetDvarIfUninitialized("sv_hudBottom", "^1Press ^7'Vote Yes' ^1for max ammo! ^7Discord: ^5https://discord.com/invite/");
             SetDvarIfUninitialized("sv_MyMapName", "WeirdMap");
             SetDvarIfUninitialized("sv_MyGameMode", "WeirdGameMode");
-            SetDvarIfUninitialized("sv_scrollingSpeed", "30");
-            SetDvarIfUninitialized("sv_scrollingHud", "1");
+            SetDvarIfUninitialized("sv_scrollingSpeed", 30);
+            SetDvarIfUninitialized("sv_scrollingHud", 1);
             SetDvarIfUninitialized("sv_b3Execute", "undefined");
-            SetDvarIfUninitialized("sv_balanceInterval", "15");
-            SetDvarIfUninitialized("sv_autoBalance", "1");
-            SetDvarIfUninitialized("sv_Bounce", "1");
-            SetDvarIfUninitialized("sv_NopAddresses", "0");
-            SetDvarIfUninitialized("sv_KnifeEnabled", "0");
-            SetDvarIfUninitialized("sv_UndoRCE", "0");
-            SetDvarIfUninitialized("sv_LocalizedStr", "1");
-            SetDvarIfUninitialized("sv_AntiCamp", "1");
-            SetDvarIfUninitialized("sv_LastStand", "0");
+            SetDvarIfUninitialized("sv_balanceInterval", 15);
+            SetDvarIfUninitialized("sv_autoBalance", 1);
+            SetDvarIfUninitialized("sv_Bounce", 1);
+            SetDvarIfUninitialized("sv_NopAddresses", 0);
+            SetDvarIfUninitialized("sv_KnifeEnabled", 0);
+            SetDvarIfUninitialized("sv_UndoRCE", 0);
+            SetDvarIfUninitialized("sv_LocalizedStr", 1);
+            SetDvarIfUninitialized("sv_AntiCamp", 1);
+            SetDvarIfUninitialized("sv_LastStand", 0);
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
-            SetDvarIfUninitialized("sv_RemoveBakaaraSentry", "0");
+            SetDvarIfUninitialized("sv_RemoveBakaaraSentry", 0);
             sv.ServerTitle(GetDvar("sv_MyMapName"), GetDvar("sv_MyGameMode"));
             //sv.MaxClients(69); // May cause crashes
 
@@ -228,8 +227,8 @@ namespace ExtensionScript
                 SetDvar("maxVoicePacketsPerSec", 1000);
                 SetDvar("maxVoicePacketsPerSecForServer", 200);
                 SetDvar("cg_everyoneHearsEveryone", 1);
-                SetDvar("scr_game_matchstarttime", "10");
-                SetDvar("scr_game_playerwaittime", "5");
+                SetDvar("scr_game_matchstarttime", 10);
+                SetDvar("scr_game_playerwaittime", 5);
                 MakeDvarServerInfo("motd", GetDvar("sv_gmotd"));
                 MakeDvarServerInfo("didyouknow", GetDvar("sv_gmotd"));
             }
@@ -297,14 +296,14 @@ namespace ExtensionScript
             {
                 player.SetClientDvar("cg_objectiveText", GetDvar("sv_objText"));
                 player.SetClientDvar("sys_lockThreads", "all");
-                player.SetClientDvar("com_maxFrameTime", "1000");
+                player.SetClientDvar("com_maxFrameTime", 1000);
                 player.SetClientDvars("snaps", 30, "rate", GetDvar("sv_rate"));
                 player.SetClientDvars("g_teamicon_allies", "weapon_missing_image", "g_teamicon_MyAllies", "weapon_missing_image", "g_teamicon_EnemyAllies", "weapon_missing_image");
                 player.SetClientDvars("g_teamicon_axis", "weapon_missing_image", "g_teamicon_MyAxis", "weapon_missing_image", "g_teamicon_EnemyAxis", "weapon_missing_image");
                 player.SetClientDvar("player_debugHealth", true);
             }
             if (GetDvarInt("sv_forceSmoke") != 0)
-                player.SetClientDvar("fx_draw", "1");
+                player.SetClientDvar("fx_draw", true);
 
             //Killstreak Related Code
             var killstreakHud = CreateFontString(player, Fonts.HudSmall, 0.8f);
