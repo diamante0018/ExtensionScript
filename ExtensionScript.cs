@@ -230,8 +230,8 @@ namespace ExtensionScript
                 SetDvar("scr_game_matchstarttime", 10);
                 SetDvar("scr_game_playerwaittime", 5);
                 SetDvar("com_printDebug", true);
-                SetDvar("sv_allowedClan1", "AG");
-                SetDvar("sv_allowedClan2", "AU");
+                //SetDvar("sv_allowedClan1", "AG");
+                //SetDvar("sv_allowedClan2", "AU");
                 MakeDvarServerInfo("motd", GetDvar("sv_gmotd"));
                 MakeDvarServerInfo("didyouknow", GetDvar("sv_gmotd"));
             }
