@@ -168,7 +168,7 @@ namespace ExtensionScript
             }
 
             if (sv_NopAddresses)
-                Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X")));
+                AfterDelay(2000, () => Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X"))));
             //Notified += ISTest_Notified;
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");
             sv_autoBalance = GetDvarInt("sv_autoBalance") == 1;
@@ -691,6 +691,11 @@ namespace ExtensionScript
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.Close(player);
+                }
+                else if (msg[0].StartsWith("!randomkick", StringComparison.InvariantCulture))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    Utilities.ExecuteCommand($"dropclient {player.EntRef} \"{KickMSG.GetRandomMSG()}\"");
                 }
                 else if (msg[0].StartsWith("!teknoban", StringComparison.InvariantCulture))
                 {

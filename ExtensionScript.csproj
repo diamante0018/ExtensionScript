@@ -51,6 +51,7 @@
     <Compile Include="Kicker.cs" />
     <Compile Include="ExtensionScript.cs" />
     <Compile Include="ExtFunc.cs" />
+    <Compile Include="KickMSG.cs" />
     <Compile Include="LoadoutName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomMap.cs" />

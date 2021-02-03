@@ -234,6 +234,32 @@ let commands = [{
     },
     {
 
+        name: "randomkick",
+
+        description: "Kicks the target using a random message",
+
+        alias: "randomkick",
+
+        permission: "Administrator",
+
+        targetRequired: true,
+
+        arguments: [{
+            name: "Target Player",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Target.ClientNumber;
+            if (gameEvent.Origin.Level > gameEvent.Target.Level)
+                server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !randomkick ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
+        }
+    },
+    {
+
         name: "quickmaths",
 
         description: "Calculates Sin, Cos, and Tan of the angle using in-game GSC Functions",

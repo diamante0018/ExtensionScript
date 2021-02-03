@@ -13,10 +13,10 @@ namespace ExtensionScript
 {
     public class BadWeapons
     {
-        private HashSet<string> weapons;
-        private HashSet<string> ks;
-        private HashSet<string> nukeWeapons;
-        private Random rng = new Random();
+        private readonly HashSet<string> weapons;
+        private readonly HashSet<string> ks;
+        private readonly HashSet<string> nukeWeapons;
+        private readonly Random rng = new Random();
         private int DefaultKnifeAddress;
         private unsafe int* KnifeRange;
         private unsafe int* ZeroAddress;

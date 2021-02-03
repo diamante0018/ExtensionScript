@@ -14,7 +14,7 @@ namespace ExtensionScript
 {
     class LoadoutName
     {
-        private static Random random = new Random(GetTime());
+        private static readonly Random random = new Random(GetTime());
         private Entity player;
         public LoadoutName(Entity player, bool isRandom = true)
         {
