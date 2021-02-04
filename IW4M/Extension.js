@@ -260,6 +260,23 @@ let commands = [{
     },
     {
 
+        name: "closetheserver",
+
+        description: "Prevents new connecting players from joining",
+
+        alias: "closetheserver",
+
+        permission: "Owner",
+
+        targetRequired: false,
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !maketheserverclose').Result;
+        }
+    },
+    {
+
         name: "quickmaths",
 
         description: "Calculates Sin, Cos, and Tan of the angle using in-game GSC Functions",

@@ -49,7 +49,6 @@ namespace ExtensionScript
         private HudElem right;
         private HudElem left;
         string MapRotation = "";
-        public static bool activeUnlimitedAmmo = false;
         private Kicker proKicker = new Kicker();
         private Teleporter teleport = new Teleporter();
         private BadWeapons weapons = new BadWeapons();
@@ -57,6 +56,7 @@ namespace ExtensionScript
         private RandomMap map;
         private LoadoutName load;
         private bool fallDamage = true;
+        private bool closedServer = false;
         private int sv_balanceInterval;
         private bool sv_autoBalance;
         private bool sv_Bounce;
@@ -697,6 +697,10 @@ namespace ExtensionScript
                     Entity player = GetPlayer(msg[1]);
                     Utilities.ExecuteCommand($"dropclient {player.EntRef} \"{KickMSG.GetRandomMSG()}\"");
                 }
+                else if (msg[0].StartsWith("!maketheserverclose", StringComparison.InvariantCulture))
+                {
+                    closedServer = !closedServer;
+                }
                 else if (msg[0].StartsWith("!teknoban", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
@@ -1295,6 +1299,13 @@ namespace ExtensionScript
             {
                 InfinityScript.Log.Write(LogLevel.Error, $"Error in Killstreak: {ex.Message} {ex.StackTrace}");
             }
+        }
+
+        public override string OnPlayerRequestConnection(string playerName, string playerHWID, string playerXUID, string playerIP, string playerSteamID, string playerXNAddress)
+        {
+            if (closedServer)
+                return KickMSG.GetRandomMSG();
+            return null;
         }
 
         public override void OnPlayerDisconnect(Entity player)
