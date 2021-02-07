@@ -304,9 +304,6 @@ namespace ExtensionScript
                 player.SetClientDvars("g_teamicon_allies", "weapon_missing_image", "g_teamicon_MyAllies", "weapon_missing_image", "g_teamicon_EnemyAllies", "weapon_missing_image");
                 player.SetClientDvars("g_teamicon_axis", "weapon_missing_image", "g_teamicon_MyAxis", "weapon_missing_image", "g_teamicon_EnemyAxis", "weapon_missing_image");
                 player.SetClientDvar("player_debugHealth", true);
-                player.SetClientDvar("cg_hudGrenadeIconMaxRangeFlash", 1200f);
-                player.SetClientDvar("cg_hudGrenadeIconMaxRangeFrag", 1200f);
-                player.SetClientDvar("cg_hudGrenadeIconMaxHeight", 200f);
             }
             if (GetDvarInt("sv_forceSmoke") != 0)
                 player.SetClientDvar("fx_draw", true);
