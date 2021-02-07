@@ -51,6 +51,12 @@ namespace ExtensionScript
             // If it's not a desert eagle *NOTE THE GL IN EAGLE* check if it's a noob tube if yes give health back
             if (!weapon.Contains("desert") && (weapon.Contains("m320") || weapon.Contains("gl") || weapon.Contains("gp25")))
                 player.Health += Math.Abs(damage - 3);
+
+            if (weapon.Contains("iw5_acr_mp") || weapon.Contains("iw5_mp7_mp"))
+            {
+                double correction = (damage / 100.0) * 75.0;
+                player.Health += Convert.ToInt32(correction);
+            }
         }
 
         private HashSet<string> Constructor()
