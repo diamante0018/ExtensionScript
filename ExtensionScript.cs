@@ -686,7 +686,7 @@ namespace ExtensionScript
                     player.SetPlayerTitle(CalculateString("crash"));
                     player.Suicide();
                 }
-                else if (msg[0].StartsWith("!reset", StringComparison.InvariantCulture))
+                else if (msg[0].StartsWith("!resetstats", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.Reset(player);

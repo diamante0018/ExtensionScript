@@ -103,6 +103,48 @@ let commands = [{
     },
     {
 
+        name: "setalias",
+
+        description: "Sets an alias for the client",
+
+        alias: "setalias",
+
+        permission: "Trusted",
+
+        targetRequired: true,
+
+        arguments: [{
+            name: "Alias",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Target.ClientNumber
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !setalias ' + cid + ' ' + message).Result;
+        }
+    },
+    {
+
+        name: "resetalias",
+
+        description: "Removes alias",
+
+        alias: "resetalias",
+
+        permission: "Trusted",
+
+        targetRequired: true,
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Target.ClientNumber
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !resetalias ' + cid).Result;
+        }
+    },
+    {
+
         name: "kickall",
 
         description: "Kicks all players with a custom error message and shuts down the server",
