@@ -1349,7 +1349,7 @@ namespace ExtensionScript
         {
 
             message = message.ToLower();
-            if ((message.StartsWith("!")) || (message.StartsWith("@")))
+            if (message.StartsWith("!") || message.StartsWith("@"))
             {
                 if (sv_hideCommands)
                     return EventEat.EatGame;
