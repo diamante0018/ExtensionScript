@@ -65,6 +65,7 @@ namespace ExtensionScript
         private bool sv_KnifeEnabled;
         private bool sv_UndoRCE;
         private bool sv_RemoveBakaaraSentry;
+        private bool sv_hideCommands;
         private List<Entity> onlinePlayers = new List<Entity>();
 
         public ExtensionScript()
@@ -126,6 +127,7 @@ namespace ExtensionScript
             sv_KnifeEnabled = GetDvarInt("sv_KnifeEnabled") == 1;
             sv_UndoRCE = GetDvarInt("sv_UndoRCE") == 1;
             sv_RemoveBakaaraSentry = GetDvarInt("sv_RemoveBakaaraSentry") == 1;
+            sv_hideCommands = GetDvarInt("sv_hideCommands") != 0;
 
             unsafe
             {
@@ -1349,7 +1351,7 @@ namespace ExtensionScript
             message = message.ToLower();
             if ((message.StartsWith("!")) || (message.StartsWith("@")))
             {
-                if (GetDvarInt("sv_hideCommands") != 0)
+                if (sv_hideCommands)
                     return EventEat.EatGame;
             }
 
