@@ -53,6 +53,7 @@ namespace ExtensionScript
         private Teleporter teleport = new Teleporter();
         private BadWeapons weapons = new BadWeapons();
         private Server sv = new Server();
+        private ChatAlias chat = new ChatAlias();
         private RandomMap map;
         private LoadoutName load;
         private bool fallDamage = true;
@@ -94,6 +95,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_LocalizedStr", 1);
             SetDvarIfUninitialized("sv_AntiCamp", 1);
             SetDvarIfUninitialized("sv_LastStand", 0);
+            SetDvarIfUninitialized("sv_playerChatAlias", 1);
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
             SetDvarIfUninitialized("sv_RemoveBakaaraSentry", 0);
             sv.ServerTitle(GetDvar("sv_MyMapName"), GetDvar("sv_MyGameMode"));
@@ -182,6 +184,9 @@ namespace ExtensionScript
 
             if (!sv_KnifeEnabled)
                 weapons.DisableKnife();
+
+            if (GetDvarInt("sv_playerChatAlias") == 1)
+                chat.Load();
         }
 
         /// <summary>function <c>ISTest_Notified</c> Prints all the notifies when triggered.</summary>
@@ -303,7 +308,6 @@ namespace ExtensionScript
                 player.SetClientDvars("snaps", 30, "rate", GetDvar("sv_rate"));
                 player.SetClientDvars("g_teamicon_allies", "weapon_missing_image", "g_teamicon_MyAllies", "weapon_missing_image", "g_teamicon_EnemyAllies", "weapon_missing_image");
                 player.SetClientDvars("g_teamicon_axis", "weapon_missing_image", "g_teamicon_MyAxis", "weapon_missing_image", "g_teamicon_EnemyAxis", "weapon_missing_image");
-                player.SetClientDvar("player_debugHealth", true);
             }
             if (GetDvarInt("sv_forceSmoke") != 0)
                 player.SetClientDvar("fx_draw", true);
@@ -441,7 +445,7 @@ namespace ExtensionScript
         {
             try
             {
-                string[] msg = message.Split(new char[] { '\x20', '\t', '\r', '\n', '\f', '\b', '\v' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] msg = message.Split(new char[] { '\x20', '\t', '\r', '\n', '\f', '\b', '\v', ';' }, StringSplitOptions.RemoveEmptyEntries);
                 msg[0] = msg[0].ToLower(new CultureInfo("en-GB", false));
 
                 if (msg[0].StartsWith("!afk", StringComparison.InvariantCulture))
@@ -1115,6 +1119,20 @@ namespace ExtensionScript
                 {
                     RemoveSentry();
                 }
+                else if (msg[0].StartsWith("!setalias", StringComparison.InvariantCulture))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    if (msg.Length > 2 && !string.IsNullOrWhiteSpace(msg[2]))
+                    {
+                        string alias = CalculateString(msg[2]);
+                        chat.Update(player.HWID, alias);
+                    }
+                }
+                else if (msg[0].StartsWith("!resetalias", StringComparison.InvariantCulture))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    chat.Remove(player.HWID);
+                }
             }
             catch (Exception e)
             {
@@ -1325,7 +1343,7 @@ namespace ExtensionScript
         public override void OnPlayerDamage(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc) => weapons.GiveHealthBack(player, weapon, damage);
 
         /// <summary>function <c>OnSay2</c> If the player is muted or the message starts with ! or @ the message will be censored and it will not be seen by other players.</summary>
-        public override EventEat OnSay2(Entity player, string name, string message)
+        public override EventEat OnSay3(Entity player, ChatType type, string name, ref string message)
         {
 
             message = message.ToLower();
@@ -1339,6 +1357,46 @@ namespace ExtensionScript
             {
                 return EventEat.EatGame;
             }
+
+            string alias = chat.CheckAlias(player);
+
+            if (!string.IsNullOrWhiteSpace(alias))
+            {
+                string text = alias + "^7: " + message;
+
+                if (type == ChatType.Team)
+                {
+                    text = alias + "^7:^5 " + message;
+                }
+
+                if (player.SessionTeam == "spectator")
+                {
+                    text = "^7(Spectator) " + text;
+                }
+
+                else if (!player.IsAlive)
+                {
+                    text = (!IsGameModeTeamBased()) ? ("^7(Dead) " + text) : ("^8(Dead) " + text);
+                }
+
+                if (!IsGameModeTeamBased())
+                {
+                    Utilities.RawSayAll(text);
+                }
+
+                else if (type == ChatType.Team)
+                {
+                    text = "^8[Team] " + text;
+                    foreach (Entity item in onlinePlayers.Where((Entity x) => x.SessionTeam == player.SessionTeam))
+                        Utilities.RawSayTo(item, text);
+                }
+
+                else
+                    Utilities.RawSayAll(text);
+
+                return EventEat.EatGame;
+            }
+
             return EventEat.EatNone;
         }
 
@@ -1434,6 +1492,7 @@ namespace ExtensionScript
                 default:
                     break;
             }
+
             return input;
         }
 

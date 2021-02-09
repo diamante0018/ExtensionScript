@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BadWeapons.cs" />
+    <Compile Include="ChatAlias.cs" />
     <Compile Include="Effects.cs" />
     <Compile Include="ExtUtil.cs" />
     <Compile Include="Kicker.cs" />
