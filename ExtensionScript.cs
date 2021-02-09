@@ -1123,23 +1123,33 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!setalias", StringComparison.InvariantCulture))
                 {
-                    Entity player = GetPlayer(msg[1]);
+                    string hwid = GetHWID16(msg[1]);
                     if (msg.Length > 2 && !string.IsNullOrWhiteSpace(msg[2]))
                     {
                         string alias = CalculateString(msg[2]);
-                        chat.Update(player.HWID, alias);
+                        chat.Update(hwid, alias);
                     }
                 }
                 else if (msg[0].StartsWith("!resetalias", StringComparison.InvariantCulture))
                 {
-                    Entity player = GetPlayer(msg[1]);
-                    chat.Remove(player.HWID);
+                    string hwid = GetHWID16(msg[1]);
+                    chat.Remove(hwid);
                 }
             }
             catch (Exception e)
             {
                 InfinityScript.Log.Write(LogLevel.Error, $"Error in Command Processing. Error: {e.Message} {e.StackTrace}");
             }
+        }
+
+        /// <summary>function <c>GetHWID16</c> Gets the firsth 16th characters of the HWID.</summary>
+        public string GetHWID16(string input)
+        {
+            if (input.Length > 2)
+                return input.ToUpperInvariant();
+
+            Entity player = GetPlayer(input);
+            return player.HWID.Substring(0, 16);
         }
 
         /// <summary>function <c>GiveAimBot</c> Gives 'aimbot' to the player. The loop that changes the player view calculates with each iteration what is the closest entity to lock on to.</summary>

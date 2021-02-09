@@ -120,9 +120,9 @@ let commands = [{
 
         execute: (gameEvent) => {
             var server = gameEvent.Owner;
-            var cid = gameEvent.Target.ClientNumber
+            var guid = gameEvent.Target.GuidString;
             var message = gameEvent.Data;
-            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !setalias ' + cid + ' ' + message).Result;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !setalias ' + guid + ' ' + message).Result;
         }
     },
     {
@@ -139,8 +139,8 @@ let commands = [{
 
         execute: (gameEvent) => {
             var server = gameEvent.Owner;
-            var cid = gameEvent.Target.ClientNumber
-            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !resetalias ' + cid).Result;
+            var guid = gameEvent.Target.GuidString;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !resetalias ' + guid).Result;
         }
     },
     {
@@ -749,7 +749,7 @@ let commands = [{
             var server = gameEvent.Owner;
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
-                server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !reset ' + cid).Result;
+                server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !resetstats ' + cid).Result;
             else
                 gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }

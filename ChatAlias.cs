@@ -7,7 +7,7 @@ namespace ExtensionScript
 {
     public class ChatAlias
     {
-        private Dictionary<string, string> playerAlias = new Dictionary<string, string>();
+        private Dictionary<string, string> playerAliases = new Dictionary<string, string>();
         private string currentPath;
 
         public ChatAlias()
@@ -18,13 +18,13 @@ namespace ExtensionScript
 
         public void Update(string HWID, string alias)
         {
-            playerAlias[HWID] = alias;
+            playerAliases[HWID] = alias;
             Save();
         }
 
         public bool Remove(string HWID)
         {
-            bool result = playerAlias.Remove(HWID);
+            bool result = playerAliases.Remove(HWID);
             if (result)
                 Save();
             return result;
@@ -33,7 +33,7 @@ namespace ExtensionScript
         /// <summary>function <c>CheckAlias</c> Checks if the player has an alias. Returns null if not found</summary>
         public string CheckAlias(Entity player)
         {
-            if (playerAlias.TryGetValue(player.HWID, out string alias))
+            if (playerAliases.TryGetValue(player.HWID.Substring(0, 16), out string alias))
                 return alias;
 
             return null;
@@ -55,7 +55,7 @@ namespace ExtensionScript
             while ((line = reader.ReadLine()) != null)
             {
                 string[] tokens = line.Split(';');
-                playerAlias[tokens[0]] = tokens[1];
+                playerAliases[tokens[0]] = tokens[1];
             }
 
             reader.Close();
@@ -73,9 +73,9 @@ namespace ExtensionScript
             StreamWriter sw = File.CreateText(currentPath);
             string line;
 
-            foreach (KeyValuePair<string, string> aliases in playerAlias)
+            foreach (KeyValuePair<string, string> alias in playerAliases)
             {
-                line = $"{aliases.Key};{aliases.Value}";
+                line = $"{alias.Key};{alias.Value}";
                 sw.WriteLine(line);
             }
 
