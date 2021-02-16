@@ -66,6 +66,8 @@ namespace ExtensionScript
         private bool sv_UndoRCE;
         private bool sv_RemoveBakaaraSentry;
         private bool sv_hideCommands;
+        private bool sv_AntiHardScope;
+        private bool sv_AntiCamp;
         private List<Entity> onlinePlayers = new List<Entity>();
 
         public ExtensionScript()
@@ -95,6 +97,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_UndoRCE", 0);
             SetDvarIfUninitialized("sv_LocalizedStr", 1);
             SetDvarIfUninitialized("sv_AntiCamp", 1);
+            SetDvarIfUninitialized("sv_AntiHardScope", 0);
             SetDvarIfUninitialized("sv_LastStand", 0);
             SetDvarIfUninitialized("sv_playerChatAlias", 1);
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
@@ -128,6 +131,8 @@ namespace ExtensionScript
             sv_UndoRCE = GetDvarInt("sv_UndoRCE") == 1;
             sv_RemoveBakaaraSentry = GetDvarInt("sv_RemoveBakaaraSentry") == 1;
             sv_hideCommands = GetDvarInt("sv_hideCommands") != 0;
+            sv_AntiHardScope = GetDvarInt("sv_AntiHardScope") == 1;
+            sv_AntiCamp = GetDvarInt("sv_AntiCamp") == 1;
 
             unsafe
             {
@@ -197,6 +202,10 @@ namespace ExtensionScript
 
             if (GetDvarInt("sv_playerChatAlias") == 1)
                 chat.Load();
+
+            //Sentry Related Code
+            if (sv_RemoveBakaaraSentry)
+                AfterDelay(5000, () => RemoveSentry());
         }
 
         /// <summary>function <c>ISTest_Notified</c> Prints all the notifies when triggered.</summary>
@@ -343,17 +352,18 @@ namespace ExtensionScript
             elem.HideWhenInMenu = true;
             elem.GlowAlpha = 0f;
 
-            //Sentry Related Code
-            if (sv_RemoveBakaaraSentry)
-                AfterDelay(5000, () => RemoveSentry());
-
             //Welcomer Related Code
             AfterDelay(5000, () => player.TellPlayer("^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo"));
-            if (GetDvarInt("sv_AntiCamp") == 1)
+
+            if (sv_AntiCamp)
                 StartAntiCamp(player);
 
+            if (sv_AntiHardScope)
+                StartAntiHardScope(player);
+
             //Give Ammo Related Code
-            player.NotifyOnPlayerCommand("giveammo", "vote yes"); ;
+            player.NotifyOnPlayerCommand("giveammo", "vote yes");
+            player.NotifyOnPlayerCommand("antiProne", "toggleprone");
 
             Thread(OnPlayerSpawned(player), (entRef, notify, paras) =>
             {
@@ -364,6 +374,14 @@ namespace ExtensionScript
             });
 
             Thread(OnPlayerVoteYes(player), (entRef, notify, paras) =>
+            {
+                if (notify == "disconnect" && player.EntRef == entRef)
+                    return false;
+
+                return true;
+            });
+
+            Thread(OnPlayerProne(player), (entRef, notify, paras) =>
             {
                 if (notify == "disconnect" && player.EntRef == entRef)
                     return false;
@@ -387,6 +405,20 @@ namespace ExtensionScript
             {
                 yield return player.WaitTill("giveammo");
                 player.MyGiveMaxAmmo();
+            }
+        }
+
+        /// <summary>function <c>OnPlayerProne</c> Coroutine function. Triggers when the player goes prone.</summary>
+        private static IEnumerator OnPlayerProne(Entity player)
+        {
+            while (true)
+            {
+                yield return player.WaitTill("antiProne");
+                if (player.MyGetField("antiProne").As<int>() == 1)
+                {
+                    player.SetStance("crouch");
+                    player.IPrintLnBold("Dropshot is not allowed");
+                }                  
             }
         }
 
@@ -1553,6 +1585,42 @@ namespace ExtensionScript
                 }
 
                 return player.MyGetField("trail").As<int>() != -1;
+            });
+        }
+
+        /// <summary>function <c>StartAntiHardScope</c> Anti-Hardscope function.</summary>
+        private void StartAntiHardScope(Entity player)
+        {
+            player.MySetField("adscycles", 0);
+            player.MySetField("antiProne", 1);
+
+            OnInterval(200, () =>
+            {
+                if (!player.IsAlive)
+                    return true;
+
+                float? ads = player.PlayerAds();
+
+                if (!ads.HasValue)
+                    return true;
+
+                int adsCycles = player.MyGetField("adscycles").As<int>();
+                ads = (ads == 1f) ? adsCycles++ : 0;
+
+                if (adsCycles >= 4)
+                {
+                    player.AllowAds(false);
+                    player.IPrintLnBold("Hard Scoping is not allowed");
+                    adsCycles = 0;
+                }
+
+                if (!player.AdsButtonPressed() && ads == 0)
+                {
+                    player.AllowAds(true);
+                }
+
+                player.MySetField("adscycles", adsCycles);
+                return true;
             });
         }
 
