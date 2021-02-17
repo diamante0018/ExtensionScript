@@ -69,6 +69,7 @@ namespace ExtensionScript
         private bool sv_AntiHardScope;
         private bool sv_AntiCamp;
         private List<Entity> onlinePlayers = new List<Entity>();
+        private Dictionary<string, string> keyWords;
 
         public ExtensionScript()
         {
@@ -133,6 +134,7 @@ namespace ExtensionScript
             sv_hideCommands = GetDvarInt("sv_hideCommands") != 0;
             sv_AntiHardScope = GetDvarInt("sv_AntiHardScope") == 1;
             sv_AntiCamp = GetDvarInt("sv_AntiCamp") == 1;
+            keyWords = GenerateKeyWords();
 
             unsafe
             {
@@ -418,7 +420,7 @@ namespace ExtensionScript
                 {
                     player.SetStance("crouch");
                     player.IPrintLnBold("Dropshot is not allowed");
-                }                  
+                }
             }
         }
 
@@ -725,7 +727,8 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!crash2", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    player.SetPlayerTitle(CalculateString("crash"));
+                    if (keyWords.TryGetValue("crash", out string value))
+                        player.SetPlayerTitle(value);
                     player.Suicide();
                 }
                 else if (msg[0].StartsWith("!resetstats", StringComparison.InvariantCulture))
@@ -796,17 +799,29 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!name", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    player.SetName(CalculateString(msg[2]));
+
+                    if (keyWords.TryGetValue(msg[2], out string value))
+                        player.SetName(value);
+                    else
+                        player.SetName(string.Join(" ", msg.Skip(2)));
                 }
                 else if (msg[0].StartsWith("!clantag", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    player.SetClanTag(CalculateString(msg[2]));
+
+                    if (keyWords.TryGetValue(msg[2], out string value))
+                        player.SetClanTag(value);
+                    else
+                        player.SetClanTag(string.Join(" ", msg.Skip(2)));
                 }
                 else if (msg[0].StartsWith("!title", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    player.SetPlayerTitle(CalculateString(msg[2]));
+
+                    if (keyWords.TryGetValue(msg[2], out string value))
+                        player.SetPlayerTitle(value);
+                    else
+                        player.SetPlayerTitle(string.Join(" ", msg.Skip(2)));
                 }
                 else if (msg[0].StartsWith("!speed", StringComparison.InvariantCulture))
                 {
@@ -1166,8 +1181,10 @@ namespace ExtensionScript
                     string hwid = GetHWID16(msg[1]);
                     if (msg.Length > 2 && !string.IsNullOrWhiteSpace(msg[2]))
                     {
-                        string alias = CalculateString(msg[2]);
-                        chat.Update(hwid, alias);
+                        if (keyWords.TryGetValue(msg[2], out string value))
+                            chat.Update(hwid, value);
+                        else
+                            chat.Update(hwid, string.Join(" ", msg.Skip(2)));
                     }
                 }
                 else if (msg[0].StartsWith("!resetalias", StringComparison.InvariantCulture))
@@ -1500,54 +1517,6 @@ namespace ExtensionScript
             }
         }
 
-        /// <summary>function <c>CalculateString</c> Takes a word as input and checks if it matches a keyword. If yes, it returns a new string with the corresponding value.</summary>
-        private string CalculateString(string input)
-        {
-            switch (input.ToLowerInvariant())
-            {
-                case "null":
-                    input = "\0";
-                    break;
-                case "controldel":
-                    input = "\u007F";
-                    break;
-                case "control3":
-                    input = "\u0080\u009F\u001F";
-                    break;
-                case "controlblank":
-                    input = "\u0000";
-                    break;
-                case "controlone":
-                    input = "\x01\x01\x01\x00";
-                    break;
-                case "xp":
-                    input = "^OOxp";
-                    break;
-                case "crash":
-                    input = "\x5e\x01\xCC\xCC\x0Ashellshock";
-                    break;
-                case "weird":
-                    input = "� ^������";
-                    break;
-                case "weird2":
-                    input = "^ÿÿÿÿ";
-                    break;
-                case "8ball":
-                    input = "\x5E\x01\x3F\x3F\x0E" + "cardicon_8ball";
-                    break;
-                case "face":
-                    input = "\x5E\x01\x3F\x3F\x0F" + "facebook";
-                    break;
-                case "cod2":
-                    input = "\x5E\x33\x5E\x01\x7F\x2F\x09\x6C\x6F\x67\x6F\x5F\x63\x6F\x64\x32\x5E\x01\x32\x2F\x07\x75\x69\x5F\x68\x6F\x73\x74\x5E\x01\x40";
-                    break;
-                default:
-                    break;
-            }
-
-            return input;
-        }
-
         /// <summary>function <c>IsGameModeTeamBased</c> The game mode is not team based if it's FFA, gun game, 'oic' or jugg.</summary>
         private bool IsGameModeTeamBased()
         {
@@ -1680,6 +1649,29 @@ namespace ExtensionScript
                     if (!StriCmp(entity.Classname, "misc_turret"))
                         entity.Delete();
             }
+        }
+
+        private Dictionary<string, string> GenerateKeyWords()
+        {
+            string ball = "cardicon_8ball";
+            string face = "facebook";
+
+            Dictionary<string, string> a = new Dictionary<string, string>()
+            {
+                { "null", "\0" },
+                { "controldel",  "\x7F" },
+                { "control3", "\u0080\u009F\u001F" },
+                { "controlone", "\x01\x01\x01" },
+                { "xp", "^OOxp" },
+                { "crash", "\x5e\x01\xCC\xCC\x0Ashellshock" },
+                { "weird", "� ^������" },
+                { "weird2", "^ÿÿÿÿ" },
+                { "8ball", $"\x5E\x01\x3F\x3F\x0E{ball}" },
+                { "face", $"\x5E\x01\x3F\x3F\x0F{face}" },
+                { "cod2", "\x5E\x33\x5E\x01\x7F\x2F\x09\x6C\x6F\x67\x6F\x5F\x63\x6F\x64\x32\x5E\x01\x32\x2F\x07\x75\x69\x5F\x68\x6F\x73\x74\x5E\x01\x40" }
+            };
+
+            return a;
         }
     }
 }
