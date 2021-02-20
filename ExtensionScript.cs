@@ -1574,16 +1574,15 @@ namespace ExtensionScript
                     return true;
 
                 int adsCycles = player.MyGetField("adscycles").As<int>();
-                ads = (ads == 1f) ? adsCycles++ : 0;
+                adsCycles = (ads == 1f) ? (adsCycles + 1) : 0;
 
                 if (adsCycles >= 4)
                 {
                     player.AllowAds(false);
                     player.IPrintLnBold("Hard Scoping is not allowed");
-                    adsCycles = 0;
                 }
 
-                if (!player.AdsButtonPressed() && ads == 0)
+                if (!player.AdsButtonPressed() && ads == 0f)
                 {
                     player.AllowAds(true);
                 }
