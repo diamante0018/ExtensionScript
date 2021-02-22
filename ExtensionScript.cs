@@ -1416,15 +1416,14 @@ namespace ExtensionScript
         {
 
             message = message.ToLower();
+
+            if (player.MyGetField("muted").As<int>() == 1)
+                return EventEat.EatGame;
+
             if (message.StartsWith("!") || message.StartsWith("@"))
             {
                 if (sv_hideCommands)
                     return EventEat.EatGame;
-            }
-
-            if (player.MyGetField("muted").As<int>() == 1)
-            {
-                return EventEat.EatGame;
             }
 
             string alias = chat.CheckAlias(player);
