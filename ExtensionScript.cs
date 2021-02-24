@@ -1414,9 +1414,6 @@ namespace ExtensionScript
         /// <summary>function <c>OnSay3</c> If the player is muted or the message starts with ! or @ the message will be censored and it will not be seen by other players.</summary>
         public override EventEat OnSay3(Entity player, ChatType type, string name, ref string message)
         {
-
-            message = message.ToLower();
-
             if (player.MyGetField("muted").As<int>() == 1)
                 return EventEat.EatGame;
 
