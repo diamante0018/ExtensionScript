@@ -6,7 +6,6 @@
 // License: GNU GPL v3.0
 // ========================================================
 using InfinityScript;
-using System;
 using System.Collections.Generic;
 
 namespace ExtensionScript
@@ -21,7 +20,7 @@ namespace ExtensionScript
         {
             Entity player = GetPlayer(playerToParse);
 
-            if (Int64.TryParse(locationToParse, out long locNum))
+            if (long.TryParse(locationToParse, out long locNum))
                 Utilities.SayTo(player, $"^2Parsed Number ^7{locNum}");
 
             else
@@ -45,7 +44,7 @@ namespace ExtensionScript
         {
             Entity player = GetPlayer(playerToParse);
 
-            if (Int64.TryParse(locationToParse, out long locNum))
+            if (long.TryParse(locationToParse, out long locNum))
                 Utilities.SayTo(player, $"^2Parsed Number ^7{locNum}");
 
             else

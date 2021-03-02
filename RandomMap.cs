@@ -6,6 +6,7 @@
 // License: GNU GPL v3.0
 // ========================================================
 using System;
+using System.Linq;
 
 namespace ExtensionScript
 {
@@ -18,7 +19,10 @@ namespace ExtensionScript
         "mp_courtyard_ss", "mp_cement", "mp_hillside_ss", "mp_meteora", "mp_qadeem", "mp_restrepo_ss", "mp_terminal_cls", "mp_crosswalk_ss",
         "mp_six_ss", "mp_burn_ss", "mp_shipbreaker", "mp_roughneck", "mp_nola", "mp_moab"};
 
-        /// <summary>function <c>GetRandomMap</c> Gets a random map to rotate to. The seed of the Random object is based on the GSC function GetTime which is the time elapsed since the server started.</summary>
+        /// <summary>function <c>GetRandomMap</c> Gets a random map to rotate to.</summary>
         public string GetRandomMap() => AllMapList[rng.Next(AllMapList.Length)];
+
+        /// <summary>function <c>IsValidMap</c> Checks if map is in the map list.</summary>
+        public bool IsValidMap(string map) => AllMapList.Any(s => map.Equals(s));
     }
 }

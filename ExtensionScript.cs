@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using static InfinityScript.GSCFunctions;
@@ -59,17 +60,10 @@ namespace ExtensionScript
         private bool fallDamage = true;
         private bool closedServer = false;
         private int sv_balanceInterval;
-        private bool sv_autoBalance;
-        private bool sv_Bounce;
-        private bool sv_NopAddresses;
-        private bool sv_KnifeEnabled;
-        private bool sv_UndoRCE;
-        private bool sv_RemoveBakaaraSentry;
-        private bool sv_hideCommands;
-        private bool sv_AntiHardScope;
-        private bool sv_AntiCamp;
         private List<Entity> onlinePlayers = new List<Entity>();
         private Dictionary<string, string> keyWords;
+        private Dictionary<string, bool> dvars;
+        private CultureInfo culture;
 
         public ExtensionScript()
         {
@@ -101,9 +95,11 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_AntiHardScope", 0);
             SetDvarIfUninitialized("sv_LastStand", 0);
             SetDvarIfUninitialized("sv_playerChatAlias", 1);
+            SetDvarIfUninitialized("sv_serverCulture", "en-GB");
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
             SetDvarIfUninitialized("sv_RemoveBakaaraSentry", 0);
             sv.ServerTitle(GetDvar("sv_MyMapName"), GetDvar("sv_MyGameMode"));
+            InitClassFields();
             //sv.MaxClients(69); // May cause crashes
 
             //Loading Server Dvars.
@@ -126,19 +122,9 @@ namespace ExtensionScript
                 return true;
             });
 
-            sv_Bounce = GetDvarInt("sv_Bounce") == 1;
-            sv_NopAddresses = GetDvarInt("sv_NopAddresses") == 1;
-            sv_KnifeEnabled = GetDvarInt("sv_KnifeEnabled") == 1;
-            sv_UndoRCE = GetDvarInt("sv_UndoRCE") == 1;
-            sv_RemoveBakaaraSentry = GetDvarInt("sv_RemoveBakaaraSentry") == 1;
-            sv_hideCommands = GetDvarInt("sv_hideCommands") != 0;
-            sv_AntiHardScope = GetDvarInt("sv_AntiHardScope") == 1;
-            sv_AntiCamp = GetDvarInt("sv_AntiCamp") == 1;
-            keyWords = GenerateKeyWords();
-
             unsafe
             {
-                if (sv_Bounce)
+                if (dvars["sv_Bounce"])
                 {
                     int[] addr = { 0x0422AB6, 0x0422AAF, 0x041E00C, 0x0414127, 0x04141B4, 0x0414E027, 0x0414B126, 0x041416B, 0x041417C };
 
@@ -152,7 +138,7 @@ namespace ExtensionScript
                     }
                 }
 
-                if (sv_UndoRCE)
+                if (dvars["sv_UndoRCE"])
                 {
                     int addr = 0x04E6170;
                     *(byte*)addr = 0x81;
@@ -186,27 +172,26 @@ namespace ExtensionScript
                 *(byte*)(ProcessUICommand + 5) = 0x00;
             }
 
-            if (sv_NopAddresses)
+            if (dvars["sv_NopAddresses"])
                 AfterDelay(2000, () => Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X"))));
             //Notified += ISTest_Notified;
-            sv_balanceInterval = GetDvarInt("sv_balanceInterval");
-            sv_autoBalance = GetDvarInt("sv_autoBalance") == 1;
+
             AfterDelay(1500, () => BalanceTeams(true));
 
             OnInterval(15000, () =>
             {
                 BalanceTeams();
-                return sv_autoBalance;
+                return dvars["sv_autoBalance"];
             });
 
-            if (!sv_KnifeEnabled)
+            if (!dvars["sv_KnifeEnabled"])
                 weapons.DisableKnife();
 
             if (GetDvarInt("sv_playerChatAlias") == 1)
                 chat.Load();
 
             //Sentry Related Code
-            if (sv_RemoveBakaaraSentry)
+            if (dvars["sv_RemoveBakaaraSentry"])
                 AfterDelay(5000, () => RemoveSentry());
         }
 
@@ -357,10 +342,10 @@ namespace ExtensionScript
             //Welcomer Related Code
             AfterDelay(5000, () => player.TellPlayer("^5Welcome ^7to ^3DIA ^1Servers^0! ^7Vote Yes for ^2Ammo"));
 
-            if (sv_AntiCamp)
+            if (dvars["sv_AntiCamp"])
                 StartAntiCamp(player);
 
-            if (sv_AntiHardScope)
+            if (dvars["sv_AntiHardScope"])
                 StartAntiHardScope(player);
 
             //Give Ammo Related Code
@@ -490,7 +475,7 @@ namespace ExtensionScript
             try
             {
                 string[] msg = message.Split(new char[] { '\x20', '\t', '\r', '\n', '\f', '\b', '\v', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                msg[0] = msg[0].ToLower(new CultureInfo("en-GB", false));
+                msg[0] = msg[0].ToLower(culture);
 
                 if (msg[0].StartsWith("!afk", StringComparison.InvariantCulture))
                 {
@@ -608,22 +593,18 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!mode", StringComparison.InvariantCulture))
                 {
-                    if (!System.IO.File.Exists($@"admin\{msg[1]}.dsr"))
-                    {
-                        Utilities.RawSayAll("^1DSR not found.");
-                        return;
-                    }
-                    Mode(msg[1]);
+                    if (TryFindDSR(msg[1], out string dsrName))
+                        Mode(dsrName);
                 }
                 else if (msg[0].StartsWith("!gametype", StringComparison.InvariantCulture))
                 {
-                    if (!System.IO.File.Exists($@"admin\{msg[1]}.dsr"))
+                    if (TryFindDSR(msg[1], out string dsrName))
                     {
-                        Utilities.RawSayAll("^1DSR not found.");
-                        return;
+                        map = new RandomMap();
+                        string toTest = msg[2].ToLower(culture);
+                        string mapName = map.IsValidMap(toTest) ? toTest : "mp_alpha";
+                        Mode(dsrName, mapName);
                     }
-                    string newMap = msg[2];
-                    Mode(msg[1], newMap);
                 }
                 else if (msg[0].StartsWith("!randommap", StringComparison.InvariantCulture))
                 {
@@ -759,7 +740,7 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!givegun", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    string gun = msg[2];
+                    string gun = msg[2].ToLower(culture);
                     player.GiveWeapon(gun);
                     player.SwitchToWeaponImmediate(gun);
                 }
@@ -1192,6 +1173,12 @@ namespace ExtensionScript
                     string hwid = GetHWID16(msg[1]);
                     chat.Remove(hwid);
                 }
+                else if (msg[0].StartsWith("!time", StringComparison.InvariantCulture))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    DateTime time = DateTime.UtcNow;
+                    Utilities.RawSayTo(player, $"The time is: {time.ToString("r", culture)}");
+                }
             }
             catch (Exception e)
             {
@@ -1326,15 +1313,18 @@ namespace ExtensionScript
             }
 
             map = map.Replace("default:", "");
-            using (System.IO.StreamWriter DSPLStream = new System.IO.StreamWriter("admin\\default.dspl"))
+            dsrname = dsrname.Replace(".dsr", "");
+
+            using (StreamWriter DSPLStream = new StreamWriter(@"admin\default.dspl"))
             {
                 DSPLStream.WriteLine(map + "," + dsrname + ",1000");
             }
+
             MapRotation = GetDvar("sv_maprotation");
             OnExitLevel();
             Utilities.ExecuteCommand("sv_maprotation default");
             Utilities.ExecuteCommand("map_rotate");
-            Utilities.ExecuteCommand("sv_maprotation " + MapRotation);
+            Utilities.ExecuteCommand($"sv_maprotation {MapRotation}");
             MapRotation = "";
         }
 
@@ -1419,7 +1409,7 @@ namespace ExtensionScript
 
             if (message.StartsWith("!") || message.StartsWith("@"))
             {
-                if (sv_hideCommands)
+                if (dvars["sv_hideCommands"])
                     return EventEat.EatGame;
             }
 
@@ -1635,6 +1625,7 @@ namespace ExtensionScript
 
         public string GetTeamVoicePrefix(string teamRef) => TableLookup("mp/factionTable.csv", 0, teamRef, 7);
 
+        /// <summary>function <c>RemoveSentry</c> Removes entity "misc_turret" from the map.</summary>
         public void RemoveSentry()
         {
             for (int i = 18; i < 2048; i++)
@@ -1646,12 +1637,62 @@ namespace ExtensionScript
             }
         }
 
+        /// <summary>function <c>TryFindDSR</c> Looks for the DSR in the admin folder. If it is missing it returns an empty string.</summary>
+        public bool TryFindDSR(string name, out string dsrName)
+        {
+            if (!File.Exists($@"admin\{name}.dsr"))
+            {
+                Utilities.RawSayAll($"Could not find DSR *{name}*, the name is case sensitive");
+                dsrName = "";
+                return false;
+            }
+
+            dsrName = $"{name}.dsr";
+            return true;
+        }
+
+        /// <summary>function <c>InitClassFields</c> Sets the fields of this class.</summary>
+        private void InitClassFields()
+        {
+            dvars = new Dictionary<string, bool>
+            {
+                ["sv_Bounce"] = GetDvarInt("sv_Bounce") == 1,
+                ["sv_NopAddresses"] = GetDvarInt("sv_NopAddresses") == 1,
+                ["sv_KnifeEnabled"] = GetDvarInt("sv_KnifeEnabled") == 1,
+                ["sv_UndoRCE"] = GetDvarInt("sv_UndoRCE") == 1,
+                ["sv_RemoveBakaaraSentry"] = GetDvarInt("sv_RemoveBakaaraSentry") == 1,
+                ["sv_hideCommands"] = GetDvarInt("sv_hideCommands") != 0,
+                ["sv_AntiHardScope"] = GetDvarInt("sv_AntiHardScope") == 1,
+                ["sv_AntiCamp"] = GetDvarInt("sv_AntiCamp") == 1,
+                ["sv_autoBalance"] = GetDvarInt("sv_autoBalance") == 1
+            };
+
+            sv_balanceInterval = GetDvarInt("sv_balanceInterval");
+            keyWords = GenerateKeyWords();
+
+            try
+            {
+                string s = GetDvar("sv_serverCulture");
+
+                if (string.IsNullOrWhiteSpace(s))
+                    s = "en-GB";
+
+                culture = new CultureInfo(s, false);
+            }
+
+            catch (CultureNotFoundException)
+            {
+                InfinityScript.Log.Write(LogLevel.Error, "Invalid Culture: Set correctly sv_serverCulture string dvar");
+                culture = new CultureInfo("en-GB", false);
+            }
+        }
+
         private Dictionary<string, string> GenerateKeyWords()
         {
             string ball = "cardicon_8ball";
             string face = "facebook";
 
-            Dictionary<string, string> a = new Dictionary<string, string>()
+            Dictionary<string, string> dict = new Dictionary<string, string>()
             {
                 { "null", "\0" },
                 { "controldel",  "\x7F" },
@@ -1666,7 +1707,7 @@ namespace ExtensionScript
                 { "cod2", "\x5E\x33\x5E\x01\x7F\x2F\x09\x6C\x6F\x67\x6F\x5F\x63\x6F\x64\x32\x5E\x01\x32\x2F\x07\x75\x69\x5F\x68\x6F\x73\x74\x5E\x01\x40" }
             };
 
-            return a;
+            return dict;
         }
     }
 }

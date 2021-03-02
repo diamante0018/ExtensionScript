@@ -34,6 +34,22 @@ let commands = [{
     },
     {
 
+        name: "time",
+
+        description: "Tells the time",
+
+        alias: "time",
+
+        permission: "User",
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !time ' + cid).Result;
+        }
+    },
+    {
+
         name: "removesentry",
 
         description: "Removes Bakaara sentry",

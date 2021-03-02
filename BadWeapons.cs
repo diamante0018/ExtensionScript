@@ -54,7 +54,7 @@ namespace ExtensionScript
 
             if (weapon.Contains("iw5_acr_mp") || weapon.Contains("iw5_mp7_mp"))
             {
-                double correction = (damage / 100.0) * 75.0;
+                double correction = (damage / 100.0) * 88.0;
                 player.Health += Convert.ToInt32(correction);
             }
         }
