@@ -167,11 +167,8 @@ namespace ExtensionScript
                 return;
             if (!fields.ContainsKey(player.HWID))
                 fields.Add(player.HWID, new Dictionary<string, Parameter>());
-
-            if (!MyHasField(player, field))
-                fields[player.HWID].Add(field, value);
-            else
-                fields[player.HWID][field] = value;
+            
+            fields[player.HWID][field] = value;
         }
 
         public static Parameter MyGetField(this Entity player, string field)

@@ -12,7 +12,7 @@ using static InfinityScript.GSCFunctions;
 
 namespace ExtensionScript
 {
-    class LoadoutName
+    public class LoadoutName
     {
         private static readonly Random random = new Random(GetTime());
         private Entity player;
