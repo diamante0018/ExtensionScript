@@ -167,7 +167,7 @@ namespace ExtensionScript
                 return;
             if (!fields.ContainsKey(player.HWID))
                 fields.Add(player.HWID, new Dictionary<string, Parameter>());
-            
+
             fields[player.HWID][field] = value;
         }
 
