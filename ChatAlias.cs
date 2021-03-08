@@ -58,7 +58,7 @@ namespace ExtensionScript
                 playerAliases[tokens[0]] = tokens[1];
             }
 
-            reader.Close();
+            reader.Dispose();
         }
 
         /// <summary>function <c>Save</c> Saves the whole dictionary.</summary>
@@ -79,7 +79,7 @@ namespace ExtensionScript
                 sw.WriteLine(line);
             }
 
-            sw.Close();
+            sw.Dispose();
         }
 
         /// <summary>function <c>CreateDirectory</c> Creates the directory.</summary>
