@@ -12,8 +12,8 @@ namespace ExtensionScript
 {
     public class Kicker
     {
-        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int NET_Print(int b, int entRef, [MarshalAs(UnmanagedType.LPStr)] string message);
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint NET_Print(int b, int entRef, [MarshalAs(UnmanagedType.LPStr)] string message);
 
         /// <summary>function <c>Reset</c> Resets the stats of the player.</summary>
         public void Reset(Entity player)

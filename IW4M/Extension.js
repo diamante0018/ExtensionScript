@@ -895,11 +895,11 @@ let commands = [{
     },
     {
 
-        name: "finddvar",
+        name: "finddvarstring",
 
         description: "Gets a string dvar current value",
 
-        alias: "finddvar",
+        alias: "finddvarstring",
 
         permission: "Trusted",
 
@@ -913,7 +913,30 @@ let commands = [{
         execute: (gameEvent) => {
             var server = gameEvent.Owner;
             var message = gameEvent.Data;
-            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !finddvar ' + message).Result;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !finddvarstring ' + message).Result;
+        }
+    },
+    {
+
+        name: "finddvarfloat",
+
+        description: "Gets a float dvar current value",
+
+        alias: "finddvarfloat",
+
+        permission: "Trusted",
+
+        targetRequired: false,
+
+        arguments: [{
+            name: "Name of the dvar",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !finddvarfloat ' + message).Result;
         }
     },
     {

@@ -21,26 +21,30 @@ namespace ExtensionScript
 {
     public class ExtensionScript : BaseScript
     {
-        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int NopTheFuckOut();
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int NopFunctions();
 
-        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void PrintErrorToConsole([MarshalAs(UnmanagedType.LPStr)] string message);
 
-        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         [return: MarshalAs(UnmanagedType.BStr)]
-        public static extern string DvarFindDvar([MarshalAs(UnmanagedType.LPStr)] string dvarName);
+        public static extern string FindStringDvar([MarshalAs(UnmanagedType.LPStr)] string dvarName);
 
-        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        public static extern string FindFloatDvar([MarshalAs(UnmanagedType.LPStr)] string dvarName);
+
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SendGameCommand(int entRef, [MarshalAs(UnmanagedType.LPStr)] string message);
 
-        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void CrashAll();
 
-        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void DvarRegisterString([MarshalAs(UnmanagedType.LPStr)] string dvarName, [MarshalAs(UnmanagedType.LPStr)] string value, [MarshalAs(UnmanagedType.LPStr)] string description);
 
-        [DllImport("RemoveTeknoChecks.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern float Q_rsqrt(float number);
 
         private static HudElem[] KillStreakHud = new HudElem[18];
@@ -170,11 +174,15 @@ namespace ExtensionScript
                 *(byte*)(ProcessUICommand + 3) = 0x04;
                 *(byte*)(ProcessUICommand + 4) = 0x00;
                 *(byte*)(ProcessUICommand + 5) = 0x00;
+
+                int adrToString = 0x04D1A43;
+                *(byte*)adrToString = 0x75;
+                *(byte*)(adrToString + 1) = 0x38;
             }
 
             if (dvars["sv_NopAddresses"])
-                AfterDelay(2000, () => Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopTheFuckOut().ToString("X"))));
-            //Notified += ISTest_Notified;
+                AfterDelay(2000, () => Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopFunctions().ToString("X"))));
+            Notified += OnNotified;
 
             AfterDelay(1500, () => BalanceTeams(true));
 
@@ -488,10 +496,16 @@ namespace ExtensionScript
                         player.MySetField("Naughty", 1);
                     }
                 }
-                else if (msg[0].StartsWith("!finddvar", StringComparison.InvariantCulture))
+                else if (msg[0].StartsWith("!finddvarstring", StringComparison.InvariantCulture))
                 {
                     //Has been tested for dvars of type string such as sv_current_dsr and sv_serverFullMsg
-                    string dvar = DvarFindDvar(msg[1]);
+                    string dvar = FindStringDvar(msg[1]);
+                    Utilities.PrintToConsole($"Dvar current value: {dvar}");
+                    Utilities.RawSayAll($"Dvar current value: {dvar}");
+                }
+                else if (msg[0].StartsWith("!finddvarfloat", StringComparison.InvariantCulture))
+                {
+                    string dvar = FindFloatDvar(msg[1]);
                     Utilities.PrintToConsole($"Dvar current value: {dvar}");
                     Utilities.RawSayAll($"Dvar current value: {dvar}");
                 }
