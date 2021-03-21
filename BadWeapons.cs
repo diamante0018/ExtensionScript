@@ -25,9 +25,9 @@ namespace ExtensionScript
 
         public BadWeapons()
         {
-            ks = Constructor2();
-            nukeWeapons = Constructor3();
-            throwable = Constructor4();
+            ks = Constructor1();
+            nukeWeapons = Constructor2();
+            throwable = Constructor3();
             SetupKnife();
         }
 
@@ -48,7 +48,6 @@ namespace ExtensionScript
             if (throwable.Contains(weapon) || weapon.Contains("gl"))
             {
                 Entity player = Entity.GetEntity(arg1);
-                player.IPrintLnBold("What happened?");
                 entWp.Delete();
                 return true;
             }
@@ -103,7 +102,7 @@ namespace ExtensionScript
             return true;
         }
 
-        private HashSet<string> Constructor2()
+        private HashSet<string> Constructor1()
         {
             HashSet<string> weapons = new HashSet<string>()
             {
@@ -131,7 +130,7 @@ namespace ExtensionScript
             return weapons;
         }
 
-        private HashSet<string> Constructor3()
+        private HashSet<string> Constructor2()
         {
             HashSet<string> weapons = new HashSet<string>()
             {
@@ -174,7 +173,7 @@ namespace ExtensionScript
             return weapons;
         }
 
-        private HashSet<string> Constructor4()
+        private HashSet<string> Constructor3()
         {
             HashSet<string> weapons = new HashSet<string>()
             {
@@ -188,7 +187,13 @@ namespace ExtensionScript
                "m320_mp",
                "claymore_mp",
                "bouncingbetty_mp",
-               "deployable_vest_marker_mp"
+               "deployable_vest_marker_mp",
+               "emp_grenade_mp",
+               "flash_grenade_mp",
+               "smoke_grenade_mp",
+               "concussion_grenade_mp",
+               "trophy_mp",
+               "portable_radar_mp"
             };
             return weapons;
         }
