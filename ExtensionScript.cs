@@ -1438,18 +1438,18 @@ namespace ExtensionScript
 
                 if (!IsGameModeTeamBased())
                 {
-                    Utilities.SayAll(text);
+                    Utilities.RawSayAll(text);
                 }
 
                 else if (type == ChatType.Team)
                 {
                     text = "^8[Team] " + text;
                     foreach (Entity item in onlinePlayers.Where((Entity x) => x.SessionTeam == player.SessionTeam))
-                        Utilities.SayTo(item, text);
+                        Utilities.RawSayTo(item, text);
                 }
 
                 else
-                    Utilities.SayAll(text);
+                    Utilities.RawSayAll(text);
 
                 return EventEat.EatGame;
             }
