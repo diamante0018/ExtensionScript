@@ -9,9 +9,16 @@ namespace ExtensionScript
     {
         private Dictionary<string, string> playerAliases = new Dictionary<string, string>();
         private string currentPath;
+        private bool loaded;
+
+        public bool Loaded
+        {
+            get { return loaded; }
+        }
 
         public ChatAlias()
         {
+            loaded = false;
             CreateDirectory();
             currentPath = Directory.GetCurrentDirectory() + $"\\PlayerChat\\Aliases.txt";
         }
@@ -59,6 +66,7 @@ namespace ExtensionScript
                 return;
             }
 
+            loaded = true;
             using (var reader = File.OpenText(currentPath))
             {
                 string line;

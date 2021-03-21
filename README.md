@@ -25,12 +25,18 @@ In the server.cfg set these dvars with the values you wish or they will be set t
 - sv_UndoRCE 0 //If set to 1 it removes SteamAuth RCE one line 'patch' (restores one address to it's original states allowing buffer overflow)
 - sv_LocalizedStr 1 //If set to 0 it will disable localized strings placed in the player card such as @MENU_FACEBOOK_LEGAL
 - sv_AntiCamp 1 //If set to 1 it will hurt campers that stay in the same place and don't move
-- sv_LastStand 0 //If set to 0 players on last stand will be killed
+- sv_AntiHardScope 0 //If set to 1 it hill prevent hard scoping and dropshots
+- sv_LastStand 0 //If set to 0 players on last stand will be pranked
 - sv_RemoveBakaaraSentry 0 //If set to 1 it will delete all entities that have class name misc_turret
 - sv_MyMapName WeirdMap
 - sv_MyGameMode WeirdGameMode
 - sv_allowedClan1 AG //Optional
 - sv_allowedClan2 AU //Optional
+- sv_playerChatAlias 1 //If set to 1 it will enabled aliases for the chat
+- sv_serverCulture "en-GB" //Definies local culture
+- sv_NerfGuns 1 //If set to 1 it will nerfs damage done by killstreaks
+- sv_ExplosivePrank 1 //If set to 1 it will deletes some explosives
+- sv_DisableAkimbo 1 //If set to 1 it will disables akimbos
 
 Native C++ functions:
 - NopTheFuckOut Called if sv_NopAddresses is 1. It uses hooks to get player data needed for other C++ functions

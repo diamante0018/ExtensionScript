@@ -74,7 +74,8 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_playerChatAlias", 1);
             SetDvarIfUninitialized("sv_serverCulture", "en-GB");
             SetDvarIfUninitialized("sv_NerfGuns", 1);
-            SetDvarIfUninitialized("sv_C4Prank", 0);
+            SetDvarIfUninitialized("sv_ExplosivePrank", 1);
+            SetDvarIfUninitialized("sv_DisableAkimbo", 1);
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
             SetDvarIfUninitialized("sv_RemoveBakaaraSentry", 0);
             sv.ServerTitle(GetDvar("sv_MyMapName"), GetDvar("sv_MyGameMode"));
@@ -197,12 +198,16 @@ namespace ExtensionScript
                 case "weapon_change":
                     if (dvars["sv_LastStand"])
                         AfterDelay(500, () => { weapons.TryPunishC4Death(arg1, arg3); });
+                    if (dvars["sv_DisableAkimbo"])
+                        weapons.TryRemoveAkimbo(arg1, arg3);
+                    break;
+                case "missile_fire":
+                    if (dvars["sv_ExplosivePrank"])
+                        weapons.TryDeleteExplosive(arg1, arg3);
                     break;
                 case "grenade_fire":
-                    if (dvars["sv_C4Prank"])
-                    {
-                        weapons.TryDeleteC4(arg1, arg3);
-                    }
+                    if (dvars["sv_ExplosivePrank"])
+                        weapons.TryDeleteExplosive(arg1, arg3);
                     break;
                 default:
                     break;
@@ -1380,7 +1385,7 @@ namespace ExtensionScript
         public override void OnPlayerDamage(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc)
         {
             if (dvars["sv_NerfGuns"])
-                weapons.GiveHealthBack(player, weapon, damage, attacker);
+                weapons.GiveHealthBack(player, weapon, damage);
             lastPlayerDamaged = player.EntRef;
         }
 
@@ -1395,6 +1400,9 @@ namespace ExtensionScript
                 if (dvars["sv_hideCommands"])
                     return EventEat.EatGame;
             }
+
+            if (!chat.Loaded)
+                return EventEat.EatNone;
 
             string alias = chat.CheckAlias(player);
 
@@ -1649,7 +1657,8 @@ namespace ExtensionScript
                 ["sv_autoBalance"] = GetDvarInt("sv_autoBalance") == 1,
                 ["sv_LastStand"] = GetDvarInt("sv_LastStand") == 0,
                 ["sv_NerfGuns"] = GetDvarInt("sv_NerfGuns") == 1,
-                ["sv_C4Prank"] = GetDvarInt("sv_C4Prank") == 1
+                ["sv_ExplosivePrank"] = GetDvarInt("sv_ExplosivePrank") == 1,
+                ["sv_DisableAkimbo"] = GetDvarInt("sv_DisableAkimbo") == 1
             };
 
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");

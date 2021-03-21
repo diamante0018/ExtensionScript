@@ -13,7 +13,7 @@ namespace ExtensionScript
 {
     public class BadWeapons
     {
-        private readonly HashSet<string> weapons;
+        private readonly HashSet<string> throwable;
         private readonly HashSet<string> ks;
         private readonly HashSet<string> nukeWeapons;
         private readonly Random rng = new Random();
@@ -25,52 +25,47 @@ namespace ExtensionScript
 
         public BadWeapons()
         {
-            weapons = Constructor();
             ks = Constructor2();
             nukeWeapons = Constructor3();
+            throwable = Constructor4();
             SetupKnife();
         }
 
-        public void GiveHealthBack(Entity player, string weapon, int damage, Entity attacker)
+        public void GiveHealthBack(Entity player, string weapon, int damage)
         {
             if (!player.IsPlayer)
                 return;
-            /*
-             * Nerf Vests
-             */
-            if (player.Health > 100)
-                player.Health = 100;
-
-            if (weapons.Contains(weapon))
-                player.Health += Math.Abs(damage - 13);
-
 
             if (ks.Contains(weapon))
-                player.Health += Math.Abs(damage - 3);
-
-            // If it's not a desert eagle *NOTE THE GL IN EAGLE* check if it's a noob tube if yes give health back
-            if (!weapon.Contains("desert") && (weapon.Contains("m320") || weapon.Contains("gl") || weapon.Contains("gp25")))
-            {
-                player.Health += Math.Abs(damage - 3);
-                if (!player.Equals(attacker))
-                {
-                    int oldHealth = attacker.Health;
-                    attacker.Health -= damage;
-                    attacker.Notify("damage", (oldHealth - attacker.Health), attacker, new Vector3(0, 0, 0), new Vector3(0, 0, 0), "MOD_EXPLOSIVE", "", "", "", 0, "frag_grenade_mp");
-                    attacker.TellPlayer("^1Don't use grenade launchers^7!");
-                }
-            }
+                player.Health += Math.Abs(damage - 7);
         }
 
-        public bool TryDeleteC4(int arg1, Parameter[] arg2)
+        public bool TryDeleteExplosive(int arg1, Parameter[] arg2)
         {
             string weapon = arg2[1].As<string>();
             Entity entWp = arg2[0].As<Entity>();
 
-            if (weapon.Equals("c4_mp", StringComparison.InvariantCultureIgnoreCase))
+            if (throwable.Contains(weapon) || weapon.Contains("gl"))
             {
-                entWp.Delete();
                 Entity player = Entity.GetEntity(arg1);
+                player.IPrintLnBold("What happened?");
+                entWp.Delete();
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool TryRemoveAkimbo(int arg1, Parameter[] arg2)
+        {
+            string weapon = arg2[0].As<string>();
+
+            if (weapon.Contains("akimbo"))
+            {
+                Entity player = Entity.GetEntity(arg1);
+                player.TakeWeapon(weapon);
+                player.GiveWeapon("iw5_usp45_mp");
+                player.SwitchToWeaponImmediate("iw5_usp45_mp");
                 player.TellPlayer("You have been pranked!");
                 return true;
             }
@@ -108,29 +103,9 @@ namespace ExtensionScript
             return true;
         }
 
-        private HashSet<string> Constructor()
-        {
-            HashSet<string> weapons = new HashSet<string>
-            {
-                "semtex_mp",
-                "c4death_mp",
-                "frag_grenade_mp",
-                "rpg_mp",
-                "xm25_mp",
-                "m320_mp",
-                "claymore_mp",
-                "iw5_smaw_mp",
-                "gl_mp",
-                "javelin_mp",
-                "bouncingbetty_mp",
-                "killstreak_precision_airstrike_mp"
-            };
-            return weapons;
-        }
-
         private HashSet<string> Constructor2()
         {
-            HashSet<string> weapons = new HashSet<string>
+            HashSet<string> weapons = new HashSet<string>()
             {
                 "stealth_bomb_mp",
                 "frag_grenade_short_mp",
@@ -150,14 +125,15 @@ namespace ExtensionScript
                 "manned_gl_turret_mp",
                 "ugv_turret_mp",
                 "ugv_gl_turret_mp",
-                "remote_turret_mp"
+                "remote_turret_mp",
+                "killstreak_precision_airstrike_mp"
             };
             return weapons;
         }
 
         private HashSet<string> Constructor3()
         {
-            HashSet<string> weapons = new HashSet<string>
+            HashSet<string> weapons = new HashSet<string>()
             {
                 "cobra_player_minigun_mp",
                 "artillery_mp",
@@ -194,6 +170,25 @@ namespace ExtensionScript
                 "ugv_gl_turret_mp" ,
                 "remote_tank_projectile_mp",
                 "uav_remote_mp"
+            };
+            return weapons;
+        }
+
+        private HashSet<string> Constructor4()
+        {
+            HashSet<string> weapons = new HashSet<string>()
+            {
+               "semtex_mp",
+               "c4_mp",
+               "frag_grenade_mp",
+               "javelin_mp",
+               "iw5_smaw_mp",
+               "rpg_mp",
+               "xm25_mp",
+               "m320_mp",
+               "claymore_mp",
+               "bouncingbetty_mp",
+               "deployable_vest_marker_mp"
             };
             return weapons;
         }
