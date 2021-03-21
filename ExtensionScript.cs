@@ -195,7 +195,7 @@ namespace ExtensionScript
                     ISTest_Notified(arg1, arg2, arg3);
                     break;
                 case "game_ended":
-                    ISTest_Notified(arg1, arg2, arg3);
+                    UnfreezePlayers();
                     break;
                 case "weapon_change":
                     if (dvars["sv_LastStand"])
@@ -1651,6 +1651,13 @@ namespace ExtensionScript
 
             dsrName = $"{name}.dsr";
             return true;
+        }
+
+        /// <summary>function <c>UnFreezePlayers</c> Unfreezes players.</summary>
+        public void UnfreezePlayers()
+        {
+            foreach (Entity player in onlinePlayers)
+                player.FreezeControls(false);
         }
 
         /// <summary>function <c>InitClassFields</c> Sets the fields of this class.</summary>
