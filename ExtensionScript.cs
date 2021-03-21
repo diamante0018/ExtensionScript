@@ -29,7 +29,7 @@ namespace ExtensionScript
         private string MapRotation = "";
         private Kicker proKicker = new Kicker();
         private Teleporter teleport = new Teleporter();
-        private BadWeapons weapons = new BadWeapons();
+        private Weapons weapons = new Weapons();
         private Server sv = new Server();
         private ChatAlias chat = new ChatAlias();
         private RandomMap map;
@@ -40,7 +40,7 @@ namespace ExtensionScript
         private int lastPlayerDamaged;
         private List<Entity> onlinePlayers = new List<Entity>();
         private Dictionary<string, string> keyWords;
-        private Dictionary<string, bool> dvars;
+        private static Dictionary<string, bool> dvars;
         private CultureInfo culture;
 
         public ExtensionScript()
@@ -76,6 +76,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_NerfGuns", 1);
             SetDvarIfUninitialized("sv_ExplosivePrank", 1);
             SetDvarIfUninitialized("sv_DisableAkimbo", 1);
+            SetDvarIfUninitialized("sv_AllPerks", 1);
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
             SetDvarIfUninitialized("sv_RemoveBakaaraSentry", 0);
             sv.ServerTitle(GetDvar("sv_MyMapName"), GetDvar("sv_MyGameMode"));
@@ -188,6 +189,7 @@ namespace ExtensionScript
             switch (arg2)
             {
                 case "weapon_fired":
+                    weapons.TryMakeStrikeMarker(arg1, arg3);
                     break;
                 case "game_win":
                     ISTest_Notified(arg1, arg2, arg3);
@@ -425,9 +427,8 @@ namespace ExtensionScript
                 player.SetClientDvar("cg_objectiveText", GetDvar("sv_objText"));
                 player.MyGiveMaxAmmo(false);
                 player.DisableGrenadeTouchDamage();
-                player.SetPerk("specialty_lightweight", true, true);
 
-                if (GetDvarInt("sv_LocalizedStr") != 1)
+                if (!dvars["sv_LocalizedStr"])
                     player.CheckLocalized();
 
                 if (player.MyGetField("wallhack").As<int>() == 1)
@@ -460,6 +461,11 @@ namespace ExtensionScript
                     Utilities.SayTo(player, "You wanted ^6God ^1Mode^0? ^7Now you suffer");
                     SetDvar("sv_b3Execute", $"!explode {player.EntRef}");
                     player.MySetField("Naughty", 0);
+                }
+
+                if (dvars["sv_AllPerks"])
+                {
+                    player.GiveAllPerks();
                 }
             }
         }
@@ -1160,6 +1166,11 @@ namespace ExtensionScript
                     DateTime time = DateTime.UtcNow;
                     Utilities.SayTo(player, $"The time is: {time.ToString("r", culture)}");
                 }
+                else if (msg[0].StartsWith("!givespecialgun", StringComparison.InvariantCulture))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    player.GiveSpecialGuns();
+                }
             }
             catch (Exception e)
             {
@@ -1658,7 +1669,9 @@ namespace ExtensionScript
                 ["sv_LastStand"] = GetDvarInt("sv_LastStand") == 0,
                 ["sv_NerfGuns"] = GetDvarInt("sv_NerfGuns") == 1,
                 ["sv_ExplosivePrank"] = GetDvarInt("sv_ExplosivePrank") == 1,
-                ["sv_DisableAkimbo"] = GetDvarInt("sv_DisableAkimbo") == 1
+                ["sv_DisableAkimbo"] = GetDvarInt("sv_DisableAkimbo") == 1,
+                ["sv_AllPerks"] = GetDvarInt("sv_AllPerks") == 1,
+                ["sv_LocalizedStr"] = GetDvarInt("sv_LocalizedStr") == 1
             };
 
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");

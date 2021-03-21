@@ -1486,6 +1486,24 @@ let commands = [{
             var message = gameEvent.Data;
             server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !registerstring ' + message).Result;
         }
+    },
+    {
+
+        name: "givespecialgun",
+
+        description: "Gives to the player special guns",
+
+        alias: "givespecialgun",
+
+        permission: "Trusted",
+
+        targetRequired: false,
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var cid = gameEvent.Origin.ClientNumber;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !givespecialgun ' + cid).Result;
+        }
     }
 ];
 

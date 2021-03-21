@@ -8,10 +8,11 @@
 using InfinityScript;
 using System;
 using System.Collections.Generic;
+using static InfinityScript.GSCFunctions;
 
 namespace ExtensionScript
 {
-    public class BadWeapons
+    public class Weapons
     {
         private readonly HashSet<string> throwable;
         private readonly HashSet<string> ks;
@@ -23,12 +24,15 @@ namespace ExtensionScript
         private readonly List<string> specialGuns = new List<string>() { "iw5_mk14_mp_xmags_rof_camo11", "iw5_barrett_mp", "iw5_barrett_mp_xmags_rof_camo11", "uav_strike_marker_mp" , "airdrop_escort_marker_mp",
         "defaultweapon_mp", "iw5_usp45jugg_mp_akimbo", "iw5_m60jugg_mp", "iw5_mp412jugg_mp" , "iw5_m60jugg_mp_camo08", "iw5_m60jugg_mp_thermal_silencer_camo07" };
 
-        public BadWeapons()
+        public Weapons()
         {
             ks = Constructor1();
             nukeWeapons = Constructor2();
             throwable = Constructor3();
             SetupKnife();
+
+            PreCacheItem("at4_mp");
+            PreCacheItem("uav_strike_marker_mp");
         }
 
         public void GiveHealthBack(Entity player, string weapon, int damage)
@@ -100,6 +104,22 @@ namespace ExtensionScript
             player.SetWeaponAmmoStock("iw5_barrett_mp", 0);
 
             return true;
+        }
+
+        public bool TryMakeStrikeMarker(int arg1, Parameter[] arg3)
+        {
+            string weapon = arg3[0].As<string>();
+            if (weapon.Equals("uav_strike_marker_mp", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Entity player = Entity.GetEntity(arg1);
+                Vector3 asd = AnglesToForward(GSCFunctions.GetPlayerAngles(player));
+                Vector3 dsa = new Vector3(asd.X * 1000000, asd.Y * 1000000, asd.Z * 1000000);
+                MagicBullet("ims_projectile_mp", GSCFunctions.GetTagOrigin(player, "tag_weapon_left"), dsa, player);
+                MagicBullet("ims_projectile_mp", GSCFunctions.GetTagOrigin(player, "tag_weapon_left"), dsa + new Vector3(50, 50, 50), player);
+                return true;
+            }
+
+            return false;
         }
 
         private HashSet<string> Constructor1()

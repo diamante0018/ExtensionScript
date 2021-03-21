@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BadWeapons.cs" />
+    <Compile Include="Weapons.cs" />
     <Compile Include="ChatAlias.cs" />
     <Compile Include="Effects.cs" />
     <Compile Include="ExtUtil.cs" />

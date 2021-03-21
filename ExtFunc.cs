@@ -252,5 +252,35 @@ namespace ExtensionScript
         {
             player.SetClientDvar("cg_thirdperson", false);
         }
+
+        /// <summary>function <c>GiveAllPerks</c> Gives all perks.</summary>
+        public static void GiveAllPerks(this Entity player)
+        {
+            player.SetPerk("specialty_longersprint", true, false);
+            player.SetPerk("specialty_fastreload", true, false);
+            player.SetPerk("specialty_scavenger", true, false);
+            player.SetPerk("specialty_blindeye", true, false);
+            player.SetPerk("specialty_paint", true, false);
+            player.SetPerk("specialty_hardline", true, false);
+            player.SetPerk("specialty_coldblooded", true, false);
+            player.SetPerk("specialty_quickdraw", true, false);
+            player.SetPerk("specialty_twoprimaries", true, false);
+            player.SetPerk("specialty_assists", true, false);
+            player.SetPerk("specialty_blastshield", true, false);
+            player.SetPerk("specialty_detectexplosive", true, false);
+            player.SetPerk("specialty_autospot", true, false);
+            player.SetPerk("specialty_bulletaccuracy", true, false);
+            player.SetPerk("specialty_quieter", true, false);
+            player.SetPerk("specialty_stalker", true, false);
+        }
+
+        /// <summary>function <c>GiveSpecialGuns</c> Gives special guns.</summary>
+        public static void GiveSpecialGuns(this Entity player)
+        {
+            player.TakeAllWeapons();
+            player.GiveWeapon("at4_mp");
+            player.GiveWeapon("uav_strike_marker_mp");
+            player.SwitchToWeapon("at4_mp");
+        }
     }
 }
