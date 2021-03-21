@@ -20,7 +20,7 @@ namespace ExtensionScript
         private int DefaultKnifeAddress;
         private unsafe int* KnifeRange;
         private unsafe int* ZeroAddress;
-        private readonly string[] specialGuns = { "iw5_mk14_mp_xmags_rof_camo11", "iw5_barrett_mp", "iw5_barrett_mp_xmags_rof_camo11", "uav_strike_marker_mp" , "airdrop_escort_marker_mp",
+        private readonly List<string> specialGuns = new List<string>() { "iw5_mk14_mp_xmags_rof_camo11", "iw5_barrett_mp", "iw5_barrett_mp_xmags_rof_camo11", "uav_strike_marker_mp" , "airdrop_escort_marker_mp",
         "defaultweapon_mp", "iw5_usp45jugg_mp_akimbo", "iw5_m60jugg_mp", "iw5_mp412jugg_mp" , "iw5_m60jugg_mp_camo08", "iw5_m60jugg_mp_thermal_silencer_camo07" };
 
         public BadWeapons()
@@ -31,7 +31,7 @@ namespace ExtensionScript
             SetupKnife();
         }
 
-        public void GiveHealthBack(Entity player, string weapon, int damage)
+        public void GiveHealthBack(Entity player, string weapon, int damage, Entity attacker)
         {
             if (!player.IsPlayer)
                 return;
@@ -50,13 +50,62 @@ namespace ExtensionScript
 
             // If it's not a desert eagle *NOTE THE GL IN EAGLE* check if it's a noob tube if yes give health back
             if (!weapon.Contains("desert") && (weapon.Contains("m320") || weapon.Contains("gl") || weapon.Contains("gp25")))
-                player.Health += Math.Abs(damage - 3);
-
-            if (weapon.Contains("iw5_acr_mp") || weapon.Contains("iw5_mp7_mp"))
             {
-                double correction = (damage / 100.0) * 88.0;
-                player.Health += Convert.ToInt32(correction);
+                player.Health += Math.Abs(damage - 3);
+                if (!player.Equals(attacker))
+                {
+                    int oldHealth = attacker.Health;
+                    attacker.Health -= damage;
+                    attacker.Notify("damage", (oldHealth - attacker.Health), attacker, new Vector3(0, 0, 0), new Vector3(0, 0, 0), "MOD_EXPLOSIVE", "", "", "", 0, "frag_grenade_mp");
+                    attacker.TellPlayer("^1Don't use grenade launchers^7!");
+                }
             }
+        }
+
+        public bool TryDeleteC4(int arg1, Parameter[] arg2)
+        {
+            string weapon = arg2[1].As<string>();
+            Entity entWp = arg2[0].As<Entity>();
+
+            if (weapon.Equals("c4_mp", StringComparison.InvariantCultureIgnoreCase))
+            {
+                entWp.Delete();
+                Entity player = Entity.GetEntity(arg1);
+                player.TellPlayer("You have been pranked!");
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool TryPunishC4Death(int arg1, Parameter[] arg3)
+        {
+            string weapon = arg3[0].As<string>();
+            if (weapon.Equals("c4death_mp", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Entity player = Entity.GetEntity(arg1);
+                player.TakeAllWeapons();
+                player.GiveWeapon("iw5_usp45_mp");
+                player.SetWeaponAmmoClip("iw5_usp45_mp", 0);
+                player.SetWeaponAmmoStock("iw5_usp45_mp", 0);
+                player.SwitchToWeaponImmediate("iw5_usp45_mp");
+                player.TellPlayer("You have been pranked!");
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool TryPunishLastStand(int lastPlayerDamaged)
+        {
+            Entity player = Entity.GetEntity(lastPlayerDamaged);
+            player.TakeAllWeapons();
+            player.GiveWeapon("iw5_barrett_mp");
+            player.SwitchToWeaponImmediate("iw5_barrett_mp");
+            player.SetWeaponAmmoClip("iw5_barrett_mp", 0);
+            player.SetWeaponAmmoStock("iw5_barrett_mp", 0);
+
+            return true;
         }
 
         private HashSet<string> Constructor()
@@ -307,6 +356,6 @@ namespace ExtensionScript
 
         public unsafe void DisableKnife() => *KnifeRange = (int)ZeroAddress;
 
-        public string GetRandomGun() => specialGuns[rng.Next(specialGuns.Length)];
+        public string GetRandomGun() => specialGuns[rng.Next(specialGuns.Count)];
     }
 }

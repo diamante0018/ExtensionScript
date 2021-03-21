@@ -44,42 +44,44 @@ namespace ExtensionScript
         {
             if (!File.Exists(currentPath))
             {
-                // Create a file to write to.
-                File.CreateText(currentPath).Close();
+                // Create a file to read from
+                File.CreateText(currentPath).Dispose();
+                var sw = File.CreateText(currentPath);
+
+                try
+                {
+                    Utilities.PrintToConsole($"File {currentPath} did not exist");
+                }
+                finally
+                {
+                    sw?.Dispose();
+                }
                 return;
             }
 
-            StreamReader reader = File.OpenText(currentPath);
-            string line;
-
-            while ((line = reader.ReadLine()) != null)
+            using (var reader = File.OpenText(currentPath))
             {
-                string[] tokens = line.Split(';');
-                playerAliases[tokens[0]] = tokens[1];
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] tokens = line.Split(';');
+                    playerAliases[tokens[0]] = tokens[1];
+                }
             }
-
-            reader.Dispose();
         }
 
         /// <summary>function <c>Save</c> Saves the whole dictionary.</summary>
         public void Save()
         {
-            if (!File.Exists(currentPath))
+            using (var sw = File.CreateText(currentPath))
             {
-                // Create a file to write to.
-                File.CreateText(currentPath).Close();
+                string line;
+                foreach (KeyValuePair<string, string> alias in playerAliases)
+                {
+                    line = $"{alias.Key};{alias.Value}";
+                    sw.WriteLine(line);
+                }
             }
-
-            StreamWriter sw = File.CreateText(currentPath);
-            string line;
-
-            foreach (KeyValuePair<string, string> alias in playerAliases)
-            {
-                line = $"{alias.Key};{alias.Value}";
-                sw.WriteLine(line);
-            }
-
-            sw.Dispose();
         }
 
         /// <summary>function <c>CreateDirectory</c> Creates the directory.</summary>
@@ -87,12 +89,12 @@ namespace ExtensionScript
         {
             try
             {
-                DirectoryInfo di = Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\PlayerChat");
+                var di = Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\PlayerChat");
             }
 
             catch (Exception e)
             {
-                Log.Write(LogLevel.Error, $"The process failed: {e}");
+                Log.Write(LogLevel.Error, $"The process failed to create directory PlayerChat: {e}");
             }
         }
     }

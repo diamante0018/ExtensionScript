@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using static InfinityScript.GSCFunctions;
 using static InfinityScript.HudElem;
 using static InfinityScript.ThreadScript;
@@ -21,39 +20,13 @@ namespace ExtensionScript
 {
     public class ExtensionScript : BaseScript
     {
-        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int NopFunctions();
-
-        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void PrintErrorToConsole([MarshalAs(UnmanagedType.LPStr)] string message);
-
-        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        [return: MarshalAs(UnmanagedType.BStr)]
-        public static extern string FindStringDvar([MarshalAs(UnmanagedType.LPStr)] string dvarName);
-
-        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        [return: MarshalAs(UnmanagedType.BStr)]
-        public static extern string FindFloatDvar([MarshalAs(UnmanagedType.LPStr)] string dvarName);
-
-        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SendGameCommand(int entRef, [MarshalAs(UnmanagedType.LPStr)] string message);
-
-        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void CrashAll();
-
-        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void DvarRegisterString([MarshalAs(UnmanagedType.LPStr)] string dvarName, [MarshalAs(UnmanagedType.LPStr)] string value, [MarshalAs(UnmanagedType.LPStr)] string description);
-
-        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern float Q_rsqrt(float number);
-
         private static HudElem[] KillStreakHud = new HudElem[18];
         private static HudElem[] NoKillsHudElem = new HudElem[18];
         private HudElem top;
         private HudElem bottom;
         private HudElem right;
         private HudElem left;
-        string MapRotation = "";
+        private string MapRotation = "";
         private Kicker proKicker = new Kicker();
         private Teleporter teleport = new Teleporter();
         private BadWeapons weapons = new BadWeapons();
@@ -64,6 +37,7 @@ namespace ExtensionScript
         private bool fallDamage = true;
         private bool closedServer = false;
         private int sv_balanceInterval;
+        private int lastPlayerDamaged;
         private List<Entity> onlinePlayers = new List<Entity>();
         private Dictionary<string, string> keyWords;
         private Dictionary<string, bool> dvars;
@@ -91,7 +65,6 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_balanceInterval", 15);
             SetDvarIfUninitialized("sv_autoBalance", 1);
             SetDvarIfUninitialized("sv_Bounce", 1);
-            SetDvarIfUninitialized("sv_NopAddresses", 0);
             SetDvarIfUninitialized("sv_KnifeEnabled", 0);
             SetDvarIfUninitialized("sv_UndoRCE", 0);
             SetDvarIfUninitialized("sv_LocalizedStr", 1);
@@ -100,6 +73,8 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_LastStand", 0);
             SetDvarIfUninitialized("sv_playerChatAlias", 1);
             SetDvarIfUninitialized("sv_serverCulture", "en-GB");
+            SetDvarIfUninitialized("sv_NerfGuns", 1);
+            SetDvarIfUninitialized("sv_C4Prank", 0);
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
             SetDvarIfUninitialized("sv_RemoveBakaaraSentry", 0);
             sv.ServerTitle(GetDvar("sv_MyMapName"), GetDvar("sv_MyGameMode"));
@@ -180,8 +155,6 @@ namespace ExtensionScript
                 *(byte*)(adrToString + 1) = 0x38;
             }
 
-            if (dvars["sv_NopAddresses"])
-                AfterDelay(2000, () => Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", NopFunctions().ToString("X"))));
             Notified += OnNotified;
 
             AfterDelay(1500, () => BalanceTeams(true));
@@ -221,6 +194,16 @@ namespace ExtensionScript
                 case "game_ended":
                     ISTest_Notified(arg1, arg2, arg3);
                     break;
+                case "weapon_change":
+                    if (dvars["sv_LastStand"])
+                        AfterDelay(500, () => { weapons.TryPunishC4Death(arg1, arg3); });
+                    break;
+                case "grenade_fire":
+                    if (dvars["sv_C4Prank"])
+                    {
+                        weapons.TryDeleteC4(arg1, arg3);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -249,8 +232,6 @@ namespace ExtensionScript
                 SetDvar("scr_game_matchstarttime", 10);
                 SetDvar("scr_game_playerwaittime", 5);
                 SetDvar("com_printDebug", true);
-                //SetDvar("sv_allowedClan1", "AG");
-                //SetDvar("sv_allowedClan2", "AU");
                 MakeDvarServerInfo("motd", GetDvar("sv_gmotd"));
                 MakeDvarServerInfo("didyouknow", GetDvar("sv_gmotd"));
             }
@@ -471,7 +452,7 @@ namespace ExtensionScript
 
                 if (player.MyGetField("Naughty").As<int>() == 1)
                 {
-                    Utilities.RawSayTo(player, "You wanted ^6God ^1Mode^0? ^7Now you suffer");
+                    Utilities.SayTo(player, "You wanted ^6God ^1Mode^0? ^7Now you suffer");
                     SetDvar("sv_b3Execute", $"!explode {player.EntRef}");
                     player.MySetField("Naughty", 0);
                 }
@@ -492,35 +473,21 @@ namespace ExtensionScript
                         player.ChangeTeam("spectator");
                     else
                     {
-                        Utilities.RawSayTo(player, "You can't go afk since you are flying");
+                        Utilities.SayTo(player, "You can't go afk since you are flying");
                         player.MySetField("Naughty", 1);
                     }
                 }
                 else if (msg[0].StartsWith("!finddvarstring", StringComparison.InvariantCulture))
                 {
-                    //Has been tested for dvars of type string such as sv_current_dsr and sv_serverFullMsg
-                    string dvar = FindStringDvar(msg[1]);
-                    Utilities.PrintToConsole($"Dvar current value: {dvar}");
-                    Utilities.RawSayAll($"Dvar current value: {dvar}");
+                    Utilities.SayAll("Find dvar is currently disabled");
                 }
                 else if (msg[0].StartsWith("!finddvarfloat", StringComparison.InvariantCulture))
                 {
-                    string dvar = FindFloatDvar(msg[1]);
-                    Utilities.PrintToConsole($"Dvar current value: {dvar}");
-                    Utilities.RawSayAll($"Dvar current value: {dvar}");
+                    Utilities.SayAll("Float dvar is currently disabled");
                 }
                 else if (msg[0].StartsWith("!registerstring", StringComparison.InvariantCulture))
                 {
-                    if (msg.Length < 3)
-                    {
-                        Utilities.RawSayAll("Dvar can't be registered. Usage is: name, value, desc");
-                        Utilities.PrintToConsole("Dvar can't be registered. Usage is: name, value, desc");
-                    }
-                    else
-                    {
-                        string dvarValue = string.Join(" ", msg.Skip(2));
-                        DvarRegisterString(msg[1], dvarValue, "Insert Sample Text");
-                    }
+                    Utilities.SayAll("Register string is currently disabled");
                 }
                 else if (msg[0].StartsWith("!setafk", StringComparison.InvariantCulture))
                 {
@@ -528,7 +495,7 @@ namespace ExtensionScript
                     if (player.MyGetField("fly").As<int>() != 1)
                         player.ChangeTeam("spectator");
                     else
-                        Utilities.RawSayAll($"{player.Name} can't be moved since he is flying");
+                        Utilities.SayAll($"{player.Name} can't be moved since he is flying");
                 }
                 else if (msg[0].StartsWith("!kill", StringComparison.InvariantCulture))
                 {
@@ -536,14 +503,14 @@ namespace ExtensionScript
                     if (player.MyGetField("fly").As<int>() != 1 && player.SessionTeam != "spectator")
                     {
                         player.Suicide();
-                        Utilities.RawSayAll($"{player.Name} was killed");
+                        Utilities.SayAll($"{player.Name} was killed");
                     }
                     else
-                        Utilities.RawSayAll($"{player.Name} can't be killed since he is flying/spectator");
+                        Utilities.SayAll($"{player.Name} can't be killed since he is flying/spectator");
                 }
                 else if (msg[0].StartsWith("!anothercrash", StringComparison.InvariantCulture))
                 {
-                    CrashAll();
+                    Utilities.SayAll("Crash all is currently disabled");
                 }
                 else if (msg[0].StartsWith("!suicide", StringComparison.InvariantCulture))
                 {
@@ -653,12 +620,12 @@ namespace ExtensionScript
                     if (player.MyGetField("muted").As<int>() == 1)
                     {
                         player.MySetField("muted", 0);
-                        Utilities.RawSayAll($"{player.Name} ^1chat has been unblocked.");
+                        Utilities.SayAll($"{player.Name} ^1chat has been unblocked.");
                     }
                     else if (player.MyGetField("muted").As<int>() == 0)
                     {
                         player.MySetField("muted", 1);
-                        Utilities.RawSayAll($"{player.Name} ^1chat has been blocked.");
+                        Utilities.SayAll($"{player.Name} ^1chat has been blocked.");
                     }
                 }
                 else if (msg[0].StartsWith("!freeze", StringComparison.InvariantCulture))
@@ -672,13 +639,13 @@ namespace ExtensionScript
                     {
                         player.FreezeControls(false);
                         player.MySetField("frozen", 0);
-                        Utilities.RawSayAll($"{player.Name} ^1has been unfrozen.");
+                        Utilities.SayAll($"{player.Name} ^1has been unfrozen.");
                     }
                     else if (player.MyGetField("frozen").As<int>() == 0)
                     {
                         player.FreezeControls(true);
                         player.MySetField("frozen", 1);
-                        Utilities.RawSayAll($"{player.Name} ^1has been frozen.");
+                        Utilities.SayAll($"{player.Name} ^1has been frozen.");
                     }
                 }
                 else if (msg[0].StartsWith("!changeteam", StringComparison.InvariantCulture))
@@ -696,14 +663,11 @@ namespace ExtensionScript
                     Entity player = GetPlayer(msg[1]);
                     if (!float.TryParse(msg[2], out float angle))
                         return;
-                    Utilities.RawSayTo(player, string.Format("Sin: {0} Cos: {1} Tan: {2}", Sin(angle), Cos(angle), Tan(angle)));
+                    Utilities.SayTo(player, string.Format("Sin: {0} Cos: {1} Tan: {2}", Sin(angle), Cos(angle), Tan(angle)));
                 }
                 else if (msg[0].StartsWith("!rsqrt", StringComparison.InvariantCulture))
                 {
-                    Entity player = GetPlayer(msg[1]);
-                    if (!float.TryParse(msg[2], out float number))
-                        return;
-                    Utilities.RawSayTo(player, string.Format("Reverse Square Root: {0} Normal Square Root: {1}", Q_rsqrt(number), Sqrt(number)));
+                    Utilities.SayAll("rsqrt is currently disabled");
                 }
                 else if (msg[0].StartsWith("!randomnum", StringComparison.InvariantCulture))
                 {
@@ -711,7 +675,7 @@ namespace ExtensionScript
                     if (!int.TryParse(msg[2], out int max))
                         return;
                     int result = RandomInt(max);
-                    Utilities.RawSayTo(player, string.Format("Random number: {0} Square root: {1} Squared: {2} Log: {3}", result, Sqrt(result), Squared(result), Log(result)));
+                    Utilities.SayTo(player, string.Format("Random number: {0} Square root: {1} Squared: {2} Log: {3}", result, Sqrt(result), Squared(result), Log(result)));
                 }
                 else if (msg[0].StartsWith("!crash", StringComparison.InvariantCulture))
                 {
@@ -765,17 +729,18 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!sendgamecmd", StringComparison.InvariantCulture))
                 {
-                    Entity player = GetPlayer(msg[1]);
-                    SendGameCommand(player.EntRef, "s 0");
-                    SendGameCommand(player.EntRef, "u _ 0 1337");
-                    SendGameCommand(player.EntRef, "c \"^1Hello ^2There^0!\"");
+                    Utilities.SayAll("Send game cmd is currently disabled");
+                    /* SendGameCommand(player.EntRef, "s 0");
+                    * SendGameCommand(player.EntRef, "u _ 0 1337");
+                    * SendGameCommand(player.EntRef, "c \"^1Hello ^2There^0!\"");
+                    */
                 }
                 else if (msg[0].StartsWith("!clientdvar", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     if (msg.Length < 4)
                     {
-                        Utilities.RawSayAll($"^1{player.Name} ^7Client dvar can't be changed. Not enough arguments supplied: cdvar value.");
+                        Utilities.SayAll($"^1{player.Name} ^7Client dvar can't be changed. Not enough arguments supplied: cdvar value.");
                         return;
                     }
                     player.SetClientDvar(msg[2], msg[3]);
@@ -784,7 +749,7 @@ namespace ExtensionScript
                 {
                     if (msg.Length < 3)
                     {
-                        Utilities.RawSayAll($"^1Dvar can't be changed. Not enough arguments supplied: dvar value.");
+                        Utilities.SayAll($"^1Dvar can't be changed. Not enough arguments supplied: dvar value.");
                         return;
                     }
 
@@ -822,25 +787,25 @@ namespace ExtensionScript
                 {
                     if (int.TryParse(msg[1], out int speed))
                         Utilities.Speed = speed;
-                    Utilities.RawSayAll($"Speed is {speed}");
+                    Utilities.SayAll($"Speed is {speed}");
                 }
                 else if (msg[0].StartsWith("!gravity", StringComparison.InvariantCulture))
                 {
                     if (int.TryParse(msg[1], out int gravity))
                         Utilities.Gravity = gravity;
-                    Utilities.RawSayAll($"Gravity is {gravity}");
+                    Utilities.SayAll($"Gravity is {gravity}");
                 }
                 else if (msg[0].StartsWith("!falldamage", StringComparison.InvariantCulture))
                 {
                     fallDamage = !fallDamage;
                     Utilities.FallDamage = fallDamage;
-                    Utilities.RawSayAll($"Fall damage is {fallDamage}");
+                    Utilities.SayAll($"Fall damage is {fallDamage}");
                 }
                 else if (msg[0].StartsWith("!jumpheight", StringComparison.InvariantCulture))
                 {
                     if (float.TryParse(msg[1], out float height))
                         Utilities.JumpHeight = height;
-                    Utilities.RawSayAll($"Jumpe height is {height}");
+                    Utilities.SayAll($"Jumpe height is {height}");
                 }
                 else if (msg[0].StartsWith("!disabletrail", StringComparison.InvariantCulture))
                 {
@@ -859,6 +824,7 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!moab", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
+                    Utilities.SayAll("MOAB command is disabled");
                 }
                 else if (msg[0].StartsWith("!wh", StringComparison.InvariantCulture))
                 {
@@ -871,13 +837,13 @@ namespace ExtensionScript
                     {
                         player.ThermalVisionFOFOverlayOff();
                         player.MySetField("wallhack", 0);
-                        Utilities.RawSayTo(player, "Wallhack is switched off");
+                        Utilities.SayTo(player, "Wallhack is switched off");
                     }
                     else if (player.MyGetField("wallhack").As<int>() == 0)
                     {
                         player.ThermalVisionFOFOverlayOn();
                         player.MySetField("wallhack", 1);
-                        Utilities.RawSayTo(player, "Wallhack is switched on");
+                        Utilities.SayTo(player, "Wallhack is switched on");
                     }
                 }
                 else if (msg[0].StartsWith("!aimbot", StringComparison.InvariantCulture))
@@ -890,13 +856,13 @@ namespace ExtensionScript
                     if (player.MyGetField("aimbot").As<int>() == 1)
                     {
                         player.MySetField("aimbot", 0);
-                        Utilities.RawSayTo(player, "Aimbot is switched off");
+                        Utilities.SayTo(player, "Aimbot is switched off");
                     }
                     else if (player.MyGetField("aimbot").As<int>() == 0)
                     {
                         GiveAimBot(player, false, true);
                         player.MySetField("aimbot", 1);
-                        Utilities.RawSayTo(player, "Aimbot is switched on");
+                        Utilities.SayTo(player, "Aimbot is switched on");
                     }
                 }
                 else if (msg[0].StartsWith("!chaos", StringComparison.InvariantCulture))
@@ -909,13 +875,13 @@ namespace ExtensionScript
                     if (player.MyGetField("aimbot").As<int>() == 1)
                     {
                         player.MySetField("aimbot", 0);
-                        Utilities.RawSayTo(player, "Aimbot is switched off");
+                        Utilities.SayTo(player, "Aimbot is switched off");
                     }
                     else if (player.MyGetField("aimbot").As<int>() == 0)
                     {
                         GiveAimBot(player, true);
                         player.MySetField("aimbot", 1);
-                        Utilities.RawSayTo(player, "Aimbot is switched on");
+                        Utilities.SayTo(player, "Aimbot is switched on");
                     }
                 }
                 else if (msg[0].StartsWith("!norecoil", StringComparison.InvariantCulture))
@@ -928,13 +894,13 @@ namespace ExtensionScript
                     if (player.MyGetField("norecoil").As<int>() == 1)
                     {
                         player.MySetField("norecoil", 0);
-                        Utilities.RawSayTo(player, "No Recoil is switched off");
+                        Utilities.SayTo(player, "No Recoil is switched off");
                     }
                     else if (player.MyGetField("norecoil").As<int>() == 0)
                     {
                         player.Player_RecoilScaleOff();
                         player.MySetField("norecoil", 1);
-                        Utilities.RawSayTo(player, "No Recoil is switched on");
+                        Utilities.SayTo(player, "No Recoil is switched on");
                     }
                 }
                 else if (msg[0].StartsWith("!infiniteammo", StringComparison.InvariantCulture))
@@ -947,12 +913,12 @@ namespace ExtensionScript
                     if (player.MyGetField("infiniteammo").As<int>() == 1)
                     {
                         player.MySetField("infiniteammo", 0);
-                        Utilities.RawSayTo(player, "Infiniteammo is switched off");
+                        Utilities.SayTo(player, "Infiniteammo is switched off");
                     }
                     else if (player.MyGetField("infiniteammo").As<int>() == 0)
                     {
                         player.MySetField("infiniteammo", 1);
-                        Utilities.RawSayTo(player, "Infiniteammo is switched on");
+                        Utilities.SayTo(player, "Infiniteammo is switched on");
                     }
                 }
                 else if (msg[0].StartsWith("!hide", StringComparison.InvariantCulture))
@@ -966,13 +932,13 @@ namespace ExtensionScript
                     {
                         player.Show();
                         player.MySetField("hide", 0);
-                        Utilities.RawSayTo(player, "You are not hidden");
+                        Utilities.SayTo(player, "You are not hidden");
                     }
                     else if (player.MyGetField("hide").As<int>() == 0)
                     {
                         player.Hide();
                         player.MySetField("hide", 1);
-                        Utilities.RawSayTo(player, "You are hidden");
+                        Utilities.SayTo(player, "You are hidden");
                     }
                 }
                 else if (msg[0].StartsWith("!noclip", StringComparison.InvariantCulture))
@@ -1051,7 +1017,7 @@ namespace ExtensionScript
                         player.SessionState = "playing";
                         player.SetContents(100);
                         player.MySetField("fly", 0);
-                        Utilities.RawSayTo(player, "You are not flying");
+                        Utilities.SayTo(player, "You are not flying");
                     }
                     else if (player.MyGetField("fly").As<int>() == 0)
                     {
@@ -1066,7 +1032,7 @@ namespace ExtensionScript
                         player.SessionState = "spectator";
                         player.SetContents(0);
                         player.MySetField("fly", 1);
-                        Utilities.RawSayTo(player, "You are flying");
+                        Utilities.SayTo(player, "You are flying");
                     }
                 }
                 else if (msg[0].StartsWith("!explode", StringComparison.InvariantCulture))
@@ -1113,22 +1079,18 @@ namespace ExtensionScript
                     {
                         player.NoWeaponDisable();
                         player.MySetField("noweapon", 0);
-                        Utilities.RawSayAll($"{player.Name} can fight back now");
+                        Utilities.SayAll($"{player.Name} can fight back now");
                     }
                     else if (player.MyGetField("noweapon").As<int>() == 0)
                     {
                         player.NoWeaponEnable();
                         player.MySetField("noweapon", 1);
-                        Utilities.RawSayAll($"{player.Name} weapons have been taken away from them");
+                        Utilities.SayAll($"{player.Name} weapons have been taken away from them");
                     }
                 }
                 else if (msg[0].StartsWith("!kickallplayers", StringComparison.InvariantCulture))
                 {
-                    if (msg.Length < 2)
-                        return;
-
-                    string text = string.Join(" ", msg.Skip(1));
-                    PrintErrorToConsole(text);
+                    Utilities.SayAll("Kick all players is currently disabled");
                 }
                 else if (msg[0].StartsWith("!juggsuit", StringComparison.InvariantCulture))
                 {
@@ -1191,7 +1153,7 @@ namespace ExtensionScript
                 {
                     Entity player = GetPlayer(msg[1]);
                     DateTime time = DateTime.UtcNow;
-                    Utilities.RawSayTo(player, $"The time is: {time.ToString("r", culture)}");
+                    Utilities.SayTo(player, $"The time is: {time.ToString("r", culture)}");
                 }
             }
             catch (Exception e)
@@ -1207,7 +1169,7 @@ namespace ExtensionScript
                 return input.ToUpperInvariant();
 
             Entity player = GetPlayer(input);
-            return player.HWID.Substring(0, 16);
+            return player.HWID.Substring(0, 16).ToUpperInvariant();
         }
 
         /// <summary>function <c>GiveAimBot</c> Gives 'aimbot' to the player. The loop that changes the player view calculates with each iteration what is the closest entity to lock on to.</summary>
@@ -1219,18 +1181,17 @@ namespace ExtensionScript
                     return false;
 
                 Entity[] victims = SortByDistance(CleanOnlinePlayerList(player, visible).ToArray(), player);
+
                 if (victims.Length > 0)
-                    player.SetPlayerAngles(VectorToAngles(victims[0].GetEye() - player.GetEye()));
-                if (chaos)
                 {
-                    AfterDelay(115, () =>
+                    player.SetPlayerAngles(VectorToAngles(victims[0].GetEye() - player.GetEye()));
+
+                    if (chaos)
                     {
-                        if (victims[0].IsAlive)
-                        {
-                            MagicBullet(player.CurrentWeapon, victims[0].GetTagOrigin("j_mainroot") + new Vector3(0f, 0f, 50f), victims[0].GetTagOrigin("j_mainroot"), player);
-                        }
-                    });
+                        MagicBullet(player.CurrentWeapon, victims[0].GetTagOrigin("j_mainroot") + new Vector3(0f, 0f, 50f), victims[0].GetTagOrigin("j_mainroot"), player);
+                    }
                 }
+
                 return true;
             });
         }
@@ -1306,9 +1267,12 @@ namespace ExtensionScript
                             cleanedList.Add(player);
                     }
                     else
+                    {
                         cleanedList.Add(player);
+                    }
                 }
             }
+
             return cleanedList;
         }
 
@@ -1408,12 +1372,17 @@ namespace ExtensionScript
         /// <summary>function <c>OnPlayerLastStand</c> If the player is in last stand he will be killed.</summary>
         public override void OnPlayerLastStand(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc, int timeOffset, int deathAnimDuration)
         {
-            if (GetDvarInt("sv_LastStand") == 0)
-                player.Suicide("Last Stand is not allowed");
+            if (dvars["sv_LastStand"])
+                weapons.TryPunishLastStand(lastPlayerDamaged);
         }
 
         /// <summary>function <c>OnPlayerDamage</c> If the player is damaged by a 'bad' weapon his health is restored.</summary>
-        public override void OnPlayerDamage(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc) => weapons.GiveHealthBack(player, weapon, damage);
+        public override void OnPlayerDamage(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc)
+        {
+            if (dvars["sv_NerfGuns"])
+                weapons.GiveHealthBack(player, weapon, damage, attacker);
+            lastPlayerDamaged = player.EntRef;
+        }
 
         /// <summary>function <c>OnSay3</c> If the player is muted or the message starts with ! or @ the message will be censored and it will not be seen by other players.</summary>
         public override EventEat OnSay3(Entity player, ChatType type, string name, ref string message)
@@ -1450,18 +1419,18 @@ namespace ExtensionScript
 
                 if (!IsGameModeTeamBased())
                 {
-                    Utilities.RawSayAll(text);
+                    Utilities.SayAll(text);
                 }
 
                 else if (type == ChatType.Team)
                 {
                     text = "^8[Team] " + text;
                     foreach (Entity item in onlinePlayers.Where((Entity x) => x.SessionTeam == player.SessionTeam))
-                        Utilities.RawSayTo(item, text);
+                        Utilities.SayTo(item, text);
                 }
 
                 else
-                    Utilities.RawSayAll(text);
+                    Utilities.SayAll(text);
 
                 return EventEat.EatGame;
             }
@@ -1656,7 +1625,7 @@ namespace ExtensionScript
         {
             if (!File.Exists($@"admin\{name}.dsr"))
             {
-                Utilities.RawSayAll($"Could not find DSR *{name}*, the name is case sensitive");
+                Utilities.SayAll($"Could not find DSR *{name}*, the name is case sensitive");
                 dsrName = "";
                 return false;
             }
@@ -1671,14 +1640,16 @@ namespace ExtensionScript
             dvars = new Dictionary<string, bool>
             {
                 ["sv_Bounce"] = GetDvarInt("sv_Bounce") == 1,
-                ["sv_NopAddresses"] = GetDvarInt("sv_NopAddresses") == 1,
                 ["sv_KnifeEnabled"] = GetDvarInt("sv_KnifeEnabled") == 1,
                 ["sv_UndoRCE"] = GetDvarInt("sv_UndoRCE") == 1,
                 ["sv_RemoveBakaaraSentry"] = GetDvarInt("sv_RemoveBakaaraSentry") == 1,
                 ["sv_hideCommands"] = GetDvarInt("sv_hideCommands") != 0,
                 ["sv_AntiHardScope"] = GetDvarInt("sv_AntiHardScope") == 1,
                 ["sv_AntiCamp"] = GetDvarInt("sv_AntiCamp") == 1,
-                ["sv_autoBalance"] = GetDvarInt("sv_autoBalance") == 1
+                ["sv_autoBalance"] = GetDvarInt("sv_autoBalance") == 1,
+                ["sv_LastStand"] = GetDvarInt("sv_LastStand") == 0,
+                ["sv_NerfGuns"] = GetDvarInt("sv_NerfGuns") == 1,
+                ["sv_C4Prank"] = GetDvarInt("sv_C4Prank") == 1
             };
 
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");
@@ -1686,12 +1657,12 @@ namespace ExtensionScript
 
             try
             {
-                string s = GetDvar("sv_serverCulture");
+                string dvarCulture = GetDvar("sv_serverCulture");
 
-                if (string.IsNullOrWhiteSpace(s))
-                    s = "en-GB";
+                if (string.IsNullOrWhiteSpace(dvarCulture))
+                    dvarCulture = "en-GB";
 
-                culture = new CultureInfo(s, false);
+                culture = new CultureInfo(dvarCulture, false);
             }
 
             catch (CultureNotFoundException)
@@ -1706,7 +1677,7 @@ namespace ExtensionScript
             string ball = "cardicon_8ball";
             string face = "facebook";
 
-            Dictionary<string, string> dict = new Dictionary<string, string>()
+            var dict = new Dictionary<string, string>()
             {
                 { "null", "\0" },
                 { "controldel",  "\x7F" },
