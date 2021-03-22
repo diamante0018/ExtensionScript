@@ -112,10 +112,10 @@ namespace ExtensionScript
             if (weapon.Equals("uav_strike_marker_mp", StringComparison.InvariantCultureIgnoreCase))
             {
                 Entity player = Entity.GetEntity(arg1);
-                Vector3 asd = AnglesToForward(GSCFunctions.GetPlayerAngles(player));
+                Vector3 asd = AnglesToForward(player.GetPlayerAngles());
                 Vector3 dsa = new Vector3(asd.X * 1000000, asd.Y * 1000000, asd.Z * 1000000);
-                MagicBullet("ims_projectile_mp", GSCFunctions.GetTagOrigin(player, "tag_weapon_left"), dsa, player);
-                MagicBullet("ims_projectile_mp", GSCFunctions.GetTagOrigin(player, "tag_weapon_left"), dsa + new Vector3(50, 50, 50), player);
+                MagicBullet("ims_projectile_mp", player.GetTagOrigin("tag_weapon_left"), dsa, player);
+                MagicBullet("ims_projectile_mp", player.GetTagOrigin("tag_weapon_left"), dsa + new Vector3(50, 50, 50), player);
                 return true;
             }
 

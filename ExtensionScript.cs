@@ -77,6 +77,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_ExplosivePrank", 1);
             SetDvarIfUninitialized("sv_DisableAkimbo", 1);
             SetDvarIfUninitialized("sv_AllPerks", 1);
+            SetDvarIfUninitialized("sv_AntiRQ", 0);
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
             SetDvarIfUninitialized("sv_RemoveBakaaraSentry", 0);
             sv.ServerTitle(GetDvar("sv_MyMapName"), GetDvar("sv_MyGameMode"));
@@ -84,7 +85,7 @@ namespace ExtensionScript
             //sv.MaxClients(69); // May cause crashes
 
             //Loading Server Dvars.
-            ServerDvars();
+            sv.ServerDvars();
 
             //HudElem For Information
             InformationHuds();
@@ -216,34 +217,6 @@ namespace ExtensionScript
             }
         }
 
-        public void ServerDvars()
-        {
-            if (GetDvarInt("sv_serverDvars") != 0)
-            {
-                SetDevDvar("sv_network_fps", 200);
-                SetDvar("sv_hugeSnapshotSize", 10000);
-                SetDvar("sv_hugeSnapshotDelay", 100);
-                SetDvar("sv_pingDegradation", 0);
-                SetDvar("sv_pingDegradationLimit", 9999);
-                SetDvar("sv_acceptableRateThrottle", 9999);
-                SetDvar("sv_newRateThrottling", 2);
-                SetDvar("sv_minPingClamp", 50);
-                SetDvar("sv_cumulThinkTime", 1000);
-                SetDvar("sys_lockThreads", "all");
-                SetDvar("com_maxFrameTime", 1000);
-                SetDvar("com_maxFps", 0);
-                SetDvar("sv_voiceQuality", 9);
-                SetDvar("maxVoicePacketsPerSec", 1000);
-                SetDvar("maxVoicePacketsPerSecForServer", 200);
-                SetDvar("cg_everyoneHearsEveryone", 1);
-                SetDvar("scr_game_matchstarttime", 10);
-                SetDvar("scr_game_playerwaittime", 5);
-                SetDvar("com_printDebug", true);
-                MakeDvarServerInfo("motd", GetDvar("sv_gmotd"));
-                MakeDvarServerInfo("didyouknow", GetDvar("sv_gmotd"));
-            }
-        }
-
         public void InformationHuds()
         {
             if (GetDvarInt("sv_hudEnable") != 0)
@@ -303,14 +276,8 @@ namespace ExtensionScript
                 onlinePlayers.Add(player);
 
             if (GetDvarInt("sv_clientDvars") != 0)
-            {
-                player.SetClientDvar("cg_objectiveText", GetDvar("sv_objText"));
-                player.SetClientDvar("sys_lockThreads", "all");
-                player.SetClientDvar("com_maxFrameTime", 1000);
-                player.SetClientDvars("snaps", 30, "rate", GetDvar("sv_rate"));
-                player.SetClientDvars("g_teamicon_allies", "weapon_missing_image", "g_teamicon_MyAllies", "weapon_missing_image", "g_teamicon_EnemyAllies", "weapon_missing_image");
-                player.SetClientDvars("g_teamicon_axis", "weapon_missing_image", "g_teamicon_MyAxis", "weapon_missing_image", "g_teamicon_EnemyAxis", "weapon_missing_image");
-            }
+                player.SVClientDvars();
+            
             if (GetDvarInt("sv_forceSmoke") != 0)
                 player.SetClientDvar("fx_draw", true);
 
@@ -343,6 +310,9 @@ namespace ExtensionScript
 
             if (dvars["sv_AntiHardScope"])
                 StartAntiHardScope(player);
+
+            if (dvars["sv_AntiRQ"])
+                StartAntiRQ(player);
 
             //Give Ammo Related Code
             player.NotifyOnPlayerCommand("giveammo", "vote yes");
@@ -1612,6 +1582,37 @@ namespace ExtensionScript
             });
         }
 
+        /// <summary>function <c>StartAntiRQ</c> Anti-RQ function, originally made for infected servers.</summary>
+        public void StartAntiRQ(Entity player)
+        {
+            player.ClosePlayerMenu();
+            player.Notify("menuresponse", "team_marinesopfor", "axis");
+
+            Thread(OnPlayerJoinTeam(player), (entRef, notify, paras) =>
+            {
+                if (notify == "disconnect" && player.EntRef == entRef)
+                    return false;
+
+                return true;
+            });
+
+            OnInterval(100, () =>
+            {
+                player.ClosePlayerMenu();
+                return true;
+            });
+        }
+
+        /// <summary>function <c>OnPlayerJoinTeam</c> Coroutine function. Triggers when the player joins a team.</summary>
+        private static IEnumerator OnPlayerJoinTeam(Entity player)
+        {
+            while (true)
+            {
+                yield return player.WaitTill("joined_team");
+                AfterDelay(500, () => { player.Notify("menuresponse", "changeclass", "class1"); });
+            }
+        }
+
         /// <summary>
         /// Play leader dialog for player
         /// </summary>
@@ -1678,7 +1679,8 @@ namespace ExtensionScript
                 ["sv_ExplosivePrank"] = GetDvarInt("sv_ExplosivePrank") == 1,
                 ["sv_DisableAkimbo"] = GetDvarInt("sv_DisableAkimbo") == 1,
                 ["sv_AllPerks"] = GetDvarInt("sv_AllPerks") == 1,
-                ["sv_LocalizedStr"] = GetDvarInt("sv_LocalizedStr") == 1
+                ["sv_LocalizedStr"] = GetDvarInt("sv_LocalizedStr") == 1,
+                ["sv_AntiRQ"] = GetDvarInt("sv_AntiRQ") == 1
             };
 
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");

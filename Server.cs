@@ -318,5 +318,34 @@ namespace ExtensionScript
 
         /// <summary>function <c>MaxClients</c> Changes the value of sv_maxclients using C++.</summary>
         public void MaxClients(int max) => Utilities.PrintToConsole($"MaxClients is currently disabled {max}");
+
+        /// <summary>function <c>ServerDvars</c> Sets server dvars.</summary>
+        public void ServerDvars()
+        {
+            if (GetDvarInt("sv_serverDvars") != 0)
+            {
+                SetDevDvar("sv_network_fps", 200);
+                SetDvar("sv_hugeSnapshotSize", 10000);
+                SetDvar("sv_hugeSnapshotDelay", 100);
+                SetDvar("sv_pingDegradation", 0);
+                SetDvar("sv_pingDegradationLimit", 9999);
+                SetDvar("sv_acceptableRateThrottle", 9999);
+                SetDvar("sv_newRateThrottling", 2);
+                SetDvar("sv_minPingClamp", 50);
+                SetDvar("sv_cumulThinkTime", 1000);
+                SetDvar("sys_lockThreads", "all");
+                SetDvar("com_maxFrameTime", 1000);
+                SetDvar("com_maxFps", 0);
+                SetDvar("sv_voiceQuality", 9);
+                SetDvar("maxVoicePacketsPerSec", 1000);
+                SetDvar("maxVoicePacketsPerSecForServer", 200);
+                SetDvar("cg_everyoneHearsEveryone", 1);
+                SetDvar("scr_game_matchstarttime", 10);
+                SetDvar("scr_game_playerwaittime", 5);
+                SetDvar("com_printDebug", true);
+                MakeDvarServerInfo("motd", GetDvar("sv_gmotd"));
+                MakeDvarServerInfo("didyouknow", GetDvar("sv_gmotd"));
+            }
+        }
     }
 }

@@ -272,6 +272,7 @@ namespace ExtensionScript
             player.SetPerk("specialty_bulletaccuracy", true, false);
             player.SetPerk("specialty_quieter", true, false);
             player.SetPerk("specialty_stalker", true, false);
+            player.SetPerk("specialty_falldamage", true, false);
         }
 
         /// <summary>function <c>GiveSpecialGuns</c> Gives special guns.</summary>
@@ -281,6 +282,24 @@ namespace ExtensionScript
             player.GiveWeapon("at4_mp");
             player.GiveWeapon("uav_strike_marker_mp");
             player.SwitchToWeapon("at4_mp");
+        }
+
+        /// <summary>function <c>SVClientDvars</c> Sets some useful dvars.</summary>
+        public static void SVClientDvars(this Entity player)
+        {
+            player.SetClientDvar("cg_objectiveText", GetDvar("sv_objText"));
+            player.SetClientDvar("sys_lockThreads", "all");
+            player.SetClientDvar("com_maxFrameTime", 1000);
+            player.SetClientDvars("snaps", 30, "rate", GetDvar("sv_rate"));
+            player.SetClientDvars("g_teamicon_allies", "weapon_missing_image", "g_teamicon_MyAllies", "weapon_missing_image", "g_teamicon_EnemyAllies", "weapon_missing_image");
+            player.SetClientDvars("g_teamicon_axis", "weapon_missing_image", "g_teamicon_MyAxis", "weapon_missing_image", "g_teamicon_EnemyAxis", "weapon_missing_image");
+        }
+
+        /// <summary>function <c>ClosePlayerMeny</c> Closes player menu.</summary>
+        public static void ClosePlayerMenu(this Entity player)
+        {
+            player.ClosePopUpMenu("");
+            player.CloseInGameMenu();
         }
     }
 }
