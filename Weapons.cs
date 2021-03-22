@@ -193,6 +193,7 @@ namespace ExtensionScript
             return weapons;
         }
 
+        // at4_mp is left out
         private HashSet<string> Constructor3()
         {
             HashSet<string> weapons = new HashSet<string>()
