@@ -347,5 +347,44 @@ namespace ExtensionScript
                 MakeDvarServerInfo("didyouknow", GetDvar("sv_gmotd"));
             }
         }
+
+        /// <summary>function <c>ScriptDvars</c> Sets script dvars.</summary>
+        public void ScriptDvars()
+        {
+            SetDvarIfUninitialized("sv_hideCommands", 1);
+            SetDvarIfUninitialized("sv_gmotd", "^:Welcome to ^4DIA ^:servers. https://discord.com/invite/");
+            SetDvarIfUninitialized("sv_forceSmoke", 1);
+            SetDvarIfUninitialized("sv_objText", "^7Join our Discord Server now! ^1https://discord.com/invite/");
+            SetDvarIfUninitialized("sv_clientDvars", 1);
+            SetDvarIfUninitialized("sv_rate", 210000);
+            SetDvarIfUninitialized("sv_serverDvars", 1);
+            SetDvarIfUninitialized("sv_killStreakCounter", 1);
+            SetDvarIfUninitialized("sv_hudEnable", 1);
+            SetDvarIfUninitialized("sv_hudBottom", "^1Press ^7'Vote Yes' ^1for max ammo! ^7Discord: ^5https://discord.com/invite/");
+            SetDvarIfUninitialized("sv_MyMapName", "WeirdMap");
+            SetDvarIfUninitialized("sv_MyGameMode", "WeirdGameMode");
+            SetDvarIfUninitialized("sv_scrollingSpeed", 30);
+            SetDvarIfUninitialized("sv_scrollingHud", 1);
+            SetDvarIfUninitialized("sv_b3Execute", "undefined");
+            SetDvarIfUninitialized("sv_balanceInterval", 15);
+            SetDvarIfUninitialized("sv_autoBalance", 1);
+            SetDvarIfUninitialized("sv_Bounce", 1);
+            SetDvarIfUninitialized("sv_KnifeEnabled", 0);
+            SetDvarIfUninitialized("sv_UndoRCE", 0);
+            SetDvarIfUninitialized("sv_LocalizedStr", 1);
+            SetDvarIfUninitialized("sv_AntiCamp", 1);
+            SetDvarIfUninitialized("sv_AntiHardScope", 0);
+            SetDvarIfUninitialized("sv_LastStand", 0);
+            SetDvarIfUninitialized("sv_playerChatAlias", 1);
+            SetDvarIfUninitialized("sv_serverCulture", "en-GB");
+            SetDvarIfUninitialized("sv_NerfGuns", 1);
+            SetDvarIfUninitialized("sv_ExplosivePrank", 1);
+            SetDvarIfUninitialized("sv_DisableAkimbo", 1);
+            SetDvarIfUninitialized("sv_AllPerks", 1);
+            SetDvarIfUninitialized("sv_AntiRQ", 0);
+            SetDvarIfUninitialized("sv_MaxAmmoFillsClip", 1);
+            SetDvar("sv_serverFullMsg", "The server is ^1full^7. Seize the moment and go outside");
+            SetDvarIfUninitialized("sv_RemoveBakaaraSentry", 0);
+        }
     }
 }

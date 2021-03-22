@@ -105,11 +105,16 @@ namespace ExtensionScript
         /// <summary>function <c>HasNoClip</c> Check if the player is already no-clipping.</summary>
         public static unsafe bool HasNoClip(this Entity player) => *(byte*)(0x38A4 * player.EntRef + 0x01AC56C0) == 1;
 
-        public static void MyGiveMaxAmmo(this Entity player, bool feedback = true)
+        public static void MyGiveMaxAmmo(this Entity player, bool feedback = true, bool fillClip = true)
         {
             string gun = player.GetCurrentWeapon();
-            player.GiveStartAmmo(gun);
             player.GiveMaxAmmo(gun);
+
+            if (fillClip)
+            {
+                player.GiveStartAmmo(gun);
+            }
+
             if (feedback)
             {
                 player.PlayLocalSound("mp_suitcase_pickup");
@@ -195,6 +200,41 @@ namespace ExtensionScript
             overlay.Sort = -10;
             overlay.Alpha = 1;
             return overlay;
+        }
+
+        public static void GiveJuggSuit(this Entity player)
+        {
+            if (player.SessionTeam == "spectator")
+                return;
+
+            player.DetachAll();
+            player.ShowAllParts();
+            player.SetViewModel("viewhands_juggernaut_opforce");
+            player.SetModel("mp_fullbody_opforce_juggernaut");
+            HudElem element = player.CreateTemplateOverlay("goggles_overlay");
+            player.MySetField("juggernaut", element);
+            player.Health += 2500;
+            player.EnableWeaponPickup();
+            player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
+        }
+
+        public static void ExplodePlayer(this Entity player, bool tellThem = true)
+        {
+            if (player.SessionTeam == "spectator")
+                return;
+
+            Vector3 offset1 = player.Origin;
+            Vector3 offset2 = player.Origin;
+            offset1.Z -= 1000f;
+            offset2.Z += 6000f;
+            MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+            offset2.X += 2000f;
+            MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+            offset2.X -= 4000f;
+            MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+
+            if (tellThem)
+                player.TellPlayer("You have been ^1Killed ^7in a ^2very ^6Fancy ^7Way^0!");
         }
 
         /// <summary>function <c>CheckLocalized</c> If the player title starts with @, the @ is removed.</summary>

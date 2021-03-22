@@ -47,39 +47,7 @@ namespace ExtensionScript
         {
             IPrintLn("^1I am Diavolo and I lost my Mind. ^7DIA Script for 1.5 IS");
             InfinityScript.Log.Write(LogLevel.Info, "^1I am Diavolo and I lost my Mind.");
-            SetDvarIfUninitialized("sv_hideCommands", 1);
-            SetDvarIfUninitialized("sv_gmotd", "^:Welcome to ^4DIA ^:servers. https://discord.com/invite/");
-            SetDvarIfUninitialized("sv_forceSmoke", 1);
-            SetDvarIfUninitialized("sv_objText", "^7Join our Discord Server now! ^1https://discord.com/invite/");
-            SetDvarIfUninitialized("sv_clientDvars", 1);
-            SetDvarIfUninitialized("sv_rate", 210000);
-            SetDvarIfUninitialized("sv_serverDvars", 1);
-            SetDvarIfUninitialized("sv_killStreakCounter", 1);
-            SetDvarIfUninitialized("sv_hudEnable", 1);
-            SetDvarIfUninitialized("sv_hudBottom", "^1Press ^7'Vote Yes' ^1for max ammo! ^7Discord: ^5https://discord.com/invite/");
-            SetDvarIfUninitialized("sv_MyMapName", "WeirdMap");
-            SetDvarIfUninitialized("sv_MyGameMode", "WeirdGameMode");
-            SetDvarIfUninitialized("sv_scrollingSpeed", 30);
-            SetDvarIfUninitialized("sv_scrollingHud", 1);
-            SetDvarIfUninitialized("sv_b3Execute", "undefined");
-            SetDvarIfUninitialized("sv_balanceInterval", 15);
-            SetDvarIfUninitialized("sv_autoBalance", 1);
-            SetDvarIfUninitialized("sv_Bounce", 1);
-            SetDvarIfUninitialized("sv_KnifeEnabled", 0);
-            SetDvarIfUninitialized("sv_UndoRCE", 0);
-            SetDvarIfUninitialized("sv_LocalizedStr", 1);
-            SetDvarIfUninitialized("sv_AntiCamp", 1);
-            SetDvarIfUninitialized("sv_AntiHardScope", 0);
-            SetDvarIfUninitialized("sv_LastStand", 0);
-            SetDvarIfUninitialized("sv_playerChatAlias", 1);
-            SetDvarIfUninitialized("sv_serverCulture", "en-GB");
-            SetDvarIfUninitialized("sv_NerfGuns", 1);
-            SetDvarIfUninitialized("sv_ExplosivePrank", 1);
-            SetDvarIfUninitialized("sv_DisableAkimbo", 1);
-            SetDvarIfUninitialized("sv_AllPerks", 1);
-            SetDvarIfUninitialized("sv_AntiRQ", 0);
-            SetDvar("sv_serverFullMsg", "The server is ^1full^7. Use this opportunity and go outside");
-            SetDvarIfUninitialized("sv_RemoveBakaaraSentry", 0);
+            sv.ScriptDvars();
             sv.ServerTitle(GetDvar("sv_MyMapName"), GetDvar("sv_MyGameMode"));
             InitClassFields();
             //sv.MaxClients(69); // May cause crashes
@@ -277,7 +245,7 @@ namespace ExtensionScript
 
             if (GetDvarInt("sv_clientDvars") != 0)
                 player.SVClientDvars();
-            
+
             if (GetDvarInt("sv_forceSmoke") != 0)
                 player.SetClientDvar("fx_draw", true);
 
@@ -357,7 +325,7 @@ namespace ExtensionScript
             while (true)
             {
                 yield return player.WaitTill("giveammo");
-                player.MyGiveMaxAmmo();
+                player.MyGiveMaxAmmo(true, dvars["sv_MaxAmmoFillsClip"]);
             }
         }
 
@@ -1025,24 +993,13 @@ namespace ExtensionScript
                     }
 
                     Entity player = GetPlayer(msg[1]);
-                    if (player.SessionTeam == "spectator")
-                        return;
-                    Vector3 offset1 = player.Origin;
-                    Vector3 offset2 = player.Origin;
-                    offset1.Z -= 1000f;
-                    offset2.Z += 6000f;
-                    MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
-                    offset2.X += 2000f;
-                    MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
-                    offset2.X -= 4000f;
-                    MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+                    player.ExplodePlayer();
+
                     AfterDelay(3000, () =>
                     {
                         if (player.IsAlive)
                             player.Suicide();
                     });
-                    player.TellPlayer("You have been ^1Killed ^7in a ^2very ^6Fancy ^7Way^0!");
-
                 }
                 else if (msg[0].StartsWith("!ffcrash", StringComparison.InvariantCulture))
                 {
@@ -1082,15 +1039,7 @@ namespace ExtensionScript
                     }
 
                     Entity player = GetPlayer(msg[1]);
-                    player.DetachAll();
-                    player.ShowAllParts();
-                    player.SetViewModel("viewhands_juggernaut_opforce");
-                    player.SetModel("mp_fullbody_opforce_juggernaut");
-                    HudElem element = player.CreateTemplateOverlay("goggles_overlay");
-                    player.MySetField("juggernaut", element);
-                    player.Health += 2500;
-                    player.EnableWeaponPickup();
-                    player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
+                    player.GiveJuggSuit();
                 }
                 else if (msg[0].StartsWith("!thirdperson", StringComparison.InvariantCulture))
                 {
@@ -1198,23 +1147,12 @@ namespace ExtensionScript
         {
             foreach (Entity player in onlinePlayers)
             {
-                if (player.SessionTeam == "spectator")
-                    continue;
-                Vector3 offset1 = player.Origin;
-                Vector3 offset2 = player.Origin;
-                offset1.Z -= 1000f;
-                offset2.Z += 6000f;
-                MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
-                offset2.X += 2000f;
-                MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
-                offset2.X -= 4000f;
-                MagicBullet("uav_strike_projectile_mp", offset2, offset1, player);
+                player.ExplodePlayer();
                 AfterDelay(3000, () =>
                 {
                     if (player.IsAlive)
                         player.Suicide();
                 });
-                player.TellPlayer("You have been ^1Killed ^7in a ^2very ^6Fancy ^7Way^0!");
             }
         }
 
@@ -1222,19 +1160,7 @@ namespace ExtensionScript
         public void JuggSuitAll()
         {
             foreach (Entity player in onlinePlayers)
-            {
-                if (player.SessionTeam == "spectator")
-                    continue;
-                player.DetachAll();
-                player.ShowAllParts();
-                player.SetViewModel("viewhands_juggernaut_opforce");
-                player.SetModel("mp_fullbody_opforce_juggernaut");
-                HudElem element = player.CreateTemplateOverlay("goggles_overlay");
-                player.MySetField("juggernaut", element);
-                player.Health += 2500;
-                player.EnableWeaponPickup();
-                player.TellPlayer("^2You ^7Have Been ^6Given ^7a ^1Jugg ^0Suit");
-            }
+                player.GiveJuggSuit();
         }
 
         private List<Entity> CleanOnlinePlayerList(Entity aimbotter, bool visible = false)
@@ -1491,23 +1417,26 @@ namespace ExtensionScript
             {
                 if (player.MyHasField("trail"))
                 {
-                    switch (player.MyGetField("trail").As<int>())
+                    foreach (Entity target in onlinePlayers)
                     {
-                        case 0:
-                            player.PlayFX(Effects.fx1, player.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
-                            break;
-                        case 1:
-                            player.PlayFX(Effects.fx2, player.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
-                            break;
-                        case 2:
-                            player.PlayFX(Effects.fx3, player.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
-                            break;
-                        case 3:
-                            player.PlayFX(Effects.fx4, player.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
-                            break;
-                        case 4:
-                            player.PlayFX(Effects.fx5, player.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
-                            break;
+                        switch (player.MyGetField("trail").As<int>())
+                        {
+                            case 0:
+                                target.PlayFX(Effects.fx1, target.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
+                                break;
+                            case 1:
+                                target.PlayFX(Effects.fx2, target.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
+                                break;
+                            case 2:
+                                target.PlayFX(Effects.fx3, target.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
+                                break;
+                            case 3:
+                                target.PlayFX(Effects.fx4, target.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
+                                break;
+                            case 4:
+                                target.PlayFX(Effects.fx5, target.Origin + new Vector3(0.0f, 0.0f, -5f), new Vector3?(), new Vector3?());
+                                break;
+                        }
                     }
                 }
 
@@ -1680,7 +1609,8 @@ namespace ExtensionScript
                 ["sv_DisableAkimbo"] = GetDvarInt("sv_DisableAkimbo") == 1,
                 ["sv_AllPerks"] = GetDvarInt("sv_AllPerks") == 1,
                 ["sv_LocalizedStr"] = GetDvarInt("sv_LocalizedStr") == 1,
-                ["sv_AntiRQ"] = GetDvarInt("sv_AntiRQ") == 1
+                ["sv_AntiRQ"] = GetDvarInt("sv_AntiRQ") == 1,
+                ["sv_MaxAmmoFillsClip"] = GetDvarInt("sv_MaxAmmoFillsClip") == 1
             };
 
             sv_balanceInterval = GetDvarInt("sv_balanceInterval");

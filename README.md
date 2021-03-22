@@ -39,6 +39,7 @@ In the server.cfg set these dvars with the values you wish, or they will be set 
 - sv_DisableAkimbo 1 //If set to 1 it will disable akimbo guns by replacing them with a USP45
 - sv_AllPerks 1 //If set to 1 it will give all the perks to the player
 - sv_AntiRQ 0 //If set to 1 it will prevent players from opening the menu
+- sv_MaxAmmoFillsClip 1 //If set to 1 it will refill the current clip when requesting ammunition
 
 Native C++ functions:
 - NopTheFuckOut Called if sv_NopAddresses is 1. It uses hooks to get player data needed for other C++ functions
