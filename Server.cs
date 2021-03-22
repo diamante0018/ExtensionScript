@@ -93,7 +93,7 @@ namespace ExtensionScript
                 return true;
             }
 
-            private List<IntPtr> _Scan(IntPtr sIn, ref byte[] sFor, int length)
+            private List<IntPtr> Scan(IntPtr sIn, ref byte[] sFor, int length)
             {
                 List<IntPtr> result = new List<IntPtr>();
 
@@ -124,7 +124,7 @@ namespace ExtensionScript
                         IntPtr buff = Marshal.AllocHGlobal((int)MemReg[i].RegionSize);
 
                         ReadProcessMemory(P.Handle, MemReg[i].BaseAddress, buff, MemReg[i].RegionSize, 0);
-                        List<IntPtr> Result = _Scan(buff, ref Pattern, (int)MemReg[i].RegionSize);
+                        List<IntPtr> Result = Scan(buff, ref Pattern, (int)MemReg[i].RegionSize);
 
                         Marshal.FreeHGlobal(buff);
 
