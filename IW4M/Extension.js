@@ -1312,17 +1312,26 @@ let commands = [{
 
         name: "explode",
 
-        description: "Blows up the entire lobby",
+        description: "Blows up the target",
 
         alias: "blowup",
 
         permission: "SeniorAdmin",
 
-        targetRequired: false,
+        targetRequired: true,
+
+        arguments: [{
+            name: "Target Player",
+            required: true
+        }],
 
         execute: (gameEvent) => {
             var server = gameEvent.Owner;
-            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !explode').Result;
+            var cid = gameEvent.Target.ClientNumber;
+            if (gameEvent.Origin.Level > gameEvent.Target.Level)
+                server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !explode ' + cid).Result;
+            else
+                gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
     },
     {
