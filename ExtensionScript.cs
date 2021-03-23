@@ -145,7 +145,7 @@ namespace ExtensionScript
 
             //Sentry Related Code
             if (dvars["sv_RemoveBakaaraSentry"])
-                AfterDelay(5000, () => RemoveSentry());
+                AfterDelay(5000, () => svUtils.RemoveSentry());
         }
 
         /// <summary>function <c>ISTest_Notified</c> Prints all the notifies when triggered.</summary>
@@ -1062,7 +1062,7 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!removesentry", StringComparison.InvariantCulture))
                 {
-                    RemoveSentry();
+                    svUtils.RemoveSentry();
                 }
                 else if (msg[0].StartsWith("!setalias", StringComparison.InvariantCulture))
                 {
@@ -1171,7 +1171,7 @@ namespace ExtensionScript
             {
                 if (player.SessionTeam != "spectator" && !player.Equals(aimbotter) && player.IsPlayer)
                 {
-                    if (IsGameModeTeamBased() && player.SessionTeam == aimbotter.SessionTeam)
+                    if (svUtils.IsGameModeTeamBased() && player.SessionTeam == aimbotter.SessionTeam)
                         continue;
 
                     if (visible)
@@ -1330,10 +1330,10 @@ namespace ExtensionScript
 
                 else if (!player.IsAlive)
                 {
-                    text = (!IsGameModeTeamBased()) ? ("^7(Dead) " + text) : ("^8(Dead) " + text);
+                    text = (!svUtils.IsGameModeTeamBased()) ? ("^7(Dead) " + text) : ("^8(Dead) " + text);
                 }
 
-                if (!IsGameModeTeamBased())
+                if (!svUtils.IsGameModeTeamBased())
                 {
                     Utilities.RawSayAll(text);
                 }
@@ -1357,7 +1357,7 @@ namespace ExtensionScript
         /// <summary>function <c>BalanceTeams</c> Balances teams. The algorithm does it's best to let players on a high killstreak stay on their current team so they don't lose the killstreak.</summary>
         public void BalanceTeams(bool balanceNow = false)
         {
-            if (!IsGameModeTeamBased())
+            if (!svUtils.IsGameModeTeamBased())
                 return;
 
             List<Entity> axis = new List<Entity>();
@@ -1400,15 +1400,6 @@ namespace ExtensionScript
                     }
                 }
             }
-        }
-
-        /// <summary>function <c>IsGameModeTeamBased</c> The game mode is not team based if it's FFA, gun game, 'oic' or jugg.</summary>
-        private bool IsGameModeTeamBased()
-        {
-            string gametype = GetDvar("g_gametype");
-            if (gametype == "dm" || gametype == "gun" || gametype == "oic" || gametype == "jugg")
-                return false;
-            return true;
         }
 
         // <summary>function <c>GiveTrail</c> Gives a trail to the player.</summary>
@@ -1497,7 +1488,7 @@ namespace ExtensionScript
                     if (oldPos.DistanceTo2D(player.Origin) < 420)
                     {
                         player.IPrintLnBold("^2Run or ^1Die!");
-                        PlayLeaderDialog(player, "pushforward");
+                        svUtils.PlayLeaderDialog(player, "pushforward");
                         int oldHealth = player.Health;
                         player.Health /= 2;
                         player.Notify("damage", (oldHealth - player.Health), player, new Vector3(0, 0, 0), new Vector3(0, 0, 0), "MOD_EXPLOSIVE", "", "", "", 0, "frag_grenade_mp");
@@ -1540,33 +1531,6 @@ namespace ExtensionScript
             {
                 yield return player.WaitTill("joined_team");
                 AfterDelay(500, () => { player.Notify("menuresponse", "changeclass", "class1"); });
-            }
-        }
-
-        /// <summary>
-        /// Play leader dialog for player
-        /// </summary>
-        /// <param name="player">Player</param>
-        /// <param name="sound">Sound</param>
-        public void PlayLeaderDialog(Entity player, string sound)
-        {
-            if (player.SessionTeam == "allies")
-                player.PlayLocalSound(GetTeamVoicePrefix(GetMapCustom("allieschar")) + "1mc_" + sound);
-            else
-                player.PlayLocalSound(GetTeamVoicePrefix(GetMapCustom("axischar")) + "1mc_" + sound);
-        }
-
-        public string GetTeamVoicePrefix(string teamRef) => TableLookup("mp/factionTable.csv", 0, teamRef, 7);
-
-        /// <summary>function <c>RemoveSentry</c> Removes entity "misc_turret" from the map.</summary>
-        public void RemoveSentry()
-        {
-            for (int i = 18; i < 2048; i++)
-            {
-                Entity entity = GetEntByNum(i);
-                if (entity != null)
-                    if (!StriCmp(entity.Classname, "misc_turret"))
-                        entity.Delete();
             }
         }
 

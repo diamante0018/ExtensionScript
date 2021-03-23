@@ -114,5 +114,41 @@ namespace ExtensionScript
 
             return culture;
         }
+
+        /// <summary>function <c>RemoveSentry</c> Removes entity "misc_turret" from the map.</summary>
+        public void RemoveSentry()
+        {
+            for (int i = 18; i < 2048; i++)
+            {
+                Entity entity = GetEntByNum(i);
+                if (entity != null)
+                    if (!StriCmp(entity.Classname, "misc_turret"))
+                        entity.Delete();
+            }
+        }
+
+        /// <summary>
+        /// Play leader dialog for player
+        /// </summary>
+        /// <param name="player">Player</param>
+        /// <param name="sound">Sound</param>
+        public void PlayLeaderDialog(Entity player, string sound)
+        {
+            if (player.SessionTeam == "allies")
+                player.PlayLocalSound(GetTeamVoicePrefix(GetMapCustom("allieschar")) + "1mc_" + sound);
+            else
+                player.PlayLocalSound(GetTeamVoicePrefix(GetMapCustom("axischar")) + "1mc_" + sound);
+        }
+
+        public string GetTeamVoicePrefix(string teamRef) => TableLookup("mp/factionTable.csv", 0, teamRef, 7);
+
+        /// <summary>function <c>IsGameModeTeamBased</c> The game mode is not team based if it's FFA, gun game, 'oic' or jugg.</summary>
+        public bool IsGameModeTeamBased()
+        {
+            string gametype = GetDvar("g_gametype");
+            if (gametype == "dm" || gametype == "gun" || gametype == "oic" || gametype == "jugg")
+                return false;
+            return true;
+        }
     }
 }
