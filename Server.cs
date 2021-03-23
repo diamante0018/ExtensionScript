@@ -384,6 +384,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_AntiRQ", 0);
             SetDvarIfUninitialized("sv_MaxAmmoFillsClip", 1);
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Seize the moment and go outside");
+            SetDvar("sv_maxPing", 470);
             SetDvarIfUninitialized("sv_RemoveBakaaraSentry", 0);
         }
     }
