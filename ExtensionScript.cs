@@ -20,32 +20,46 @@ namespace ExtensionScript
 {
     public class ExtensionScript : BaseScript
     {
-        private static HudElem[] KillStreakHud = new HudElem[18];
-        private static HudElem[] NoKillsHudElem = new HudElem[18];
+        private static HudElem[] KillStreakHud;
+        private static HudElem[] NoKillsHudElem;
         private HudElem top;
         private HudElem bottom;
         private HudElem right;
         private HudElem left;
-        private string MapRotation = "";
-        private Kicker proKicker = new Kicker();
-        private Teleporter teleport = new Teleporter();
-        private Weapons weapons = new Weapons();
-        private Server sv = new Server();
-        private ChatAlias chat = new ChatAlias();
-        private ServerUtils svUtils = new ServerUtils();
+        private string MapRotation;
+        private Kicker proKicker;
+        private Teleporter teleport;
+        private Weapons weapons;
+        private Server sv;
+        private ChatAlias chat;
+        private ServerUtils svUtils;
         private RandomMap map;
         private LoadoutName load;
-        private bool fallDamage = true;
-        private bool closedServer = false;
+        private bool fallDamage;
+        private bool closedServer;
         private int sv_balanceInterval;
         private int lastPlayerDamaged;
-        private List<Entity> onlinePlayers = new List<Entity>();
+        private List<Entity> onlinePlayers;
         private Dictionary<string, string> keyWords;
         private static Dictionary<string, bool> dvars;
         private CultureInfo culture;
 
         public ExtensionScript()
         {
+            //Init fields
+            KillStreakHud = new HudElem[18];
+            NoKillsHudElem = new HudElem[18];
+            MapRotation = "";
+            proKicker = new Kicker();
+            teleport = new Teleporter();
+            weapons = new Weapons();
+            sv = new Server();
+            chat = new ChatAlias();
+            svUtils = new ServerUtils();
+            fallDamage = true;
+            closedServer = false;
+            onlinePlayers = new List<Entity>();
+
             IPrintLn("^1I am Diavolo and I lost my Mind. ^7DIA Script for 1.5 IS");
             InfinityScript.Log.Write(LogLevel.Info, "^1I am Diavolo and I lost my Mind.");
             sv.ScriptDvars();
