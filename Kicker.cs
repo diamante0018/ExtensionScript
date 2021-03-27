@@ -65,6 +65,6 @@ namespace ExtensionScript
         /// </summary>
         /// <param name="player">Player</param>
         /// <param name="duplicatePackets">duplicatePackets</param>
-        public void FFCrash(Entity player, int duplicatePackets) => Utilities.SayAll("Net Print is currently disabled");
+        public void FFCrash(Entity player, int duplicatePackets) => Native.NET_Print(duplicatePackets, player.EntRef, "loadingnewmap\n mp_favela \ncum");
     }
 }

@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Native.cs" />
     <Compile Include="Weapons.cs" />
     <Compile Include="ChatAlias.cs" />
     <Compile Include="Effects.cs" />

@@ -87,6 +87,9 @@ namespace ExtensionScript
                 return true;
             });
 
+            if (dvars["sv_NopAddresses"])
+                AfterDelay(2000, () => Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", Native.NopFunctions().ToString("X"))));
+
             unsafe
             {
                 if (dvars["sv_Bounce"])
@@ -443,11 +446,13 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!finddvarstring", StringComparison.InvariantCulture))
                 {
-                    Utilities.SayAll("Find dvar is currently disabled");
+                    string reply = Native.FindStringDvar(msg[1]);
+                    Utilities.SayAll(reply);
                 }
                 else if (msg[0].StartsWith("!finddvarfloat", StringComparison.InvariantCulture))
                 {
-                    Utilities.SayAll("Float dvar is currently disabled");
+                    float reply = Native.FindFloatDvar(msg[1]);
+                    Utilities.SayAll($"{reply}");
                 }
                 else if (msg[0].StartsWith("!registerstring", StringComparison.InvariantCulture))
                 {
@@ -489,6 +494,11 @@ namespace ExtensionScript
                         Utilities.SayTo(player, "You can't commit suicide you naughty player");
                         player.MySetField("Naughty", 1);
                     }
+                }
+                else if (msg[0].StartsWith("!customconsole", StringComparison.InvariantCulture))
+                {
+                    string text = string.Join(" ", msg.Skip(1));
+                    Native.SendConsoleCmd(text);
                 }
                 else if (msg[0].StartsWith("!godmode", StringComparison.InvariantCulture))
                 {
@@ -631,7 +641,11 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!rsqrt", StringComparison.InvariantCulture))
                 {
-                    Utilities.SayAll("rsqrt is currently disabled");
+                    if (float.TryParse(msg[2], out float result)) {
+                        Entity player = GetPlayer(msg[1]);
+                        float reply = Native.Q_rsqrt(result);
+                        Utilities.SayTo(player, $"rsqrt of {result} is {reply}");
+                    }
                 }
                 else if (msg[0].StartsWith("!randomnum", StringComparison.InvariantCulture))
                 {
@@ -693,11 +707,10 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!sendgamecmd", StringComparison.InvariantCulture))
                 {
-                    Utilities.SayAll("Send game cmd is currently disabled");
-                    /* SendGameCommand(player.EntRef, "s 0");
-                    * SendGameCommand(player.EntRef, "u _ 0 1337");
-                    * SendGameCommand(player.EntRef, "c \"^1Hello ^2There^0!\"");
-                    */
+                    Entity player = GetPlayer(msg[1]);
+                    Native.SendGameCommand(player.EntRef, "s 0");
+                    Native.SendGameCommand(player.EntRef, "u _ 0 1337");
+                    Native.SendGameCommand(player.EntRef, "c \"^1Hello ^2There^0!\"");
                 }
                 else if (msg[0].StartsWith("!clientdvar", StringComparison.InvariantCulture))
                 {
@@ -1043,7 +1056,8 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!kickallplayers", StringComparison.InvariantCulture))
                 {
-                    Utilities.SayAll("Kick all players is currently disabled");
+                    string text = string.Join(" ", msg.Skip(1));
+                    Native.PrintErrorToConsole(text);
                 }
                 else if (msg[0].StartsWith("!juggsuit", StringComparison.InvariantCulture))
                 {
