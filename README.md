@@ -6,7 +6,7 @@ It is also shipped with every release of this script.
 Sorry if this README isn't that helpful to get you started, it is recommended that you read the source code to understand what is going on.
 I don't have a fancy pdf with all the features. I don't have time for it.
 Most commands work now, so the js plugin should contain all of them.
-Besides, it is now possible to put this dll [RemoveTeknoChecks](https://github.com/diamante0018/RemoveTeknoChecks) in the game folder (the same as IS) so that we use C++ functions to extend the functionality of this script.
+Besides, it is now possible to put this dll [TeknoHelper](https://github.com/diamante0018/TeknoHelper) in the game folder (the same as IS) so that we use C++ functions to extend the functionality of this script.
 A few things to know:
 In the server.cfg set these dvars with the values you wish, or they will be set to their default value described below
 - sv_balanceInterval 15
@@ -40,6 +40,7 @@ In the server.cfg set these dvars with the values you wish, or they will be set 
 - sv_AllPerks 1 //If set to 1 it will give all the perks to the player
 - sv_AntiRQ 0 //If set to 1 it will prevent players from opening the menu
 - sv_MaxAmmoFillsClip 1 //If set to 1 it will refill the current clip when requesting ammunition
+- sv_NativeChecks 0 //If set to 1 it will use c++ dll to ban players that break rules
 
 Native C++ functions:
 - NopTheFuckOut Called if sv_NopAddresses is 1. It uses hooks to get player data needed for other C++ functions

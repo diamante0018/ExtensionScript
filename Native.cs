@@ -37,5 +37,8 @@ namespace ExtensionScript
 
         [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SendConsoleCmd([MarshalAs(UnmanagedType.LPStr)] string message);
+
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void CheckPlayerIP([MarshalAs(UnmanagedType.LPStr)] string IP, int entRef);
     }
 }

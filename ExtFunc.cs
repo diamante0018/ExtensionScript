@@ -6,7 +6,9 @@
 // License: GNU GPL v3.0
 // ========================================================
 using InfinityScript;
+using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using static InfinityScript.GSCFunctions;
 using static InfinityScript.HudElem;
@@ -340,6 +342,21 @@ namespace ExtensionScript
         {
             player.ClosePopUpMenu("");
             player.CloseInGameMenu();
+        }
+
+        /// <summary>function <c>GetIPInt</c> Gets the unsigned integer representing the IP of the player.</summary>
+        public static uint GetIPInt(this Entity player)
+        {
+            var address = player.IP.Address;
+            byte[] bytes = address.GetAddressBytes();
+
+            // Flip big-endian (network order) to little-endian
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bytes);
+            }
+
+            return BitConverter.ToUInt32(bytes, 0);
         }
     }
 }

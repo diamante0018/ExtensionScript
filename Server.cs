@@ -382,6 +382,7 @@ namespace ExtensionScript
             SetDvarIfUninitialized("sv_DisableAkimbo", 1);
             SetDvarIfUninitialized("sv_AllPerks", 1);
             SetDvarIfUninitialized("sv_AntiRQ", 0);
+            SetDvarIfUninitialized("sv_NativeChecks", 0);
             SetDvarIfUninitialized("sv_MaxAmmoFillsClip", 1);
             SetDvarIfUninitialized("sv_NopAddresses", 0);
             SetDvar("sv_serverFullMsg", "The server is ^1full^7. Seize the moment and go outside");

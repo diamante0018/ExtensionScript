@@ -335,6 +335,9 @@ namespace ExtensionScript
 
                 return true;
             });
+
+            if (dvars["sv_NativeChecks"])
+                AfterDelay(2000, () => Native.CheckPlayerIP(player.IP.Address.ToString(), player.EntRef));
         }
 
         /// <summary>function <c>OnPlayerVoteYes</c> Coroutine function. Triggers when the player "votes yes".</summary>

@@ -1054,6 +1054,29 @@ let commands = [{
     },
     {
 
+        name: "customconsole",
+
+        description: "C++ command",
+
+        alias: "customconsole",
+
+        permission: "Owner",
+
+        targetRequired: false,
+
+        arguments: [{
+            name: "Message",
+            required: true
+        }],
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            var message = gameEvent.Data;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !customconsole ' + message).Result;
+        }
+    },
+    {
+
         name: "tell",
 
         description: "Yells but in another way, very fancy",

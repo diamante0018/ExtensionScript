@@ -64,7 +64,8 @@ namespace ExtensionScript
                 ["sv_LocalizedStr"] = GetDvarInt("sv_LocalizedStr") == 1,
                 ["sv_AntiRQ"] = GetDvarInt("sv_AntiRQ") == 1,
                 ["sv_MaxAmmoFillsClip"] = GetDvarInt("sv_MaxAmmoFillsClip") == 1,
-                ["sv_NopAddresses"] = GetDvarInt("sv_NopAddresses") == 1
+                ["sv_NopAddresses"] = GetDvarInt("sv_NopAddresses") == 1,
+                ["sv_NativeChecks"] = GetDvarInt("sv_NativeChecks") == 1
             };
 
             return dvars;
