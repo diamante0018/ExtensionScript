@@ -387,6 +387,9 @@ namespace ExtensionScript
                 player.MyGiveMaxAmmo(false);
                 player.DisableGrenadeTouchDamage();
 
+                if (Native.TryBanClientsUI(Convert.ToUInt32(player.EntRef)))
+                    Utilities.ExecuteCommand($"banclient {player.EntRef} UI Commands are a lame way to cheat");
+
                 if (!dvars["sv_LocalizedStr"])
                     player.CheckLocalized();
 

@@ -40,5 +40,8 @@ namespace ExtensionScript
 
         [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void CheckPlayerIP([MarshalAs(UnmanagedType.LPStr)] string IP, int entRef);
+
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool TryBanClientsUI(uint entRef);
     }
 }
