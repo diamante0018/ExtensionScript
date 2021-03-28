@@ -389,5 +389,16 @@ namespace ExtensionScript
             SetDvar("sv_maxPing", 470);
             SetDvarIfUninitialized("sv_RemoveBakaaraSentry", 0);
         }
+
+        public void NopAddresses()
+        {
+            SetDvarIfUninitialized("sv_HasBeenHooked", 0);
+
+            if (GetDvarInt("sv_HasBeenHooked") == 0)
+            {
+                Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", Native.NopFunctions().ToString("X")));
+                SetDvar("sv_HasBeenHooked", 1);
+            }
+        }
     }
 }

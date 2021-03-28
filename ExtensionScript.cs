@@ -88,7 +88,7 @@ namespace ExtensionScript
             });
 
             if (dvars["sv_NopAddresses"])
-                AfterDelay(2000, () => Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", Native.NopFunctions().ToString("X"))));
+                AfterDelay(1500, () => sv.NopAddresses());
 
             unsafe
             {
