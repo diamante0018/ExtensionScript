@@ -392,12 +392,16 @@ namespace ExtensionScript
 
         public void NopAddresses()
         {
-            SetDvarIfUninitialized("sv_HasBeenHooked", 0);
+            string sv_HasBeenHooked = GetDvar("sv_HasBeenHooked");
 
-            if (GetDvarInt("sv_HasBeenHooked") == 0)
+            if (string.IsNullOrWhiteSpace(sv_HasBeenHooked))
             {
                 Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", Native.NopFunctions().ToString("X")));
-                SetDvar("sv_HasBeenHooked", 1);
+                SetDvar("sv_HasBeenHooked", "We did it");
+            }
+            else
+            {
+                Utilities.PrintToConsole($"It appears we already hooked some function: {sv_HasBeenHooked}");
             }
         }
     }
