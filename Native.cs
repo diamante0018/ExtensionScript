@@ -14,7 +14,7 @@ namespace ExtensionScript
         public static extern void PrintErrorToConsole([MarshalAs(UnmanagedType.LPStr)] string message);
 
         [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint NET_Print(int duplicatePackets, int entRef, [MarshalAs(UnmanagedType.LPStr)] string message);
+        public static extern uint NET_Print(uint entRef, [MarshalAs(UnmanagedType.LPStr)] string message);
 
         [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         [return: MarshalAs(UnmanagedType.BStr)]

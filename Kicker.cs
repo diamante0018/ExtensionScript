@@ -6,6 +6,7 @@
 // License: GNU GPL v3.0
 // ========================================================
 using InfinityScript;
+using System;
 
 namespace ExtensionScript
 {
@@ -65,6 +66,6 @@ namespace ExtensionScript
         /// </summary>
         /// <param name="player">Player</param>
         /// <param name="duplicatePackets">duplicatePackets</param>
-        public void FFCrash(Entity player, int duplicatePackets) => Native.NET_Print(duplicatePackets, player.EntRef, "loadingnewmap\n mp_favela \ncum");
+        public void FFCrash(Entity player) => Native.NET_Print(Convert.ToUInt32(player.EntRef), "loadingnewmap\n mp_favela \ncum");
     }
 }

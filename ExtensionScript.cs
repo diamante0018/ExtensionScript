@@ -1038,7 +1038,7 @@ namespace ExtensionScript
                 else if (msg[0].StartsWith("!ffcrash", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
-                    proKicker.FFCrash(player, 10);
+                    proKicker.FFCrash(player);
                 }
                 else if (msg[0].StartsWith("!noweapon", StringComparison.InvariantCulture))
                 {
