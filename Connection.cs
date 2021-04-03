@@ -1,6 +1,6 @@
-﻿using System;
+﻿using InfinityScript;
+using System;
 using System.Collections.Generic;
-using InfinityScript;
 
 namespace ExtensionScript
 {
@@ -23,11 +23,11 @@ namespace ExtensionScript
         public bool CheckPlayerData(string playerConString)
         {
             string playerHWID = GetHWID(playerConString);
-            string playerXUID = MyGetValueForKey(playerConString, "xuid");
-            string playerxnaddr = MyGetValueForKey(playerConString, "xnaddr");
-            string playerSteamID = MyGetValueForKey(playerConString, "steamid");
-            string playerName = MyGetValueForKey(playerConString, "name");
-            string IP = MyGetValueForKey(playerConString, "IP-string");
+            string playerXUID = GetValueForKey(playerConString, "xuid");
+            string playerxnaddr = GetValueForKey(playerConString, "xnaddr");
+            string playerSteamID = GetValueForKey(playerConString, "steamid");
+            string playerName = GetValueForKey(playerConString, "name");
+            string IP = GetValueForKey(playerConString, "IP-string");
 
             if (playerDat.Contains($"{playerXUID}.{playerxnaddr}") || playerDat.Contains($"{playerXUID}.{playerSteamID}"))
             {
@@ -57,7 +57,7 @@ namespace ExtensionScript
         }
 
         /// <summary>function <c>MyGetValueForKey</c> Another implementation for GetValueForKey. If no value for key is found key is returned.</summary>
-        public string MyGetValueForKey(string longString, string key)
+        public string GetValueForKey(string longString, string key)
         {
             string[] kv = longString.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
             int index = Array.FindIndex(kv, x => x == key);

@@ -8,7 +8,6 @@
 using InfinityScript;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Text;
 using static InfinityScript.GSCFunctions;
 using static InfinityScript.HudElem;

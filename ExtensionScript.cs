@@ -649,7 +649,8 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!rsqrt", StringComparison.InvariantCulture))
                 {
-                    if (float.TryParse(msg[2], out float result)) {
+                    if (float.TryParse(msg[2], out float result))
+                    {
                         Entity player = GetPlayer(msg[1]);
                         float reply = Native.Q_rsqrt(result);
                         Utilities.SayTo(player, $"rsqrt of {result} is {reply}");
