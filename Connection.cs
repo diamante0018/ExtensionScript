@@ -27,9 +27,11 @@ namespace ExtensionScript
             string playerxnaddr = MyGetValueForKey(playerConString, "xnaddr");
             string playerSteamID = MyGetValueForKey(playerConString, "steamid");
             string playerName = MyGetValueForKey(playerConString, "name");
+            string IP = MyGetValueForKey(playerConString, "IP-string");
 
             if (playerDat.Contains($"{playerXUID}.{playerxnaddr}") || playerDat.Contains($"{playerXUID}.{playerSteamID}"))
             {
+                InsertBan.WriteIPBan(IP, playerName, "Attempted to use illegal tools to kick online players");
                 return true;
             }
 
@@ -37,6 +39,7 @@ namespace ExtensionScript
             {
                 if (player.HWID.ToLower() == playerHWID || player.GetXUID() == playerXUID || playerName == player.Name)
                 {
+                    InsertBan.WriteIPBan(IP, playerName, "Attempted to use illegal tools to kick online players");
                     return true;
                 }
             }

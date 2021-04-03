@@ -6,8 +6,10 @@
 // License: GNU GPL v3.0
 // ========================================================
 using InfinityScript;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using static InfinityScript.GSCFunctions;
 
@@ -39,6 +41,53 @@ namespace ExtensionScript
             }
 
             *(byte*)address = 0;
+        }
+    }
+
+    public static class InsertBan
+    {
+        private static string path;
+        private static string directory;
+
+        public static void CreateDirectory()
+        {
+            try
+            {
+                var di = Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\{directory}");
+            }
+
+            catch (Exception e)
+            {
+                InfinityScript.Log.Write(LogLevel.Error, $"The process failed to create directory PlayerChat: {e}");
+            }
+        }
+
+        public static void GetDirPath()
+        {
+            string result = GetDvar("sv_path_for_ban_dbs");
+            if (string.IsNullOrWhiteSpace(result))
+            {
+                InfinityScript.Log.Write(LogLevel.Warning, "\"sv_path_for_ban_dbs\" dvar is null or contains white spaces.");
+                result = "BanDB";
+            }
+
+            directory = result;
+            path = Directory.GetCurrentDirectory() + $"\\{directory}\\Permanent_IP.ban";
+            CreateDirectory();
+        }
+
+        public static void WriteIPBan(string IP, string name, string reason)
+        {
+            GetDirPath();
+            bool existed = File.Exists(path);
+
+            using (var sw = File.AppendText(path))
+            {
+                if (!existed)
+                    sw.WriteLine("[IPBans]");
+
+                sw.WriteLine($"{IP}=NAME({name}) Reason: {reason}");
+            }
         }
     }
 

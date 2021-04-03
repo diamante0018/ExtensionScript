@@ -20,7 +20,7 @@ namespace ExtensionScript
         {
             loaded = false;
             CreateDirectory();
-            currentPath = Directory.GetCurrentDirectory() + $"\\PlayerChat\\Aliases.txt";
+            currentPath = Directory.GetCurrentDirectory() + "\\PlayerChat\\Aliases.txt";
         }
 
         public void Update(string HWID, string alias)
@@ -52,17 +52,11 @@ namespace ExtensionScript
             if (!File.Exists(currentPath))
             {
                 // Create a file to read from
-                File.CreateText(currentPath).Dispose();
-                var sw = File.CreateText(currentPath);
-
-                try
+                using (var sw = File.CreateText(currentPath))
                 {
                     Utilities.PrintToConsole($"File {currentPath} did not exist");
                 }
-                finally
-                {
-                    sw?.Dispose();
-                }
+
                 return;
             }
 
