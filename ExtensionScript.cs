@@ -35,11 +35,12 @@ namespace ExtensionScript
         private ServerUtils svUtils;
         private RandomMap map;
         private LoadoutName load;
+        private Connection con;
         private bool fallDamage;
         private bool closedServer;
         private int sv_balanceInterval;
         private int lastPlayerDamaged;
-        private List<Entity> onlinePlayers;
+        public static List<Entity> onlinePlayers;
         private Dictionary<string, string> keyWords;
         private static Dictionary<string, bool> dvars;
         private CultureInfo culture;
@@ -56,6 +57,7 @@ namespace ExtensionScript
             sv = new Server();
             chat = new ChatAlias();
             svUtils = new ServerUtils();
+            con = new Connection();
             fallDamage = true;
             closedServer = false;
             onlinePlayers = new List<Entity>();
@@ -1305,6 +1307,10 @@ namespace ExtensionScript
 
         public override string OnPlayerRequestConnection(string playerName, string playerHWID, string playerXUID, string playerIP, string playerSteamID, string playerXNAddress)
         {
+            // If a player with the same data already exists on the server we should not allow them to connect
+            if (con.CheckPlayerData(playerHWID))
+                return KickMSG.GetRandomMSG();
+
             if (closedServer)
                 return KickMSG.GetRandomMSG();
             return null;
@@ -1314,6 +1320,7 @@ namespace ExtensionScript
         {
             player.MyRemoveField();
             onlinePlayers.Remove(player);
+            con.RemovePlayerDat(player);
         }
 
         /// <summary>function <c>OnPlayerLastStand</c> If the player is in last stand he will be killed.</summary>
