@@ -1128,6 +1128,11 @@ namespace ExtensionScript
                     Entity player = GetPlayer(msg[1]);
                     player.GiveSpecialGuns();
                 }
+                else if (msg[0].StartsWith("!addbot", StringComparison.InvariantCulture))
+                {
+                    Utilities.PrintToConsole("C# Adding bot");
+                    Native.MakeBot();
+                }
             }
             catch (Exception e)
             {

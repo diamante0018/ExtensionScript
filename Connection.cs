@@ -29,7 +29,7 @@ namespace ExtensionScript
             string playerName = GetValueForKey(playerConString, "name");
             string IP = GetValueForKey(playerConString, "IP-string");
 
-            if (playerDat.Contains($"{playerXUID}.{playerxnaddr}") || playerDat.Contains($"{playerXUID}.{playerSteamID}"))
+            if (CheckPlayerDat(playerxnaddr) || CheckPlayerDat(playerSteamID))
             {
                 InsertBan.WriteIPBan(IP, playerName, "Attempted to use illegal tools to kick online players");
                 return true;
@@ -47,6 +47,17 @@ namespace ExtensionScript
             Utilities.PrintToConsole($"{playerName} is allowed to connect because no other player shares his data");
             playerDat.Add($"{playerXUID}.{playerxnaddr}");
             playerDat.Add($"{playerXUID}.{playerSteamID}");
+
+            return false;
+        }
+
+        public bool CheckPlayerDat(string data)
+        {
+            foreach (var a1 in playerDat)
+            {
+                if (a1.Contains(data))
+                    return true;
+            }
 
             return false;
         }

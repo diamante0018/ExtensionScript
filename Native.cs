@@ -43,5 +43,8 @@ namespace ExtensionScript
 
         [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool TryBanClientsUI(uint entRef);
+
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void MakeBot();
     }
 }
