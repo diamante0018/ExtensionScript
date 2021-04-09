@@ -92,59 +92,15 @@ namespace ExtensionScript
             if (dvars["sv_NopAddresses"])
                 AfterDelay(1500, () => sv.NopAddresses());
 
-            unsafe
-            {
-                if (dvars["sv_Bounce"])
-                {
-                    int[] addr = { 0x0422AB6, 0x0422AAF, 0x041E00C, 0x0414127, 0x04141B4, 0x0414E027, 0x0414B126, 0x041416B, 0x041417C };
+           if (dvars["sv_Bounce"])
+           {
+                    sv.Bounce();
+           }
 
-                    byte nop = 0x90;
-                    for (int i = 0; i < 7; ++i)
-                    {
-                        *((byte*)addr[7] + i) = nop;
-                        *((byte*)addr[8] + i) = nop;
-                        *(byte*)addr[i] = nop;
-                        *(byte*)(addr[i] + 1) = nop;
-                    }
-                }
-
-                if (dvars["sv_UndoRCE"])
-                {
-                    int addr = 0x04E6170;
-                    *(byte*)addr = 0x81;
-                    Utilities.PrintToConsole("You undid the RCE Patch");
-                }
-
-                //Undo something else pesky Tekno devs did.
-                int userInfo = 0x4E7490;
-                *(byte*)userInfo = 0xA1;
-
-                int QueryInfo = 0x04EBCF4;
-                *(byte*)QueryInfo = 0xE8;
-                *(byte*)(QueryInfo + 1) = 0x97;
-                *(byte*)(QueryInfo + 2) = 0x87;
-                *(byte*)(QueryInfo + 3) = 0xFF;
-                *(byte*)(QueryInfo + 4) = 0xFF;
-
-                int NetSendPacket = 0x526443;
-                *(byte*)NetSendPacket = 0xE8;
-                *(byte*)(NetSendPacket + 1) = 0x18;
-                *(byte*)(NetSendPacket + 2) = 0x66;
-                *(byte*)(NetSendPacket + 3) = 0xFA;
-                *(byte*)(NetSendPacket + 4) = 0xFF;
-
-                int ProcessUICommand = 0x04800B0;
-                *(byte*)ProcessUICommand = 0x81;
-                *(byte*)(ProcessUICommand + 1) = 0xEC;
-                *(byte*)(ProcessUICommand + 2) = 0x00;
-                *(byte*)(ProcessUICommand + 3) = 0x04;
-                *(byte*)(ProcessUICommand + 4) = 0x00;
-                *(byte*)(ProcessUICommand + 5) = 0x00;
-
-                int adrToString = 0x04D1A43;
-                *(byte*)adrToString = 0x75;
-                *(byte*)(adrToString + 1) = 0x38;
-            }
+           if (dvars["sv_UndoRCE"])
+           {
+                    sv.RCE();
+           }            
 
             Notified += OnNotified;
 
