@@ -92,15 +92,15 @@ namespace ExtensionScript
             if (dvars["sv_NopAddresses"])
                 AfterDelay(1500, () => sv.NopAddresses());
 
-           if (dvars["sv_Bounce"])
-           {
-                    sv.Bounce();
-           }
+            if (dvars["sv_Bounce"])
+            {
+                sv.Bounce();
+            }
 
-           if (dvars["sv_UndoRCE"])
-           {
-                    sv.RCE();
-           }            
+            if (dvars["sv_UndoRCE"])
+            {
+                sv.RCE();
+            }
 
             Notified += OnNotified;
 

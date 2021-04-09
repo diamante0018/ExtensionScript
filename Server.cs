@@ -421,7 +421,7 @@ namespace ExtensionScript
         }
 
         public unsafe void RCE()
-        { 
+        {
             int addr = 0x04E6170;
             *(byte*)addr = 0x81;
             Utilities.PrintToConsole("You undid the RCE Patch");
