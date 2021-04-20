@@ -1,4 +1,11 @@
-﻿using InfinityScript;
+﻿// ==================== ExtensionScript ===================
+// Admin Manager via Rcon. It is recommended you
+// Use this script with IW4M 
+// Project: https://github.com/diamante0018/ExtensionScript
+// Author: Diavolo (https://github.com/diamante0018)
+// License: GNU GPL v3.0
+// ========================================================
+using InfinityScript;
 using System;
 using System.Collections.Generic;
 using System.IO;
