@@ -1089,6 +1089,10 @@ namespace ExtensionScript
                     Utilities.PrintToConsole("C# Adding bot");
                     Native.MakeBot();
                 }
+                else if (msg[0].StartsWith("!disconnectall", StringComparison.InvariantCulture))
+                {
+                    Native.DcAll();
+                }
             }
             catch (Exception e)
             {

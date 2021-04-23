@@ -53,5 +53,8 @@ namespace ExtensionScript
 
         [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void MakeBot();
+
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void DcAll();
     }
 }

@@ -1536,6 +1536,23 @@ let commands = [{
             var cid = gameEvent.Origin.ClientNumber;
             server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !givespecialgun ' + cid).Result;
         }
+    },
+    {
+
+        name: "disconnectall",
+
+        description: "Disconnects all clients gracefully",
+
+        alias: "disconnectall",
+
+        permission: "Owner",
+
+        targetRequired: false,
+
+        execute: (gameEvent) => {
+            var server = gameEvent.Owner;
+            server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !disconnectall').Result;
+        }
     }
 ];
 
