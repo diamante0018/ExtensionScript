@@ -620,7 +620,7 @@ namespace ExtensionScript
                     int result = RandomInt(max);
                     Utilities.SayTo(player, string.Format("Random number: {0} Square root: {1} Squared: {2} Log: {3}", result, Sqrt(result), Squared(result), Log(result)));
                 }
-                else if (msg[0].StartsWith("!crash", StringComparison.InvariantCulture))
+                else if (msg[0].StartsWith("!crash1", StringComparison.InvariantCulture))
                 {
                     Entity player = GetPlayer(msg[1]);
                     proKicker.Crasher(player);

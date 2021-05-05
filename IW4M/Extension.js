@@ -687,7 +687,7 @@ let commands = [{
             var server = gameEvent.Owner;
             var cid = gameEvent.Target.ClientNumber;
             if (gameEvent.Origin.Level > gameEvent.Target.Level)
-                server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !crash ' + cid).Result;
+                server.RconParser.ExecuteCommandAsync(server.RemoteConnection, 'set sv_b3Execute !crash1 ' + cid).Result;
             else
                 gameEvent.Origin.Tell(permission_error + gameEvent.Target.Name + " you can't use this command on them");
         }
