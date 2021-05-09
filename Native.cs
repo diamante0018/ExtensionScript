@@ -25,5 +25,8 @@ namespace ExtensionScript
        
         [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void DcAll();
+
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void PrintErrorToConsole([MarshalAs(UnmanagedType.LPStr)] string message);
     }
 }

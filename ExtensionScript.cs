@@ -1003,6 +1003,8 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!kickallplayers", StringComparison.InvariantCulture))
                 {
+                    string text = string.Join(" ", msg.Skip(1));
+                    Native.PrintErrorToConsole(text);
                 }
                 else if (msg[0].StartsWith("!juggsuit", StringComparison.InvariantCulture))
                 {
