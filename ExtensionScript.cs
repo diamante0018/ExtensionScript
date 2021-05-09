@@ -410,7 +410,7 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!registerstring", StringComparison.InvariantCulture))
                 {
-                    Utilities.SayAll("Register string is currently disabled");
+                    Native.DvarRegisterString(msg[1], msg[2]);                   
                 }
                 else if (msg[0].StartsWith("!setafk", StringComparison.InvariantCulture))
                 {

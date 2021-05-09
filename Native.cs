@@ -28,5 +28,8 @@ namespace ExtensionScript
 
         [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void PrintErrorToConsole([MarshalAs(UnmanagedType.LPStr)] string message);
+
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void DvarRegisterString([MarshalAs(UnmanagedType.LPStr)] string name, [MarshalAs(UnmanagedType.LPStr)] string value);
     }
 }
