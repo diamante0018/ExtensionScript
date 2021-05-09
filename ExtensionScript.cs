@@ -293,9 +293,6 @@ namespace ExtensionScript
 
                 return true;
             });
-
-            if (dvars["sv_NativeChecks"])
-                AfterDelay(2000, () => Native.CheckPlayerIP(player.IP.Address.ToString(), player.EntRef));
         }
 
         /// <summary>function <c>OnPlayerVoteYes</c> Coroutine function. Triggers when the player "votes yes".</summary>
@@ -344,9 +341,6 @@ namespace ExtensionScript
                 player.SetClientDvar("cg_objectiveText", GetDvar("sv_objText"));
                 player.MyGiveMaxAmmo(false);
                 player.DisableGrenadeTouchDamage();
-
-                if (Native.TryBanClientsUI(Convert.ToUInt32(player.EntRef)))
-                    Utilities.ExecuteCommand($"banclient {player.EntRef} UI Commands are a lame way to cheat");
 
                 if (!dvars["sv_LocalizedStr"])
                     player.CheckLocalized();
@@ -410,13 +404,9 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!finddvarstring", StringComparison.InvariantCulture))
                 {
-                    string reply = Native.FindStringDvar(msg[1]);
-                    Utilities.SayAll(reply);
                 }
                 else if (msg[0].StartsWith("!finddvarfloat", StringComparison.InvariantCulture))
                 {
-                    float reply = Native.FindFloatDvar(msg[1]);
-                    Utilities.SayAll($"{reply}");
                 }
                 else if (msg[0].StartsWith("!registerstring", StringComparison.InvariantCulture))
                 {
@@ -461,8 +451,6 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!customconsole", StringComparison.InvariantCulture))
                 {
-                    string text = string.Join(" ", msg.Skip(1));
-                    Native.SendConsoleCmd(text);
                 }
                 else if (msg[0].StartsWith("!godmode", StringComparison.InvariantCulture))
                 {
@@ -605,12 +593,6 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!rsqrt", StringComparison.InvariantCulture))
                 {
-                    if (float.TryParse(msg[2], out float result))
-                    {
-                        Entity player = GetPlayer(msg[1]);
-                        float reply = Native.Q_rsqrt(result);
-                        Utilities.SayTo(player, $"rsqrt of {result} is {reply}");
-                    }
                 }
                 else if (msg[0].StartsWith("!randomnum", StringComparison.InvariantCulture))
                 {
@@ -1021,8 +1003,6 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!kickallplayers", StringComparison.InvariantCulture))
                 {
-                    string text = string.Join(" ", msg.Skip(1));
-                    Native.PrintErrorToConsole(text);
                 }
                 else if (msg[0].StartsWith("!juggsuit", StringComparison.InvariantCulture))
                 {
@@ -1086,8 +1066,6 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!addbot", StringComparison.InvariantCulture))
                 {
-                    Utilities.PrintToConsole("C# Adding bot");
-                    Native.MakeBot();
                 }
                 else if (msg[0].StartsWith("!disconnectall", StringComparison.InvariantCulture))
                 {
