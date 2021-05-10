@@ -6,7 +6,7 @@ It is also shipped with every release of this script.
 Sorry if this README isn't that helpful to get you started, it is recommended that you read the source code to understand what is going on.
 I don't have a fancy pdf with all the features. I don't have time for it.
 Most commands work now, so the js plugin should contain all of them.
-Besides, it is now possible to put this dll [TeknoHelper](https://github.com/diamante0018/TeknoHelper) in the game folder (the same as IS) so that we use C++ functions to extend the functionality of this script.
+Besides, it is now possible to put this dll [BetterTekno](https://github.com/diamante0018/BetterTekno) in the game folder (the same as IS) so that we use C++ functions to extend the functionality of this script.
 A few things to know:
 In the server.cfg set these dvars with the values you wish, or they will be set to their default value described below
 - sv_balanceInterval 15
@@ -58,7 +58,7 @@ Native C++ functions:
 
 General Trivia:
 - com_printDebug bool dvar is not used
-- Rekt RCE patch is a one-line NOP that doesn't address the real issue (easily undone)
+- Rekt RCE patch is a one-line NOP that doesn't address the real issue (easily undone) (exploit chain is possible with CVE-2019-11333)
 - NetSendPacket and QueryInfo NOP undoing doesn't do anything
 - sv_kickBanTime is a float dvar (even though it stores time expressed in seconds), and its DvarValues are modified by TeknoMW3S.dll
 - sv_kickBanTime new DvarValues are: current 3600f * 3f, max 60f * 60f * 24f * 7f, default 3600f * 3f, min 0.0f
