@@ -89,9 +89,6 @@ namespace ExtensionScript
                 return true;
             });
 
-            if (dvars["sv_NopAddresses"])
-                AfterDelay(1500, () => sv.NopAddresses());
-
             if (dvars["sv_Bounce"])
             {
                 sv.Bounce();
@@ -121,6 +118,9 @@ namespace ExtensionScript
             //Sentry Related Code
             if (dvars["sv_RemoveBakaaraSentry"])
                 AfterDelay(5000, () => svUtils.RemoveSentry());
+
+            if (dvars["sv_NopAddresses"])
+                AfterDelay(1500, () => sv.NopAddresses());
         }
 
         /// <summary>function <c>ISTest_Notified</c> Prints all the notifies when triggered.</summary>

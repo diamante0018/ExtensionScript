@@ -396,9 +396,9 @@ namespace ExtensionScript
 
             if (string.IsNullOrWhiteSpace(sv_HasBeenHooked))
             {
+                Patches();
                 Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", Native.NopFunctions().ToString("X")));
                 SetDvar("sv_HasBeenHooked", "We did it");
-                Patches();
             }
             else
             {
