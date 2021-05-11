@@ -398,6 +398,7 @@ namespace ExtensionScript
             {
                 Patches();
                 Utilities.PrintToConsole(string.Format("Extern DLL Return Value: {0}", Native.NopFunctions().ToString("X")));
+                Native.Hook();
                 SetDvar("sv_HasBeenHooked", "We did it");
             }
             else
