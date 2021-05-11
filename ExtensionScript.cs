@@ -121,7 +121,7 @@ namespace ExtensionScript
 
             if (dvars["sv_NopAddresses"])
                 AfterDelay(1500, () => sv.NopAddresses());
-    }
+        }
 
         /// <summary>function <c>ISTest_Notified</c> Prints all the notifies when triggered.</summary>
         public void ISTest_Notified(int arg1, string arg2, Parameter[] arg3)
