@@ -140,6 +140,7 @@ namespace ExtensionScript
                     ISTest_Notified(arg1, arg2, arg3);
                     break;
                 case "game_ended":
+                    ISTest_Notified(arg1, arg2, arg3);
                     UnfreezePlayers();
                     break;
                 case "weapon_change":
@@ -1068,6 +1069,8 @@ namespace ExtensionScript
                 }
                 else if (msg[0].StartsWith("!addbot", StringComparison.InvariantCulture))
                 {
+                    Utilities.PrintToConsole("Adding bot");
+                    Native.AddBot();
                 }
                 else if (msg[0].StartsWith("!disconnectall", StringComparison.InvariantCulture))
                 {

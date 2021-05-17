@@ -32,6 +32,9 @@ namespace ExtensionScript
         [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void DvarRegisterString([MarshalAs(UnmanagedType.LPStr)] string name, [MarshalAs(UnmanagedType.LPStr)] string value);
 
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void AddBot();
+
         [DllImport("TeknoCrasher.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Hook();
     }

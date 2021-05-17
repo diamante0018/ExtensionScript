@@ -434,6 +434,24 @@ namespace ExtensionScript
             int userInfo = 0x4E7490;
             *(byte*)userInfo = 0xA1;
 
+            int check_1 = 0x04E5E32;
+            *(byte*)check_1 = 0xE8;
+            *(byte*)(check_1 + 1) = 0x79;
+            *(byte*)(check_1 + 2) = 0xFC;
+            *(byte*)(check_1 + 3) = 0xFF;
+            *(byte*)(check_1 + 4) = 0xFF;
+
+            int check_2 = 0x04E826A;
+            *(byte*)check_2 = 0x8D;
+            *(byte*)(check_2 + 1) = 0x4C;
+            *(byte*)(check_2 + 2) = 0x24;
+            *(byte*)(check_2 + 3) = 0x48;
+            *(byte*)(check_2 + 4) = 0x68;
+            *(byte*)(check_2 + 5) = 0x4C;
+            *(byte*)(check_2 + 6) = 0x36;
+            *(byte*)(check_2 + 7) = 0x6E;
+            *(byte*)(check_2 + 8) = 0x00;
+
             int QueryInfo = 0x04EBCF4;
             *(byte*)QueryInfo = 0xE8;
             *(byte*)(QueryInfo + 1) = 0x97;
