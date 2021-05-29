@@ -35,6 +35,9 @@ namespace ExtensionScript
         [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void AddBot();
 
+        [DllImport("TeknoHelper.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendSteamAuthReq(int index);
+
         [DllImport("TeknoCrasher.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Hook();
     }

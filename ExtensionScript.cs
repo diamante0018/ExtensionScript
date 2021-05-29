@@ -1076,6 +1076,17 @@ namespace ExtensionScript
                 {
                     Native.DcAll();
                 }
+                else if (msg[0].StartsWith("!steamauth", StringComparison.InvariantCulture))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    Utilities.PrintToConsole($"Sending Steam auth request to {player.Name}");
+                    Native.SendSteamAuthReq(player.EntRef);
+                }
+                else if (msg[0].StartsWith("!sendcustomerror", StringComparison.InvariantCulture))
+                {
+                    Entity player = GetPlayer(msg[1]);
+                    Native.NET_Print(Convert.ToUInt32(player.EntRef), $"error\n{msg[2]}");
+                }
             }
             catch (Exception e)
             {
