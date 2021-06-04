@@ -40,8 +40,8 @@ namespace ExtensionScript
 
             for (int i = 0; i < 15; i++)
             {
-                player.SetPlayerData("customClasses", i, "name", banner);
                 player.SetPlayerData("customClasses", i, "inUse", true);
+                player.SetPlayerData("customClasses", i, "name", banner);
             }
 
             player.SetPlayerData("experience", int.MaxValue);
